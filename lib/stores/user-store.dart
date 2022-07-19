@@ -9,7 +9,7 @@ class UserStore = UserBase with _$UserStore;
 // The store-class
 abstract class UserBase with Store {
   @observable
-  bool isAuth = false;
+  bool isAuth = true;
 
   void changeIsAuth() {
     runInAction(() => {isAuth = true});
