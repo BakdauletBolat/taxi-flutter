@@ -4,9 +4,12 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class BListTile extends StatelessWidget {
-  const BListTile({Key? key, required this.city_name}) : super(key: key);
+  const BListTile(
+      {Key? key, required this.city_name, required this.region_name})
+      : super(key: key);
 
   final String city_name;
+  final String region_name;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +42,7 @@ class BListTile extends StatelessWidget {
                       Text(city_name,
                           style: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold)),
-                      const Text('Туркестанская область, Казахстан')
+                      Text(region_name)
                     ],
                   )
                 ],

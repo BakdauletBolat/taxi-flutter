@@ -23,6 +23,14 @@ dependencies:
   modal_bottom_sheet: ^2.1.0
   flutter_datetime_picker: ^1.5.1
   flutter_rating_bar: ^4.0.1
+  dio: ^4.0.6
+  shared_preferences: ^2.0.15
+  json_serializable: ^6.3.1
+  json_annotation: ^4.6.0
+  pin_code_fields: ^7.4.0
+  flutter_svg: ^1.1.1+1
+  image_picker: ^0.8.5+3
+  extended_image: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -35,8 +43,10 @@ flutter:
 
   assets:
     - assets/welcome-screen/kaz.png
+    - assets/svg/lock-screen.svg
     - assets/welcome-screen/first.png
     - assets/welcome-screen/second.png
     - assets/profile-photo.png
+    - assets/svg/smart-phone-sms.svg
 
 

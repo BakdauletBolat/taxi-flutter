@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:taxiflutter/pages/CreateOrderPage.dart';
+import 'package:taxiflutter/pages/ProfilePage.dart';
 import 'package:taxiflutter/pages/RidePage.dart';
 import 'package:taxiflutter/stores/user-store.dart';
 
@@ -24,9 +25,7 @@ class _MyHomePageState extends State<MainPage> {
   static const List<Widget> _widgetOptions = <Widget>[
     CreateOrderPage(),
     RidePage(),
-    Text(
-      'Index 2: School',
-    ),
+    ProfilePage()
   ];
 
   @override
@@ -45,8 +44,8 @@ class _MyHomePageState extends State<MainPage> {
             label: 'Попутки',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.list_bullet),
-            label: 'Мой заказы',
+            icon: Icon(Icons.supervised_user_circle),
+            label: 'Профиль',
           ),
         ],
         currentIndex: _selectedIndex,

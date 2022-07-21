@@ -64,6 +64,7 @@ class _RidePageState extends State<RidePage> {
                     return GestureDetector(
                       onTap: openSecondModal,
                       child: const BListTile(
+                        region_name: 'Межгород',
                         city_name: 'Шымкент',
                       ),
                     );

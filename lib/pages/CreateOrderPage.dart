@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:taxiflutter/components/BAppBar.dart';
 import 'package:taxiflutter/components/ListTile.dart';
 import 'package:taxiflutter/components/Select.dart';
+import 'package:taxiflutter/stores/region-store.dart';
 import 'package:taxiflutter/stores/user-store.dart';
 
 class CreateOrderPage extends StatefulWidget {
@@ -18,6 +20,13 @@ class CreateOrderPage extends StatefulWidget {
 }
 
 class _CreateOrderPageState extends State<CreateOrderPage> {
+  @override
+  void initState() {
+    RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
+    regionStore.loadCities();
+    super.initState();
+  }
+
   void openSecondModal() {
     showCupertinoModalBottomSheet(
       context: context,
@@ -44,6 +53,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   }
 
   void openModal() {
+    RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
+
     showCupertinoModalBottomSheet(
       context: context,
       expand: false,
@@ -58,17 +69,20 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   placeholder: 'Искать',
                 ),
               ),
-              ListView.builder(
-                  itemCount: 100,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: openSecondModal,
-                      child: const BListTile(
-                        city_name: 'Шымкент',
-                      ),
-                    );
-                  })
+              Observer(builder: (context) {
+                return ListView.builder(
+                    itemCount: regionStore.cities.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: openSecondModal,
+                        child: BListTile(
+                          region_name: regionStore.cities[index].region.name,
+                          city_name: regionStore.cities[index].name,
+                        ),
+                      );
+                    });
+              })
             ]),
           )),
     );
