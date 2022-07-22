@@ -18,6 +18,18 @@ abstract class UserBase with Store {
   @computed
   bool get isAuth => profile == null ? false : true;
 
+  @computed
+  bool get profileNotNull =>
+      profile?.profile_info?.avatar != null &&
+      profile?.profile_info?.first_name != null &&
+      profile?.profile_info?.last_name != null;
+
+  @computed
+  bool get userDocumentsNotNull =>
+      profile?.user_document?.passport_photo_back != null &&
+      profile?.user_document?.passport_photo_front != null &&
+      profile?.user_document?.car_passport != null;
+
   @observable
   bool isLoadingRegister = false;
 
@@ -75,22 +87,37 @@ abstract class UserBase with Store {
       isLoadingVerify = true;
     });
 
-    try {
-      Profile? profile = await userService.verifyUser(phone: phone!, otp: otp!);
-      runInAction(() => {this.profile = profile, error = null});
-    } on DioError catch (e) {
-      if (e.response!.data['details'] == 'time') {
-        runInAction(() {
-          error = 'time';
-        });
-      } else {
-        runInAction(() {
-          error = 'error';
-        });
-      }
-    } finally {
+    final profileObject =
+        await userService.verifyUser(phone: phone!, otp: otp!);
+
+    if (profileObject.item3) {
       runInAction(() {
-        isLoadingVerify = false;
+        error = profileObject.item2;
+      });
+    } else {
+      runInAction(() {
+        profile = profileObject.item1;
+        error = null;
+      });
+    }
+
+    runInAction(() {
+      isLoadingVerify = false;
+    });
+  }
+
+  Future requestUserDocument(UserDocumentsCreate userDocumentsCreate) async {
+    final profileObject =
+        await userService.requestUserDocument(userDocumentsCreate);
+
+    if (profileObject.item3) {
+      runInAction(() {
+        error = profileObject.item2;
+      });
+    } else {
+      runInAction(() {
+        profile = profileObject.item1;
+        error = null;
       });
     }
   }

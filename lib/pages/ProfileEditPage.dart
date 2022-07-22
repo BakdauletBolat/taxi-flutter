@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:extended_image/extended_image.dart' as Ex;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:taxiflutter/components/BAppBar.dart';
@@ -47,12 +49,16 @@ class _ProfilePageState extends State<ProfileEditPage> {
       );
     }
 
-    return Image.network(
-      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWVufGVufDB8fDB8fA%3D%3D&w=1000&q=80',
-      width: 142,
-      height: 142,
-      fit: BoxFit.cover,
-    );
+    return Observer(builder: (context) {
+      UserStore userStore = Provider.of<UserStore>(context, listen: false);
+      return Ex.ExtendedImage.network(
+        userStore.profile?.profile_info?.avatar ??
+            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWVufGVufDB8fDB8fA%3D%3D&w=1000&q=80',
+        width: 142,
+        height: 142,
+        fit: BoxFit.cover,
+      );
+    });
   }
 
   @override
@@ -143,14 +149,17 @@ class _ProfilePageState extends State<ProfileEditPage> {
                         children: [
                           Expanded(
                             child: CupertinoButton.filled(
-                                child: Text('Сохранить'),
-                                onPressed: () {
-                                  userStore.updateUserInfo(ProfileInfoCreate(
-                                      email: email_controller?.text,
-                                      avatar: avatar_form,
-                                      first_name: first_name_controller?.text,
-                                      last_name: last_name_controller?.text));
-                                }),
+                              onPressed: () {
+                                userStore.updateUserInfo(ProfileInfoCreate(
+                                    email: email_controller?.text,
+                                    avatar: avatar_form,
+                                    first_name: first_name_controller?.text,
+                                    last_name: last_name_controller?.text));
+
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Сохранить'),
+                            ),
                           ),
                         ],
                       )),

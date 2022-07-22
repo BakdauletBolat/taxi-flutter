@@ -1,7 +1,42 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:dio/dio.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'profile-model.g.dart';
+
+@JsonSerializable()
+class UserDocumentsGet {
+  final String? passport_photo_front;
+  final String? passport_photo_back;
+  final String? car_passport;
+
+  UserDocumentsGet(
+      {this.passport_photo_back, this.passport_photo_front, this.car_passport});
+
+  factory UserDocumentsGet.fromJson(Map<String, dynamic> json) =>
+      _$UserDocumentsGetFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserDocumentsGetToJson(this);
+}
+
+@JsonSerializable()
+class UserDocumentsCreate {
+  @JsonKey(ignore: true)
+  String? passport_photo_front;
+  @JsonKey(ignore: true)
+  String? passport_photo_back;
+  @JsonKey(ignore: true)
+  String? car_passport;
+
+  UserDocumentsCreate(
+      {this.passport_photo_back, this.passport_photo_front, this.car_passport});
+
+  factory UserDocumentsCreate.fromJson(Map<String, dynamic> json) =>
+      _$UserDocumentsCreateFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserDocumentsCreateToJson(this);
+}
 
 @JsonSerializable()
 class ProfileInfo {
@@ -22,6 +57,30 @@ class ProfileInfo {
       _$ProfileInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProfileInfoToJson(this);
+}
+
+@JsonSerializable()
+class ProfileInfoGet extends ProfileInfo {
+  String? avatar;
+
+  ProfileInfoGet(
+      {this.avatar,
+      String? email,
+      String? last_name,
+      String? first_name,
+      DateTime? birthday,
+      int? city_id})
+      : super(
+            email: email,
+            last_name: last_name,
+            first_name: first_name,
+            birthday: birthday,
+            city_id: city_id);
+
+  factory ProfileInfoGet.fromJson(Map<String, dynamic> json) =>
+      _$ProfileInfoGetFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProfileInfoGetToJson(this);
 }
 
 @JsonSerializable()
@@ -53,13 +112,15 @@ class ProfileInfoCreate extends ProfileInfo {
 class Profile {
   final String phone;
   final int? id;
-  final ProfileInfo? profile_info;
+  final ProfileInfoGet? profile_info;
   final DateTime? driver_can_view_order_date;
   final bool? is_driver;
+  final UserDocumentsGet? user_document;
 
   Profile(
       {required this.phone,
       this.id,
+      this.user_document,
       required this.profile_info,
       required this.driver_can_view_order_date,
       required this.is_driver});

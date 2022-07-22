@@ -15,6 +15,20 @@ mixin _$UserStore on UserBase, Store {
   bool get isAuth => (_$isAuthComputed ??=
           Computed<bool>(() => super.isAuth, name: 'UserBase.isAuth'))
       .value;
+  Computed<bool>? _$profileNotNullComputed;
+
+  @override
+  bool get profileNotNull =>
+      (_$profileNotNullComputed ??= Computed<bool>(() => super.profileNotNull,
+              name: 'UserBase.profileNotNull'))
+          .value;
+  Computed<bool>? _$userDocumentsNotNullComputed;
+
+  @override
+  bool get userDocumentsNotNull => (_$userDocumentsNotNullComputed ??=
+          Computed<bool>(() => super.userDocumentsNotNull,
+              name: 'UserBase.userDocumentsNotNull'))
+      .value;
 
   late final _$profileAtom = Atom(name: 'UserBase.profile', context: context);
 
@@ -134,7 +148,9 @@ isCanRegister: ${isCanRegister},
 phone: ${phone},
 otp: ${otp},
 error: ${error},
-isAuth: ${isAuth}
+isAuth: ${isAuth},
+profileNotNull: ${profileNotNull},
+userDocumentsNotNull: ${userDocumentsNotNull}
     ''';
   }
 }
