@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,17 +9,19 @@ import 'package:taxiflutter/models/profile-model.dart';
 import 'package:tuple/tuple.dart';
 
 class UserService extends ApiService {
-  Future<int> register({required String phone}) async {
+  Future<Tuple3<int?, String?, bool>> register({String? phone}) async {
     try {
       var res =
           await api.post('/users/sign-in/', data: {'phone_number': phone});
-      if (res.data['status'] == 'success') {
-        return 200;
+      return Tuple3.fromList([res.statusCode, null, false]);
+    } on DioError catch (e) {
+      if (e.response != null) {
+        return Tuple3.fromList([null, e.response!.data.toString(), true]);
       } else {
-        return 500;
+        return Tuple3.fromList([null, e.message, true]);
       }
     } catch (e) {
-      throw e;
+      return Tuple3.fromList([null, e.toString(), true]);
     }
   }
 
@@ -56,6 +59,8 @@ class UserService extends ApiService {
       print(formData.files);
       var res = await authApi.post('/users/request-driver/', data: formData);
       return Tuple3(Profile.fromJson(res.data), null, false);
+    } on DioError catch (e) {
+      return Tuple3(null, e.response!.data, true);
     } catch (e) {
       return Tuple3(null, e.toString(), true);
     }
@@ -70,7 +75,11 @@ class UserService extends ApiService {
       instance.setString('token', res.data['access']);
       return Tuple3(Profile.fromJson(res.data['user']), null, false);
     } on DioError catch (e) {
-      return Tuple3(null, e.response!.data['details'], true);
+      if (e.response != null) {
+        return Tuple3(null, e.response!.data['details'], true);
+      } else {
+        return Tuple3(null, e.message, true);
+      }
     } catch (e) {
       return Tuple3(null, e.toString(), true);
     }

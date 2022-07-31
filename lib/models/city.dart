@@ -17,10 +17,10 @@ class Region {
 @JsonSerializable()
 class City {
   final String name;
-  final Region region;
+  final Region? region;
   final int? id;
 
-  City({required this.name, this.id, required this.region});
+  City({required this.name, this.id, this.region});
 
   factory City.fromJson(Map<String, dynamic> json) => _$CityFromJson(json);
 

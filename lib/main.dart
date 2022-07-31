@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobx/mobx.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:taxiflutter/WelcomePage.dart';
-import 'package:taxiflutter/pages/CreateOrderPage.dart';
 import 'package:taxiflutter/pages/VerifyUserPage.dart';
+import 'package:taxiflutter/stores/create-order-store.dart';
+import 'package:taxiflutter/stores/order-store.dart';
 import 'package:taxiflutter/stores/region-store.dart';
 import 'package:taxiflutter/stores/user-store.dart';
 import 'MainPage.dart';
@@ -28,7 +28,9 @@ void main() {
   runApp(MultiProvider(
     providers: [
       Provider(create: (_) => UserStore()),
-      Provider(create: (_) => RegionStore())
+      Provider(create: (_) => RegionStore()),
+      Provider(create: (_) => OrderStore()),
+      Provider(create: (_) => CreateOrderStore())
     ],
     child: const TaxiApp(),
   ));

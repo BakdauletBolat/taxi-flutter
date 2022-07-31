@@ -9,19 +9,41 @@ part of 'create-order-store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$CreateOrderStore on CreateOrderBase, Store {
-  late final _$isAuthAtom =
-      Atom(name: 'CreateOrderBase.isAuth', context: context);
+  Computed<bool>? _$isCreateComputed;
 
   @override
-  bool get isAuth {
-    _$isAuthAtom.reportRead();
-    return super.isAuth;
+  bool get isCreate =>
+      (_$isCreateComputed ??= Computed<bool>(() => super.isCreate,
+              name: 'CreateOrderBase.isCreate'))
+          .value;
+
+  late final _$timeAtom = Atom(name: 'CreateOrderBase.time', context: context);
+
+  @override
+  String? get time {
+    _$timeAtom.reportRead();
+    return super.time;
   }
 
   @override
-  set isAuth(bool value) {
-    _$isAuthAtom.reportWrite(value, super.isAuth, () {
-      super.isAuth = value;
+  set time(String? value) {
+    _$timeAtom.reportWrite(value, super.time, () {
+      super.time = value;
+    });
+  }
+
+  late final _$dateAtom = Atom(name: 'CreateOrderBase.date', context: context);
+
+  @override
+  String? get date {
+    _$dateAtom.reportRead();
+    return super.date;
+  }
+
+  @override
+  set date(String? value) {
+    _$dateAtom.reportWrite(value, super.date, () {
+      super.date = value;
     });
   }
 
@@ -54,6 +76,38 @@ mixin _$CreateOrderStore on CreateOrderBase, Store {
   set to_city_id(int? value) {
     _$to_city_idAtom.reportWrite(value, super.to_city_id, () {
       super.to_city_id = value;
+    });
+  }
+
+  late final _$from_city_nameAtom =
+      Atom(name: 'CreateOrderBase.from_city_name', context: context);
+
+  @override
+  String? get from_city_name {
+    _$from_city_nameAtom.reportRead();
+    return super.from_city_name;
+  }
+
+  @override
+  set from_city_name(String? value) {
+    _$from_city_nameAtom.reportWrite(value, super.from_city_name, () {
+      super.from_city_name = value;
+    });
+  }
+
+  late final _$to_city_nameAtom =
+      Atom(name: 'CreateOrderBase.to_city_name', context: context);
+
+  @override
+  String? get to_city_name {
+    _$to_city_nameAtom.reportRead();
+    return super.to_city_name;
+  }
+
+  @override
+  set to_city_name(String? value) {
+    _$to_city_nameAtom.reportWrite(value, super.to_city_name, () {
+      super.to_city_name = value;
     });
   }
 
@@ -121,33 +175,37 @@ mixin _$CreateOrderStore on CreateOrderBase, Store {
     });
   }
 
-  late final _$date_timeAtom =
-      Atom(name: 'CreateOrderBase.date_time', context: context);
+  late final _$errorAtom =
+      Atom(name: 'CreateOrderBase.error', context: context);
 
   @override
-  DateTime? get date_time {
-    _$date_timeAtom.reportRead();
-    return super.date_time;
+  String? get error {
+    _$errorAtom.reportRead();
+    return super.error;
   }
 
   @override
-  set date_time(DateTime? value) {
-    _$date_timeAtom.reportWrite(value, super.date_time, () {
-      super.date_time = value;
+  set error(String? value) {
+    _$errorAtom.reportWrite(value, super.error, () {
+      super.error = value;
     });
   }
 
   @override
   String toString() {
     return '''
-isAuth: ${isAuth},
+time: ${time},
+date: ${date},
 from_city_id: ${from_city_id},
 to_city_id: ${to_city_id},
+from_city_name: ${from_city_name},
+to_city_name: ${to_city_name},
 price: ${price},
 to_address: ${to_address},
 from_address: ${from_address},
 comment: ${comment},
-date_time: ${date_time}
+error: ${error},
+isCreate: ${isCreate}
     ''';
   }
 }

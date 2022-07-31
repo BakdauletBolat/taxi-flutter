@@ -1,13 +1,30 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 import 'package:taxiflutter/components/BAppBar.dart';
 import 'package:taxiflutter/components/ListTile.dart';
+import 'package:taxiflutter/components/OrderItem.dart';
 import 'package:taxiflutter/components/Select.dart';
+import 'package:taxiflutter/models/order.dart';
+import 'package:taxiflutter/stores/order-store.dart';
+import 'package:taxiflutter/stores/region-store.dart';
+import 'package:taxiflutter/stores/user-store.dart';
+import 'package:intl/intl.dart';
+
+enum TypeOrder { driver, passenger }
+
+Map<TypeOrder, int> skyColors = <TypeOrder, int>{
+  TypeOrder.driver: 1,
+  TypeOrder.passenger: 2
+};
 
 class RidePage extends StatefulWidget {
   const RidePage({Key? key}) : super(key: key);
@@ -17,32 +34,9 @@ class RidePage extends StatefulWidget {
 }
 
 class _RidePageState extends State<RidePage> {
-  void openSecondModal() {
-    showCupertinoModalBottomSheet(
-      context: context,
-      expand: false,
-      builder: (context) => Scaffold(
-          backgroundColor: Colors.white,
-          appBar: const BAppBar(title: 'Напишите место откуда вас забрать'),
-          body: SingleChildScrollView(
-            child: Column(children: [
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: CupertinoTextField(
-                  placeholder: 'Айбергенова 5А',
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: CupertinoButton.filled(
-                    child: const Text('Подтвердить'), onPressed: () {}),
-              )
-            ]),
-          )),
-    );
-  }
-
-  void openModal() {
+  void openModal(type) {
+    OrderStore orderStore = Provider.of<OrderStore>(context, listen: false);
+    RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
     showCupertinoModalBottomSheet(
       context: context,
       expand: false,
@@ -57,397 +51,158 @@ class _RidePageState extends State<RidePage> {
                   placeholder: 'Искать',
                 ),
               ),
-              ListView.builder(
-                  itemCount: 100,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: openSecondModal,
-                      child: const BListTile(
-                        region_name: 'Межгород',
-                        city_name: 'Шымкент',
-                      ),
-                    );
-                  })
+              Observer(builder: (context) {
+                return ListView.builder(
+                    itemCount: regionStore.cities.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () async {
+                          if (type == 'from_city') {
+                            orderStore.from_city_id =
+                                regionStore.cities[index].id;
+                            orderStore.from_city_name =
+                                regionStore.cities[index].name;
+                          }
+                          if (type == 'to_city') {
+                            orderStore.to_city_id =
+                                regionStore.cities[index].id;
+                            orderStore.to_city_name =
+                                regionStore.cities[index].name;
+                          }
+
+                          orderStore.loadOrders();
+
+                          Navigator.of(context).pop();
+                        },
+                        child: BListTile(
+                          region_name: regionStore.cities[index].region!.name,
+                          city_name: regionStore.cities[index].name,
+                        ),
+                      );
+                    });
+              })
             ]),
           )),
     );
   }
 
-  String? city_name_from = 'Шымкент';
-  String? address_from = 'Aibergenova 5A';
+  @override
+  void initState() {
+    OrderStore orderStore = Provider.of<OrderStore>(context, listen: false);
+    orderStore.loadOrders();
+    super.initState();
+  }
 
-  String? city_name_to = 'Аламаты';
-  String? address_to = 'Бейбитшилик';
+  TypeOrder _selectedSegment = TypeOrder.driver;
+
+  DateFormat dateFormat = DateFormat("yyyy-MM-dd");
 
   @override
   Widget build(BuildContext context) {
+    OrderStore orderStore = Provider.of<OrderStore>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: BAppBar(title: 'Попутки'),
+      appBar: const BAppBar(title: 'Попутки'),
       body: SingleChildScrollView(
-          child: Column(
-        children: [
-          Select(
-            iconData: Icons.directions,
-            onPress: openModal,
-            city_name: city_name_from,
-            address: address_from,
-          ),
-          Select(
-            iconData: Icons.place,
-            onPress: openModal,
-            placeholder: 'Туда',
-            city_name: city_name_to,
-            address: address_to,
-          ),
-          Select(
-            iconData: Icons.calendar_month,
-            placeholder: 'Выезд',
-            onPress: () {
-              DatePicker.showDatePicker(context, showTitleActions: true,
-                  onChanged: (date) {
-                print('change $date');
-              }, onConfirm: (date) {
-                print('confirm $date');
-              }, currentTime: DateTime.now(), locale: LocaleType.ru);
-            },
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          padding: const EdgeInsets.all(20),
+          child: Observer(builder: (context) {
+            return Column(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.asset('assets/profile-photo.png'),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Шымкент',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Алматы'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        RatingBarIndicator(
-                          rating: 4,
-                          itemBuilder: (context, index) => const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          itemCount: 5,
-                          itemSize: 14,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Комментарий'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('12 июля 2022, 15:40'),
-                      ],
-                    ),
-                  ],
+                Select(
+                  iconData: Icons.directions,
+                  onPress: () {
+                    openModal('from_city');
+                  },
+                  city_name: orderStore.from_city_name,
                 ),
-                GestureDetector(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Container(
-                      color: Colors.green,
-                      padding: const EdgeInsets.all(10),
-                      child: const Icon(
-                        Icons.phone,
-                        color: Colors.white,
+                Select(
+                  iconData: Icons.place,
+                  onPress: () {
+                    openModal('to_city');
+                  },
+                  placeholder: 'Туда',
+                  city_name: orderStore.to_city_name,
+                ),
+                Select(
+                  iconData: Icons.calendar_month,
+                  placeholder: 'Выезд',
+                  value: orderStore.date,
+                  onPress: () {
+                    DatePicker.showDatePicker(context, showTitleActions: true,
+                        onConfirm: (date) {
+                      orderStore.date = dateFormat.format(date);
+                      orderStore.loadOrders();
+                    }, currentTime: DateTime.now(), locale: LocaleType.ru);
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CupertinoSlidingSegmentedControl<TypeOrder>(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  thumbColor: Colors.white,
+                  groupValue: _selectedSegment,
+                  onValueChanged: (TypeOrder? value) {
+                    if (value != null) {
+                      if (value == TypeOrder.driver) {
+                        orderStore.loadOrders(type_order: 1);
+                      }
+
+                      if (value == TypeOrder.passenger) {
+                        orderStore.loadOrders(type_order: 2);
+                      }
+
+                      setState(() {
+                        _selectedSegment = value;
+                      });
+                    }
+                  },
+                  children: <TypeOrder, Widget>{
+                    TypeOrder.driver: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Водителские',
+                        style: TextStyle(
+                            color: _selectedSegment == TypeOrder.driver
+                                ? Theme.of(context).primaryColor
+                                : Colors.white),
                       ),
                     ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.asset('assets/profile-photo.png'),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Шымкент',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Алматы'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        RatingBarIndicator(
-                          rating: 4,
-                          itemBuilder: (context, index) => const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          itemCount: 5,
-                          itemSize: 14,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Комментарий'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('12 июля 2022, 15:40'),
-                      ],
-                    ),
-                  ],
-                ),
-                GestureDetector(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Container(
-                      color: Colors.green,
-                      padding: const EdgeInsets.all(10),
-                      child: const Icon(
-                        Icons.phone,
-                        color: Colors.white,
+                    TypeOrder.passenger: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Пассажирские',
+                        style: TextStyle(
+                            color: _selectedSegment == TypeOrder.passenger
+                                ? Theme.of(context).primaryColor
+                                : Colors.white),
                       ),
                     ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.asset('assets/profile-photo.png'),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Шымкент',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Алматы'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        RatingBarIndicator(
-                          rating: 4,
-                          itemBuilder: (context, index) => const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          itemCount: 5,
-                          itemSize: 14,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Комментарий'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('12 июля 2022, 15:40'),
-                      ],
-                    ),
-                  ],
+                  },
                 ),
-                GestureDetector(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Container(
-                      color: Colors.green,
-                      padding: const EdgeInsets.all(10),
-                      child: const Icon(
-                        Icons.phone,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.asset('assets/profile-photo.png'),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Шымкент',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Алматы'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        RatingBarIndicator(
-                          rating: 4,
-                          itemBuilder: (context, index) => const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          itemCount: 5,
-                          itemSize: 14,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Комментарий'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('12 июля 2022, 15:40'),
-                      ],
-                    ),
-                  ],
+                const SizedBox(
+                  height: 30,
                 ),
-                GestureDetector(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Container(
-                      color: Colors.green,
-                      padding: const EdgeInsets.all(10),
-                      child: const Icon(
-                        Icons.phone,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                )
+                Observer(builder: (context) {
+                  return ListView.separated(
+                      physics: const NeverScrollableScrollPhysics(),
+                      separatorBuilder: ((context, index) => const Divider(
+                            height: 30,
+                          )),
+                      shrinkWrap: true,
+                      itemCount: orderStore.orders.length,
+                      itemBuilder: (context, int index) {
+                        Order order = orderStore.orders[index];
+
+                        return OrderItem(order: order);
+                      });
+                }),
               ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.asset('assets/profile-photo.png'),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Шымкент',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Алматы'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        RatingBarIndicator(
-                          rating: 4,
-                          itemBuilder: (context, index) => const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          itemCount: 5,
-                          itemSize: 14,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Комментарий'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('12 июля 2022, 15:40'),
-                      ],
-                    ),
-                  ],
-                ),
-                GestureDetector(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Container(
-                      color: Colors.green,
-                      padding: const EdgeInsets.all(10),
-                      child: const Icon(
-                        Icons.phone,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
-      )),
+            );
+          })),
     );
   }
 }

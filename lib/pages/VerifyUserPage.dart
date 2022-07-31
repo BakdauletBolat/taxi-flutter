@@ -6,7 +6,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
+import 'package:taxiflutter/MainPage.dart';
 import 'package:taxiflutter/components/BAppBar.dart';
+import 'package:taxiflutter/components/StickyErrorHeader.dart';
 import 'package:taxiflutter/stores/user-store.dart';
 
 class VerifyPage extends StatefulWidget {
@@ -36,9 +38,9 @@ class _VerifyPageState extends State<VerifyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final String asset_name = 'assets/svg/smart-phone-sms.svg';
-    final Widget svgIcon = SvgPicture.asset(asset_name,
-        width: 100, semanticsLabel: 'A red up arrow');
+    const String assetName = 'assets/svg/smart-phone-sms.svg';
+    final Widget svgIcon =
+        SvgPicture.asset(assetName, width: 100, semanticsLabel: 'Sms');
 
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
 
@@ -46,7 +48,13 @@ class _VerifyPageState extends State<VerifyPage> {
         backgroundColor: Colors.white,
         appBar: const BAppBar(title: 'Верификация'),
         body: SingleChildScrollView(
-          child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Observer(builder: (context) {
+              return StickyErrorHeader(
+                error: userStore.errorVerify,
+              );
+            }),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 50),
               child: svgIcon,
@@ -118,11 +126,38 @@ class _VerifyPageState extends State<VerifyPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: CupertinoButton.filled(
-                        child: const Text('Отправить'),
-                        onPressed: userStore.verifyUser),
+                      onPressed: () async {
+                        await userStore.verifyUser();
+
+                        if (userStore.errorVerify == null) {
+                          var route = CupertinoPageRoute(
+                              builder: (context) => const MainPage());
+
+                          Navigator.of(context)
+                              .pushAndRemoveUntil(route, (route) => false);
+                        }
+                      },
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Observer(builder: (context) {
+                              if (userStore.isLoadingVerify) {
+                                return const CupertinoActivityIndicator(
+                                  color: Colors.white,
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            }),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            const Text('Отправить')
+                          ]),
+                    ),
                   ),
                 ],
               ),

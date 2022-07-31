@@ -9,6 +9,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:taxiflutter/components/BAppBar.dart';
+import 'package:taxiflutter/components/StickyErrorHeader.dart';
 import 'package:taxiflutter/stores/user-store.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -49,6 +50,7 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget build(BuildContext context) {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
@@ -175,6 +177,10 @@ class _WelcomePageState extends State<WelcomePage> {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Observer(builder: (context) {
+                                return StickyErrorHeader(
+                                    error: userStore.errorRegister);
+                              }),
                               const SizedBox(
                                 width: 240,
                                 child: Text(

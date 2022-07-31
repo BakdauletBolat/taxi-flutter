@@ -10,16 +10,28 @@ class Select extends StatelessWidget {
       this.address,
       this.onPress,
       this.placeholder,
+      this.value,
       this.iconData})
       : super(key: key);
 
   final String? city_name;
   final IconData? iconData;
+  final String? value;
   final String? address;
   final Function()? onPress;
   final String? placeholder;
 
   Widget renderText() {
+    if (value != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(value!,
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500))
+        ],
+      );
+    }
     if (city_name != null && address != null) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -68,28 +80,25 @@ class Select extends StatelessWidget {
         decoration: const BoxDecoration(
           color: Colors.white,
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(iconData, color: Theme.of(context).primaryColor),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    renderText()
-                  ],
-                ),
-                const Icon(
-                  CupertinoIcons.chevron_right,
-                  size: 20,
-                )
-              ]),
-        ),
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(iconData, color: Theme.of(context).primaryColor),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  renderText()
+                ],
+              ),
+              const Icon(
+                CupertinoIcons.chevron_right,
+                size: 20,
+              )
+            ]),
       ),
     );
   }

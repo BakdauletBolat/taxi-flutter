@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 import 'package:taxiflutter/components/BAppBar.dart';
 import 'package:taxiflutter/components/FilePicker.dart';
 import 'package:taxiflutter/models/profile-model.dart';
@@ -62,35 +64,56 @@ class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
         title: 'Загрузка документов',
       ),
       body: SingleChildScrollView(
-        child: Column(children: [
-          FilePicker(
-            onPress: pickFrontPassport,
-            photo: frontPassportLocal,
-            subtitle: 'Передная часть паспорта',
-            title: 'Загрузите передную часть документа',
+        child: StickyHeader(
+          header: Container(
+            color: Colors.white,
+            child: Observer(builder: (context) {
+              return userStore.error != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.warning_amber, color: Colors.red),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width - 100,
+                              child: Text(userStore.error!.toString())),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink();
+            }),
           ),
-          FilePicker(
-            onPress: pickBackPassport,
-            photo: backPassportLocal,
-            subtitle: 'Задная часть паспорта',
-            title: 'Загрузите задную часть документа',
-          ),
-          FilePicker(
-            onPress: pickCarPassport,
-            photo: carPassportLocal,
-            subtitle: 'Паспорт машины',
-            title: 'Загрузите паспорт машины часть документа',
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: CupertinoButton.filled(
-                      child: Text('Загрузить'),
+          content: Column(children: [
+            FilePicker(
+              onPress: pickFrontPassport,
+              photo: frontPassportLocal,
+              subtitle: 'Передная часть паспорта',
+              title: 'Загрузите передную часть документа',
+            ),
+            FilePicker(
+              onPress: pickBackPassport,
+              photo: backPassportLocal,
+              subtitle: 'Задная часть паспорта',
+              title: 'Загрузите задную часть документа',
+            ),
+            FilePicker(
+              onPress: pickCarPassport,
+              photo: carPassportLocal,
+              subtitle: 'Паспорт машины',
+              title: 'Загрузите паспорт машины часть документа',
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CupertinoButton.filled(
                       onPressed: useDocumentsNotNull
                           ? () {
                               userStore.requestUserDocument(UserDocumentsCreate(
@@ -98,15 +121,18 @@ class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
                                   passport_photo_front: frontPassport,
                                   car_passport: carPassport));
                             }
-                          : null),
-                ),
-              ],
+                          : null,
+                      child: const Text('Загрузить'),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 100,
-          )
-        ]),
+            const SizedBox(
+              height: 100,
+            )
+          ]),
+        ),
       ),
     );
   }

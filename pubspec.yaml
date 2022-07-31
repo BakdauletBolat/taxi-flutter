@@ -33,6 +33,9 @@ dependencies:
   extended_image: ^6.2.1
   dotted_border: ^2.0.0+2
   tuple: ^2.0.0
+  sticky_headers: ^0.3.0+2
+  intl: ^0.17.0
+  lottie: ^1.3.0
 
 dev_dependencies:
   flutter_test:
@@ -48,7 +51,10 @@ flutter:
     - assets/svg/lock-screen.svg
     - assets/welcome-screen/first.png
     - assets/welcome-screen/second.png
+    - assets/taxi.png
     - assets/profile-photo.png
+    - assets/lottie/success.json
+    - assets/lottie/warning.json
     - assets/svg/smart-phone-sms.svg
 
 

@@ -15,6 +15,13 @@ mixin _$UserStore on UserBase, Store {
   bool get isAuth => (_$isAuthComputed ??=
           Computed<bool>(() => super.isAuth, name: 'UserBase.isAuth'))
       .value;
+  Computed<bool>? _$isSubsriptionDriverComputed;
+
+  @override
+  bool get isSubsriptionDriver => (_$isSubsriptionDriverComputed ??=
+          Computed<bool>(() => super.isSubsriptionDriver,
+              name: 'UserBase.isSubsriptionDriver'))
+      .value;
   Computed<bool>? _$profileNotNullComputed;
 
   @override
@@ -138,6 +145,54 @@ mixin _$UserStore on UserBase, Store {
     });
   }
 
+  late final _$errorRegisterAtom =
+      Atom(name: 'UserBase.errorRegister', context: context);
+
+  @override
+  String? get errorRegister {
+    _$errorRegisterAtom.reportRead();
+    return super.errorRegister;
+  }
+
+  @override
+  set errorRegister(String? value) {
+    _$errorRegisterAtom.reportWrite(value, super.errorRegister, () {
+      super.errorRegister = value;
+    });
+  }
+
+  late final _$errorVerifyAtom =
+      Atom(name: 'UserBase.errorVerify', context: context);
+
+  @override
+  String? get errorVerify {
+    _$errorVerifyAtom.reportRead();
+    return super.errorVerify;
+  }
+
+  @override
+  set errorVerify(String? value) {
+    _$errorVerifyAtom.reportWrite(value, super.errorVerify, () {
+      super.errorVerify = value;
+    });
+  }
+
+  late final _$errorUpdateInfoAtom =
+      Atom(name: 'UserBase.errorUpdateInfo', context: context);
+
+  @override
+  String? get errorUpdateInfo {
+    _$errorUpdateInfoAtom.reportRead();
+    return super.errorUpdateInfo;
+  }
+
+  @override
+  set errorUpdateInfo(String? value) {
+    _$errorUpdateInfoAtom.reportWrite(value, super.errorUpdateInfo, () {
+      super.errorUpdateInfo = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
@@ -148,7 +203,11 @@ isCanRegister: ${isCanRegister},
 phone: ${phone},
 otp: ${otp},
 error: ${error},
+errorRegister: ${errorRegister},
+errorVerify: ${errorVerify},
+errorUpdateInfo: ${errorUpdateInfo},
 isAuth: ${isAuth},
+isSubsriptionDriver: ${isSubsriptionDriver},
 profileNotNull: ${profileNotNull},
 userDocumentsNotNull: ${userDocumentsNotNull}
     ''';

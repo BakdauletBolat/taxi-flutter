@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const BAppBar({Key? key, required this.title, this.type})
+  const BAppBar(
+      {Key? key, required this.title, this.type, this.leading, this.actions})
       : preferredSize = const Size.fromHeight(42),
         super(key: key);
 
@@ -11,6 +12,8 @@ class BAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Size preferredSize;
 
   final String title;
+  final Widget? leading;
+  final List<Widget>? actions;
 
   @override
   _CustomAppBarState createState() => _CustomAppBarState();
@@ -23,10 +26,12 @@ class _CustomAppBarState extends State<BAppBar> {
     Color backgroundColor = Colors.white;
 
     if (widget.type == 'transparent') {
-      backgroundColor = Colors.transparent;
+      backgroundColor = Theme.of(context).primaryColor;
       foregroundColor = Colors.white;
     }
     return AppBar(
+      actions: widget.actions,
+      leading: widget.leading,
       title: Text(widget.title,
           style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
       centerTitle: true,

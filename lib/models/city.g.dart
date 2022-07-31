@@ -19,7 +19,9 @@ Map<String, dynamic> _$RegionToJson(Region instance) => <String, dynamic>{
 City _$CityFromJson(Map<String, dynamic> json) => City(
       name: json['name'] as String,
       id: json['id'] as int?,
-      region: Region.fromJson(json['region'] as Map<String, dynamic>),
+      region: json['region'] == null
+          ? null
+          : Region.fromJson(json['region'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$CityToJson(City instance) => <String, dynamic>{

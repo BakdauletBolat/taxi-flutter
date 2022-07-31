@@ -7,13 +7,13 @@ part of 'create-order.dart';
 // **************************************************************************
 
 CreateOrder _$CreateOrderFromJson(Map<String, dynamic> json) => CreateOrder(
-      from_address: json['from_address'] as String,
+      from_address: json['from_address'] as String?,
       from_city_id: json['from_city_id'] as int,
-      to_address: json['to_address'] as String,
+      to_address: json['to_address'] as String?,
       to_city_id: json['to_city_id'] as int,
       price: json['price'] as int,
-      comment: json['comment'] as String,
-      date_time: DateTime.parse(json['date_time'] as String),
+      comment: json['comment'] as String?,
+      date_time: json['date_time'] as String,
     );
 
 Map<String, dynamic> _$CreateOrderToJson(CreateOrder instance) =>
@@ -24,5 +24,5 @@ Map<String, dynamic> _$CreateOrderToJson(CreateOrder instance) =>
       'from_address': instance.from_address,
       'to_address': instance.to_address,
       'comment': instance.comment,
-      'date_time': instance.date_time.toIso8601String(),
+      'date_time': instance.date_time,
     };

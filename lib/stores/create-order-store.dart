@@ -1,8 +1,10 @@
 import 'package:mobx/mobx.dart';
 import 'package:taxiflutter/api/api-service.dart';
-import 'package:taxiflutter/api/create-order-service.dart';
+import 'package:taxiflutter/api/order-service.dart';
 import 'package:taxiflutter/api/region-service.dart';
 import 'package:taxiflutter/models/city.dart';
+import 'package:taxiflutter/models/create-order.dart';
+import 'package:taxiflutter/models/order.dart';
 
 // Include generated file
 part 'create-order-store.g.dart';
@@ -13,9 +15,10 @@ class CreateOrderStore = CreateOrderBase with _$CreateOrderStore;
 // The store-class
 abstract class CreateOrderBase with Store {
   @observable
-  bool isAuth = true;
+  String? time;
 
-  List<City> cities = [];
+  @observable
+  String? date;
 
   @observable
   int? from_city_id;
@@ -24,7 +27,13 @@ abstract class CreateOrderBase with Store {
   int? to_city_id;
 
   @observable
-  int? price;
+  String? from_city_name;
+
+  @observable
+  String? to_city_name;
+
+  @observable
+  int? price = 0;
 
   @observable
   String? to_address;
@@ -36,12 +45,50 @@ abstract class CreateOrderBase with Store {
   String? comment;
 
   @observable
-  DateTime? date_time;
+  String? error;
 
-  CreateOrderService service = CreateOrderService();
+  @computed
+  bool get isCreate =>
+      time != null &&
+      date != null &&
+      from_city_id != null &&
+      to_city_id != null &&
+      price != null;
 
-  void create() async {
-    // List<City> citiesData = await service.create();
-    // runInAction(() => {cities = citiesData});
+  OrderService service = OrderService();
+
+  void clear() {
+    runInAction(() {
+      to_city_id = null;
+      to_address = null;
+      from_city_id = null;
+      from_address = null;
+      comment = null;
+      error = null;
+      from_city_name = null;
+      to_city_name = null;
+      price = 0;
+      date = null;
+      time = null;
+    });
+  }
+
+  Future create() async {
+    if (isCreate) {
+      var order = await service.createOrder(CreateOrder(
+          from_city_id: from_city_id!,
+          to_city_id: to_city_id!,
+          from_address: from_address,
+          to_address: to_address,
+          price: price!,
+          comment: comment,
+          date_time: '$date $time'));
+
+      if (order.item3) {
+        error = order.item2;
+      } else {
+        error = null;
+      }
+    }
   }
 }

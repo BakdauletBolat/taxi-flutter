@@ -111,7 +111,7 @@ class ProfileInfoCreate extends ProfileInfo {
 @JsonSerializable()
 class Profile {
   final String phone;
-  final int? id;
+  final int? id, type_user;
   final ProfileInfoGet? profile_info;
   final DateTime? driver_can_view_order_date;
   final bool? is_driver;
@@ -119,6 +119,7 @@ class Profile {
 
   Profile(
       {required this.phone,
+      this.type_user,
       this.id,
       this.user_document,
       required this.profile_info,

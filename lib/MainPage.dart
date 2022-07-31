@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:taxiflutter/pages/CreateOrderPage.dart';
 import 'package:taxiflutter/pages/ProfilePage.dart';
 import 'package:taxiflutter/pages/RidePage.dart';
+import 'package:taxiflutter/pages/SubscriptionPage.dart';
 import 'package:taxiflutter/stores/user-store.dart';
 
 class MainPage extends StatefulWidget {
@@ -24,6 +25,7 @@ class _MyHomePageState extends State<MainPage> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     CreateOrderPage(),
+    // SubscriptionPage(),
     RidePage(),
     ProfilePage()
   ];

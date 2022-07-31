@@ -90,6 +90,7 @@ Map<String, dynamic> _$ProfileInfoCreateToJson(ProfileInfoCreate instance) =>
 
 Profile _$ProfileFromJson(Map<String, dynamic> json) => Profile(
       phone: json['phone'] as String,
+      type_user: json['type_user'] as int?,
       id: json['id'] as int?,
       user_document: json['user_document'] == null
           ? null
@@ -108,6 +109,7 @@ Profile _$ProfileFromJson(Map<String, dynamic> json) => Profile(
 Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
       'phone': instance.phone,
       'id': instance.id,
+      'type_user': instance.type_user,
       'profile_info': instance.profile_info,
       'driver_can_view_order_date':
           instance.driver_can_view_order_date?.toIso8601String(),

@@ -4,11 +4,16 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 import 'package:taxiflutter/components/BAppBar.dart';
 import 'package:taxiflutter/components/ListTile.dart';
 import 'package:taxiflutter/components/Select.dart';
+import 'package:taxiflutter/components/StickyErrorHeader.dart';
+import 'package:taxiflutter/stores/create-order-store.dart';
 import 'package:taxiflutter/stores/region-store.dart';
 import 'package:taxiflutter/stores/user-store.dart';
 
@@ -27,8 +32,12 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     super.initState();
   }
 
-  void openSecondModal() {
-    showCupertinoModalBottomSheet(
+  TextEditingController textEditingController = TextEditingController();
+
+  Future<String> openSecondModal(type) async {
+    CreateOrderStore createOrderStore =
+        Provider.of<CreateOrderStore>(context, listen: false);
+    var res = await showCupertinoModalBottomSheet(
       context: context,
       expand: false,
       builder: (context) => Scaffold(
@@ -36,24 +45,49 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
           appBar: const BAppBar(title: 'Напишите место откуда вас забрать'),
           body: SingleChildScrollView(
             child: Column(children: [
-              const Padding(
-                padding: EdgeInsets.all(20),
+              Padding(
+                padding: const EdgeInsets.all(20),
                 child: CupertinoTextField(
+                  controller: textEditingController,
                   placeholder: 'Айбергенова 5А',
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: CupertinoButton.filled(
-                    child: const Text('Подтвердить'), onPressed: () {}),
+                    child: const Text('Подтвердить'),
+                    onPressed: () {
+                      if (type == 'from_city') {
+                        if (textEditingController.text.isEmpty) {
+                          createOrderStore.from_address = null;
+                        } else {
+                          createOrderStore.from_address =
+                              textEditingController.text;
+                        }
+                      }
+                      if (type == 'to_city') {
+                        if (textEditingController.text.isEmpty) {
+                          createOrderStore.to_address = null;
+                        } else {
+                          createOrderStore.to_address =
+                              textEditingController.text;
+                        }
+                      }
+
+                      textEditingController.text = '';
+                      Navigator.pop(context, 'exit');
+                    }),
               )
             ]),
           )),
     );
+    return res.toString();
   }
 
-  void openModal() {
+  void openModal(type) {
     RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
+    CreateOrderStore createOrderStore =
+        Provider.of<CreateOrderStore>(context, listen: false);
 
     showCupertinoModalBottomSheet(
       context: context,
@@ -73,11 +107,31 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 return ListView.builder(
                     itemCount: regionStore.cities.length,
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: openSecondModal,
+                        onTap: () async {
+                          if (type == 'from_city') {
+                            createOrderStore.from_city_name =
+                                regionStore.cities[index].name;
+                            createOrderStore.from_city_id =
+                                regionStore.cities[index].id;
+                          }
+                          if (type == 'to_city') {
+                            createOrderStore.to_city_name =
+                                regionStore.cities[index].name;
+                            createOrderStore.to_city_id =
+                                regionStore.cities[index].id;
+                          }
+                          var res = await openSecondModal(type);
+
+                          if (res == 'exit') {
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).pop();
+                          }
+                        },
                         child: BListTile(
-                          region_name: regionStore.cities[index].region.name,
+                          region_name: regionStore.cities[index].region!.name,
                           city_name: regionStore.cities[index].name,
                         ),
                       );
@@ -88,83 +142,182 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     );
   }
 
-  String? city_name_from = 'Шымкент';
-  String? address_from = 'Aibergenova 5A';
-
-  String? city_name_to = 'Аламаты';
-  String? address_to = 'Бейбитшилик';
+  DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+  DateFormat timeFormat = DateFormat("HH:mm:ss");
 
   @override
   Widget build(BuildContext context) {
+    CreateOrderStore createOrderStore =
+        Provider.of<CreateOrderStore>(context, listen: false);
+    UserStore userStore = Provider.of<UserStore>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const BAppBar(
         title: 'Межгород',
       ),
       body: SingleChildScrollView(
-          child: Column(
-        children: [
-          Select(
-            iconData: Icons.directions,
-            onPress: openModal,
-            city_name: city_name_from,
-            address: address_from,
-          ),
-          Select(
-            iconData: Icons.place,
-            onPress: openModal,
-            placeholder: 'Туда',
-            city_name: city_name_to,
-            address: address_to,
-          ),
-          CupertinoTextFormFieldRow(
-            placeholder: 'Цена',
-            decoration: const BoxDecoration(),
-            prefix: Icon(Icons.wallet, color: Theme.of(context).primaryColor),
-          ),
-          CupertinoTextFormFieldRow(
-            placeholder: 'Комментарий',
-            decoration: const BoxDecoration(),
-            prefix: Icon(Icons.chat_bubble_rounded,
-                color: Theme.of(context).primaryColor),
-          ),
-          Select(
-            iconData: Icons.calendar_month,
-            placeholder: 'Выезд',
-            onPress: () {
-              DatePicker.showDatePicker(context, showTitleActions: true,
-                  onChanged: (date) {
-                print('change $date');
-              }, onConfirm: (date) {
-                print('confirm $date');
-              }, currentTime: DateTime.now(), locale: LocaleType.ru);
-            },
-          ),
-          Select(
-            iconData: Icons.timer,
-            placeholder: 'Дата выезда',
-            onPress: () {
-              DatePicker.showTimePicker(context, showTitleActions: true,
-                  onChanged: (date) {
-                print('change $date in time zone ' +
-                    date.timeZoneOffset.inHours.toString());
-              }, onConfirm: (date) {
-                print('confirm $date');
-              }, currentTime: DateTime.now());
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                Expanded(
-                    child: CupertinoButton.filled(
-                        child: const Text('Заказать'), onPressed: () {}))
-              ],
-            ),
-          )
-        ],
-      )),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: StickyHeader(
+            header: Observer(
+                builder: (context) => StickyErrorHeader(
+                      error: createOrderStore.error,
+                    )),
+            content: Observer(builder: (context) {
+              return Column(
+                children: [
+                  Select(
+                    iconData: Icons.directions,
+                    onPress: () {
+                      openModal('from_city');
+                    },
+                    city_name: createOrderStore.from_city_name,
+                    address: createOrderStore.from_address,
+                  ),
+                  Select(
+                    iconData: Icons.place,
+                    onPress: () {
+                      openModal('to_city');
+                    },
+                    placeholder: 'Туда',
+                    city_name: createOrderStore.to_city_name,
+                    address: createOrderStore.to_address,
+                  ),
+                  CupertinoTextFormFieldRow(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    placeholder: 'Цена',
+                    initialValue: createOrderStore.price.toString(),
+                    onChanged: (value) {
+                      createOrderStore.price = int.tryParse(value);
+                    },
+                    decoration: const BoxDecoration(),
+                    prefix: Icon(Icons.wallet,
+                        color: Theme.of(context).primaryColor),
+                  ),
+                  CupertinoTextFormFieldRow(
+                    initialValue: createOrderStore.comment,
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    placeholder: 'Комментарий',
+                    onChanged: (value) {
+                      createOrderStore.comment = value;
+                    },
+                    decoration: const BoxDecoration(),
+                    prefix: Icon(Icons.chat_bubble_rounded,
+                        color: Theme.of(context).primaryColor),
+                  ),
+                  Select(
+                    iconData: Icons.calendar_month,
+                    placeholder: 'Выезд',
+                    value: createOrderStore.date,
+                    onPress: () {
+                      DatePicker.showDatePicker(context, showTitleActions: true,
+                          onConfirm: (date) {
+                        createOrderStore.date = dateFormat.format(date);
+                      }, currentTime: DateTime.now(), locale: LocaleType.ru);
+                    },
+                  ),
+                  Select(
+                    iconData: Icons.timer,
+                    placeholder: 'Время выезда',
+                    value: createOrderStore.time,
+                    onPress: () {
+                      DatePicker.showTimePicker(context, showTitleActions: true,
+                          onConfirm: (date) {
+                        createOrderStore.time = timeFormat.format(date);
+                      }, currentTime: DateTime.now());
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: CupertinoButton.filled(
+                                child: Builder(builder: (context) {
+                          if (userStore.profile?.type_user == 2) {
+                            return const Text('Заказать');
+                          }
+                          return const Text('Создать заказ');
+                        }), onPressed: () async {
+                          if (createOrderStore.isCreate) {
+                            await createOrderStore.create();
+                            if (createOrderStore.error == null) {
+                              createOrderStore.clear();
+                              showCupertinoDialog(
+                                context: context,
+                                builder: (context) {
+                                  return CupertinoAlertDialog(
+                                    title: Column(
+                                      children: [
+                                        Lottie.asset(
+                                            'assets/lottie/success.json'),
+                                        Text("Заказ успешно создан "),
+                                      ],
+                                    ),
+                                    content: Text("Посмотреть заказ ?"),
+                                    actions: [
+                                      CupertinoDialogAction(
+                                          child: Text("Да"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          }),
+                                      CupertinoDialogAction(
+                                        child: Text("Нет"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          } else {
+                            showCupertinoDialog(
+                              barrierDismissible: true,
+                              context: context,
+                              builder: (context) {
+                                return CupertinoAlertDialog(
+                                  title: Column(
+                                    children: [
+                                      Lottie.asset(
+                                          'assets/lottie/warning.json'),
+                                      Text("Пожалуйста запоните все поля "),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                        })),
+                      ],
+                    ),
+                  ),
+                  Builder(
+                    builder: (context) {
+                      if (userStore.profile?.type_user == 1) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(CupertinoIcons.car_detailed,
+                                  color: Theme.of(context).primaryColor),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Text('Вы создаете заказ как водитель')
+                            ],
+                          ),
+                        );
+                      }
+
+                      return const SizedBox.shrink();
+                    },
+                  )
+                ],
+              );
+            }),
+          )),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxiflutter/api/user-service.dart';
 import 'package:taxiflutter/models/profile-model.dart';
 
@@ -17,6 +18,10 @@ abstract class UserBase with Store {
 
   @computed
   bool get isAuth => profile == null ? false : true;
+
+  @computed
+  bool get isSubsriptionDriver => DateTime.now().isBefore(DateTime.parse(
+      profile?.driver_can_view_order_date?.toString() ?? '2022-01-01'));
 
   @computed
   bool get profileNotNull =>
@@ -48,6 +53,15 @@ abstract class UserBase with Store {
   @observable
   String? error;
 
+  @observable
+  String? errorRegister;
+
+  @observable
+  String? errorVerify;
+
+  @observable
+  String? errorUpdateInfo;
+
   UserService userService = UserService();
 
   Future loadUser() async {
@@ -65,21 +79,23 @@ abstract class UserBase with Store {
     runInAction(() {
       isLoadingRegister = true;
     });
-    try {
-      await Future.delayed(const Duration(seconds: 3));
-      int res = await userService.register(phone: phone!);
-      if (res == 200) {
-        runInAction(() {
-          isCanRegister = true;
-        });
-      }
-    } on DioError catch (e) {
-      print(e);
-    } finally {
+    var result = await userService.register(phone: phone);
+
+    if (result.item3) {
       runInAction(() {
-        isLoadingRegister = false;
+        errorRegister = result.item2;
+        isCanRegister = false;
+      });
+    } else {
+      runInAction(() {
+        isCanRegister = true;
+        errorRegister = null;
       });
     }
+
+    runInAction(() {
+      isLoadingRegister = false;
+    });
   }
 
   Future verifyUser() async {
@@ -87,17 +103,25 @@ abstract class UserBase with Store {
       isLoadingVerify = true;
     });
 
+    if (otp == null) {
+      runInAction(() {
+        errorVerify = 'Заполните все данные';
+        isLoadingVerify = false;
+      });
+      return;
+    }
+
     final profileObject =
         await userService.verifyUser(phone: phone!, otp: otp!);
 
     if (profileObject.item3) {
       runInAction(() {
-        error = profileObject.item2;
+        errorVerify = profileObject.item2;
       });
     } else {
       runInAction(() {
         profile = profileObject.item1;
-        error = null;
+        errorVerify = null;
       });
     }
 
@@ -127,9 +151,22 @@ abstract class UserBase with Store {
       Profile? profile = await userService.updateProfileInfo(profileInfo);
       runInAction(() {
         this.profile = profile;
+        errorUpdateInfo = null;
       });
     } on DioError catch (e) {
-      print(e.response!.data);
+      if (e.response != null) {
+        runInAction(() {
+          errorUpdateInfo = e.response!.data.toString();
+        });
+      } else {
+        runInAction(() {
+          errorUpdateInfo = e.message;
+        });
+      }
+    } catch (e) {
+      runInAction(() {
+        errorUpdateInfo = e.toString();
+      });
     }
   }
 
@@ -143,5 +180,10 @@ abstract class UserBase with Store {
     runInAction(() {
       this.otp = otp;
     });
+  }
+
+  void logout() async {
+    SharedPreferences instance = await SharedPreferences.getInstance();
+    instance.remove('token');
   }
 }

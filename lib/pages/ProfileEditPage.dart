@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -7,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 import 'package:taxiflutter/components/BAppBar.dart';
+import 'package:taxiflutter/components/StickyErrorHeader.dart';
 import 'package:taxiflutter/models/profile-model.dart';
 import 'package:taxiflutter/stores/user-store.dart';
 
@@ -80,93 +84,105 @@ class _ProfilePageState extends State<ProfileEditPage> {
     return Scaffold(
         backgroundColor: Colors.white,
         extendBodyBehindAppBar: true,
-        appBar: const BAppBar(title: 'Профиль', type: 'transparent'),
+        appBar: const BAppBar(title: 'Изменение профиля', type: 'transparent'),
         body: SingleChildScrollView(
-            child: Column(
-          children: [
-            Container(
-              height: 350,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Positioned(
-                      top: 0,
-                      child: Container(
-                          height: 200,
-                          width: MediaQuery.of(context).size.width,
-                          color: Theme.of(context).primaryColor)),
-                  Positioned(
-                    top: 129,
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(142),
-                        child: _renderImage()),
-                  ),
-                  Positioned(
-                      bottom: 20,
-                      child: CupertinoButton.filled(
-                          child: Text('Изменить фото'), onPressed: pickImage))
-                ],
+          child: Column(
+            children: [
+              Container(
+                height: 350,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.white,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                        top: 0,
+                        child: Container(
+                            height: 200,
+                            width: MediaQuery.of(context).size.width,
+                            color: Theme.of(context).primaryColor)),
+                    Positioned(
+                      top: 129,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(142),
+                          child: _renderImage()),
+                    ),
+                    Positioned(
+                        bottom: 20,
+                        child: CupertinoButton.filled(
+                          onPressed: pickImage,
+                          child: const Text('Изменить фото'),
+                        ))
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              color: Colors.white,
-              child: Column(
-                children: [
-                  ListTile(
-                    subtitle:
-                        Text(userStore.profile?.phone ?? 'Телеофон не указано'),
-                    title: const Text('Телеофон'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: CupertinoTextField.borderless(
-                      controller: first_name_controller,
-                      placeholder: 'Укажите имя',
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Observer(builder: (context) {
+                      return StickyErrorHeader(
+                          error: userStore.errorUpdateInfo);
+                    }),
+                    ListTile(
+                      subtitle: Text(
+                          userStore.profile?.phone ?? 'Телеофон не указано'),
+                      title: const Text('Телеофон'),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: CupertinoTextField.borderless(
-                      controller: last_name_controller,
-                      placeholder: 'Укажите фамилия',
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: CupertinoTextField.borderless(
-                      controller: email_controller,
-                      placeholder: 'Укажите почту',
-                    ),
-                  ),
-                  Padding(
+                    Padding(
                       padding: const EdgeInsets.all(10),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: CupertinoButton.filled(
-                              onPressed: () {
-                                userStore.updateUserInfo(ProfileInfoCreate(
-                                    email: email_controller?.text,
-                                    avatar: avatar_form,
-                                    first_name: first_name_controller?.text,
-                                    last_name: last_name_controller?.text));
+                      child: CupertinoTextField.borderless(
+                        controller: first_name_controller,
+                        placeholder: 'Укажите имя',
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: CupertinoTextField.borderless(
+                        controller: last_name_controller,
+                        placeholder: 'Укажите фамилия',
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: CupertinoTextField.borderless(
+                        controller: email_controller,
+                        placeholder: 'Укажите почту',
+                      ),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: CupertinoButton.filled(
+                                onPressed: () async {
+                                  await userStore.updateUserInfo(
+                                      ProfileInfoCreate(
+                                          email: email_controller?.text,
+                                          avatar: avatar_form,
+                                          first_name:
+                                              first_name_controller?.text,
+                                          last_name:
+                                              last_name_controller?.text));
 
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Сохранить'),
+                                  if (userStore.errorUpdateInfo == null) {
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                                child: const Text('Сохранить'),
+                              ),
                             ),
-                          ),
-                        ],
-                      )),
-                ],
-              ),
-            )
-          ],
-        )));
+                          ],
+                        )),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ));
   }
 }

@@ -5,16 +5,17 @@ part 'create-order.g.dart';
 @JsonSerializable()
 class CreateOrder {
   final int from_city_id, to_city_id, price;
-  final String from_address, to_address, comment;
-  final DateTime date_time;
+  final String? from_address, to_address;
+  final String? comment;
+  final String date_time;
 
   CreateOrder(
-      {required this.from_address,
+      {this.from_address,
       required this.from_city_id,
-      required this.to_address,
+      this.to_address,
       required this.to_city_id,
       required this.price,
-      required this.comment,
+      this.comment,
       required this.date_time});
 
   factory CreateOrder.fromJson(Map<String, dynamic> json) =>
