@@ -1,5 +1,7 @@
-import 'package:taxiflutter/api/api-service.dart';
-import 'package:taxiflutter/models/city.dart';
+// ignore_for_file: file_names
+
+import 'package:taxizakaz/api/api-service.dart';
+import 'package:taxizakaz/models/city.dart';
 
 class RegionService extends ApiService {
   Future<List<City>> getCities({String? name}) async {

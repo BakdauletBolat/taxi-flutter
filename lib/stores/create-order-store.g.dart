@@ -179,13 +179,13 @@ mixin _$CreateOrderStore on CreateOrderBase, Store {
       Atom(name: 'CreateOrderBase.error', context: context);
 
   @override
-  String? get error {
+  dynamic get error {
     _$errorAtom.reportRead();
     return super.error;
   }
 
   @override
-  set error(String? value) {
+  set error(dynamic value) {
     _$errorAtom.reportWrite(value, super.error, () {
       super.error = value;
     });

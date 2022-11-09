@@ -1,9 +1,12 @@
+// ignore_for_file: nullable_type_in_catch_clause,file_names, non_constant_identifier_names
+
+import 'dart:async';
+
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:taxiflutter/api/user-service.dart';
-import 'package:taxiflutter/models/profile-model.dart';
+import 'package:taxizakaz/api/user-service.dart';
+import 'package:taxizakaz/models/profile-model.dart';
 
 // Include generated file
 part 'user-store.g.dart';
@@ -45,6 +48,12 @@ abstract class UserBase with Store {
   bool isCanRegister = false;
 
   @observable
+  bool isLoadingCreatePayment = false;
+
+  @observable
+  bool isLoadingPayments = false;
+
+  @observable
   String? phone;
 
   @observable
@@ -62,50 +71,74 @@ abstract class UserBase with Store {
   @observable
   String? errorUpdateInfo;
 
+  @observable
+  List<Payment> userPayments = [];
+
   UserService userService = UserService();
 
   Future loadUser() async {
     try {
-      Profile? profile = await userService.getUser();
-      runInAction(() {
-        this.profile = profile;
-      });
-    } on dynamic catch (e) {
-      print(e);
+      SharedPreferences instance = await SharedPreferences.getInstance();
+      if (instance.getString('token') != null) {
+        Profile? profile = await userService.getUser();
+        runInAction(() {
+          this.profile = profile;
+        });
+      }
+    } finally {}
+  }
+
+  Future loadUserPayments() async {
+    runInAction(() => {isLoadingPayments = true});
+
+    final paymentsObject = await userService.getUserPayments();
+
+    if (paymentsObject.item3) {
+      runInAction(
+          () => {error = paymentsObject.item2, isLoadingPayments = false});
+    } else {
+      runInAction(() => {
+            userPayments = paymentsObject.item1!,
+            error = null,
+            isLoadingPayments = false
+          });
     }
+  }
+
+  FutureOr<Payment?> createPayment(int user_id, String coin) async {
+    runInAction(() => {isLoadingCreatePayment = true});
+    final paymentObject =
+        await userService.createPayment(user_id, int.parse(coin));
+    if (paymentObject.item3) {
+      runInAction(() => {error = paymentObject.item2});
+    } else {
+      runInAction(() => {error = null, isLoadingCreatePayment = false});
+      return paymentObject.item1!;
+    }
+    runInAction(() => {isLoadingCreatePayment = false});
+    return null;
   }
 
   Future register() async {
-    runInAction(() {
-      isLoadingRegister = true;
-    });
-    var result = await userService.register(phone: phone);
-
-    if (result.item3) {
-      runInAction(() {
-        errorRegister = result.item2;
-        isCanRegister = false;
-      });
-    } else {
-      runInAction(() {
-        isCanRegister = true;
-        errorRegister = null;
-      });
+    runInAction(() => isLoadingRegister = true);
+    try {
+      var statusCode = await userService.register(phone: phone);
+      if (statusCode == 200) {
+        runInAction(() => isCanRegister = true);
+      }
+    } catch (e) {
+      runInAction(() => isLoadingRegister = false);
+      rethrow;
     }
 
-    runInAction(() {
-      isLoadingRegister = false;
-    });
+    runInAction(() => isLoadingRegister = false);
   }
 
   Future verifyUser() async {
-    runInAction(() {
-      isLoadingVerify = true;
-    });
+    runInAction(() => isLoadingVerify = true);
 
     if (otp == null) {
       runInAction(() {
-        errorVerify = 'Заполните все данные';
         isLoadingVerify = false;
       });
       return;
@@ -114,19 +147,9 @@ abstract class UserBase with Store {
     final profileObject =
         await userService.verifyUser(phone: phone!, otp: otp!);
 
-    if (profileObject.item3) {
-      runInAction(() {
-        errorVerify = profileObject.item2;
-      });
-    } else {
-      runInAction(() {
-        profile = profileObject.item1;
-        errorVerify = null;
-      });
-    }
-
     runInAction(() {
       isLoadingVerify = false;
+      profile = profileObject;
     });
   }
 

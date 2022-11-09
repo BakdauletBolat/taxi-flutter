@@ -1,12 +1,14 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
-import 'package:taxiflutter/components/BAppBar.dart';
-import 'package:taxiflutter/pages/PreviewDocumentsPage.dart';
-import 'package:taxiflutter/pages/ProfileEditPage.dart';
-import 'package:taxiflutter/pages/UploadDocumentsPage.dart';
-import 'package:taxiflutter/stores/user-store.dart';
+import 'package:taxizakaz/components/BAppBar.dart';
+import 'package:taxizakaz/pages/PreviewDocumentsPage.dart';
+import 'package:taxizakaz/pages/ProfileEditPage.dart';
+import 'package:taxizakaz/pages/UploadDocumentsPage.dart';
+import 'package:taxizakaz/stores/user-store.dart';
 
 class RequestDriverPage extends StatefulWidget {
   const RequestDriverPage({Key? key}) : super(key: key);
@@ -125,7 +127,7 @@ class _RequestDriverPageState extends State<RequestDriverPage> {
       appBar: const BAppBar(title: 'Заявка на водителя'),
       body: Column(
         children: [
-          Text('Статус'),
+          const Text('Статус'),
           Stepper(
             type: StepperType.vertical,
             controlsBuilder: (context, details) {

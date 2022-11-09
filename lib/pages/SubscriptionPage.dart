@@ -1,7 +1,7 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:taxiflutter/stores/user-store.dart';
 
 class SubscriptionPage extends StatefulWidget {
   const SubscriptionPage({Key? key}) : super(key: key);
@@ -13,7 +13,6 @@ class SubscriptionPage extends StatefulWidget {
 class _SubscriptionPageState extends State<SubscriptionPage> {
   @override
   Widget build(BuildContext context) {
-    UserStore userStore = Provider.of<UserStore>(context, listen: false);
     return Scaffold(
         body: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -35,7 +34,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           height: 20,
         ),
         CupertinoButton.filled(
-            child: Text('Оплатить подписку'), onPressed: () {})
+            child: const Text('Оплатить подписку'), onPressed: () {})
       ],
     ));
   }

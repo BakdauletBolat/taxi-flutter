@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthInterceptor extends Interceptor {
+class BaseInterceptor extends Interceptor {}
+
+class AuthInterceptor extends BaseInterceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {

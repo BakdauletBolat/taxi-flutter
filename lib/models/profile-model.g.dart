@@ -96,6 +96,8 @@ Profile _$ProfileFromJson(Map<String, dynamic> json) => Profile(
           ? null
           : UserDocumentsGet.fromJson(
               json['user_document'] as Map<String, dynamic>),
+      coins_expected: json['coins_expected'] as int?,
+      coins: json['coins'] as int?,
       profile_info: json['profile_info'] == null
           ? null
           : ProfileInfoGet.fromJson(
@@ -114,5 +116,25 @@ Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
       'driver_can_view_order_date':
           instance.driver_can_view_order_date?.toIso8601String(),
       'is_driver': instance.is_driver,
+      'coins': instance.coins,
+      'coins_expected': instance.coins_expected,
       'user_document': instance.user_document,
+    };
+
+Payment _$PaymentFromJson(Map<String, dynamic> json) => Payment(
+      id: json['id'] as int,
+      gen_id: json['gen_id'] as String?,
+      coin: json['coin'] as int,
+      created_at: DateTime.parse(json['created_at'] as String),
+      is_confirmed: json['is_confirmed'] as bool,
+      user_id: json['user_id'] as int?,
+    );
+
+Map<String, dynamic> _$PaymentToJson(Payment instance) => <String, dynamic>{
+      'id': instance.id,
+      'gen_id': instance.gen_id,
+      'coin': instance.coin,
+      'user_id': instance.user_id,
+      'is_confirmed': instance.is_confirmed,
+      'created_at': instance.created_at.toIso8601String(),
     };

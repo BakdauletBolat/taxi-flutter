@@ -1,21 +1,24 @@
+// ignore_for_file: file_names
+
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mobx/mobx.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
-import 'package:taxiflutter/components/BAppBar.dart';
-import 'package:taxiflutter/components/ListTile.dart';
-import 'package:taxiflutter/components/Select.dart';
-import 'package:taxiflutter/components/StickyErrorHeader.dart';
-import 'package:taxiflutter/stores/create-order-store.dart';
-import 'package:taxiflutter/stores/region-store.dart';
-import 'package:taxiflutter/stores/user-store.dart';
+import 'package:taxizakaz/components/BAppBar.dart';
+import 'package:taxizakaz/components/ListTile.dart';
+import 'package:taxizakaz/components/Select.dart';
+import 'package:taxizakaz/components/StickyErrorHeader.dart';
+import 'package:taxizakaz/stores/create-order-store.dart';
+import 'package:taxizakaz/stores/region-store.dart';
+import 'package:taxizakaz/stores/user-store.dart';
 
 class CreateOrderPage extends StatefulWidget {
   const CreateOrderPage({Key? key}) : super(key: key);
@@ -25,11 +28,25 @@ class CreateOrderPage extends StatefulWidget {
 }
 
 class _CreateOrderPageState extends State<CreateOrderPage> {
+  late var disposeFunc;
+
   @override
   void initState() {
+    CreateOrderStore createOrderStore =
+        Provider.of<CreateOrderStore>(context, listen: false);
     RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
     regionStore.loadCities();
     super.initState();
+
+    disposeFunc =
+        reaction((_) => createOrderStore.error, (msg) => _showDialog());
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    disposeFunc();
   }
 
   TextEditingController textEditingController = TextEditingController();
@@ -89,6 +106,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     CreateOrderStore createOrderStore =
         Provider.of<CreateOrderStore>(context, listen: false);
 
+    UserStore userStore = Provider.of<UserStore>(context, listen: false);
+
     showCupertinoModalBottomSheet(
       context: context,
       expand: false,
@@ -123,10 +142,16 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                             createOrderStore.to_city_id =
                                 regionStore.cities[index].id;
                           }
-                          var res = await openSecondModal(type);
 
-                          if (res == 'exit') {
-                            // ignore: use_build_context_synchronously
+                          if (userStore.profile?.type_user != null &&
+                              userStore.profile?.type_user == 2) {
+                            var res = await openSecondModal(type);
+
+                            if (res == 'exit') {
+                              // ignore: use_build_context_synchronously
+                              Navigator.of(context).pop();
+                            }
+                          } else {
                             Navigator.of(context).pop();
                           }
                         },
@@ -145,11 +170,37 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
   DateFormat timeFormat = DateFormat("HH:mm:ss");
 
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title:
+            const Text("Для того чтобы создать заказ, нужно оплатить поездку"),
+        content: Column(
+          children: [Text("createOrderStore.error['message']")],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: Container(
+              color: Colors.green,
+              padding: const EdgeInsets.all(14),
+              child: const Text("okay"),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     CreateOrderStore createOrderStore =
         Provider.of<CreateOrderStore>(context, listen: false);
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const BAppBar(
@@ -159,10 +210,11 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: StickyHeader(
             header: Observer(
-                builder: (context) => StickyErrorHeader(
-                      error: createOrderStore.error,
-                    )),
+                builder: (context) => StickyErrorHeader(error: 'error')),
             content: Observer(builder: (context) {
+              // if (createOrderStore.error != null) {
+
+              // }
               return Column(
                 children: [
                   Select(
@@ -250,18 +302,18 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                       children: [
                                         Lottie.asset(
                                             'assets/lottie/success.json'),
-                                        Text("Заказ успешно создан "),
+                                        const Text("Заказ успешно создан "),
                                       ],
                                     ),
-                                    content: Text("Посмотреть заказ ?"),
+                                    content: const Text("Посмотреть заказ ?"),
                                     actions: [
                                       CupertinoDialogAction(
-                                          child: Text("Да"),
+                                          child: const Text("Да"),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           }),
                                       CupertinoDialogAction(
-                                        child: Text("Нет"),
+                                        child: const Text("Нет"),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
@@ -281,7 +333,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                                     children: [
                                       Lottie.asset(
                                           'assets/lottie/warning.json'),
-                                      Text("Пожалуйста запоните все поля "),
+                                      const Text(
+                                          "Пожалуйста запоните все поля "),
                                     ],
                                   ),
                                 );
@@ -313,7 +366,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
 
                       return const SizedBox.shrink();
                     },
-                  )
+                  ),
                 ],
               );
             }),

@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 
 class BAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -16,10 +18,10 @@ class BAppBar extends StatefulWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
 
   @override
-  _CustomAppBarState createState() => _CustomAppBarState();
+  CustomAppBarState createState() => CustomAppBarState();
 }
 
-class _CustomAppBarState extends State<BAppBar> {
+class CustomAppBarState extends State<BAppBar> {
   @override
   Widget build(BuildContext context) {
     Color foregroundColor = Colors.black;

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "493521214399",
+    "project_id": "taxizakaz-d4d41",
+    "storage_bucket": "taxizakaz-d4d41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493521214399:android:7a94b90b1d1dc3c69bdf0a",
+        "android_client_info": {
+          "package_name": "com.example.taxizakaz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "493521214399-8mg6i3525gjolrcgktfj5a8uhu0huvpf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXAUGpfNFjqTkUIFRbbmqjPcUD8PDbrnk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "493521214399-8mg6i3525gjolrcgktfj5a8uhu0huvpf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

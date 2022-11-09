@@ -1,5 +1,6 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 
 class StickyErrorHeader extends StatelessWidget {
   const StickyErrorHeader({Key? key, this.error}) : super(key: key);

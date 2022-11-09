@@ -1,11 +1,10 @@
+// ignore_for_file: non_constant_identifier_names,file_names
+
 import 'dart:developer';
 
 import 'package:mobx/mobx.dart';
-import 'package:taxiflutter/api/api-service.dart';
-import 'package:taxiflutter/api/order-service.dart';
-import 'package:taxiflutter/api/region-service.dart';
-import 'package:taxiflutter/models/city.dart';
-import 'package:taxiflutter/models/order.dart';
+import 'package:taxizakaz/api/order-service.dart';
+import 'package:taxizakaz/models/order.dart';
 
 // Include generated file
 part 'order-store.g.dart';

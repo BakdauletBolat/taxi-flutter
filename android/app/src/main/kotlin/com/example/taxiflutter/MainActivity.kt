@@ -1,4 +1,4 @@
-package com.example.taxiflutter
+package com.example.taxizakaz
 
 import io.flutter.embedding.android.FlutterActivity
 

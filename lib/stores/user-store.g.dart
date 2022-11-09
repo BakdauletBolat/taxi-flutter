@@ -100,6 +100,39 @@ mixin _$UserStore on UserBase, Store {
     });
   }
 
+  late final _$isLoadingCreatePaymentAtom =
+      Atom(name: 'UserBase.isLoadingCreatePayment', context: context);
+
+  @override
+  bool get isLoadingCreatePayment {
+    _$isLoadingCreatePaymentAtom.reportRead();
+    return super.isLoadingCreatePayment;
+  }
+
+  @override
+  set isLoadingCreatePayment(bool value) {
+    _$isLoadingCreatePaymentAtom
+        .reportWrite(value, super.isLoadingCreatePayment, () {
+      super.isLoadingCreatePayment = value;
+    });
+  }
+
+  late final _$isLoadingPaymentsAtom =
+      Atom(name: 'UserBase.isLoadingPayments', context: context);
+
+  @override
+  bool get isLoadingPayments {
+    _$isLoadingPaymentsAtom.reportRead();
+    return super.isLoadingPayments;
+  }
+
+  @override
+  set isLoadingPayments(bool value) {
+    _$isLoadingPaymentsAtom.reportWrite(value, super.isLoadingPayments, () {
+      super.isLoadingPayments = value;
+    });
+  }
+
   late final _$phoneAtom = Atom(name: 'UserBase.phone', context: context);
 
   @override
@@ -193,6 +226,22 @@ mixin _$UserStore on UserBase, Store {
     });
   }
 
+  late final _$userPaymentsAtom =
+      Atom(name: 'UserBase.userPayments', context: context);
+
+  @override
+  List<Payment> get userPayments {
+    _$userPaymentsAtom.reportRead();
+    return super.userPayments;
+  }
+
+  @override
+  set userPayments(List<Payment> value) {
+    _$userPaymentsAtom.reportWrite(value, super.userPayments, () {
+      super.userPayments = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
@@ -200,12 +249,15 @@ profile: ${profile},
 isLoadingRegister: ${isLoadingRegister},
 isLoadingVerify: ${isLoadingVerify},
 isCanRegister: ${isCanRegister},
+isLoadingCreatePayment: ${isLoadingCreatePayment},
+isLoadingPayments: ${isLoadingPayments},
 phone: ${phone},
 otp: ${otp},
 error: ${error},
 errorRegister: ${errorRegister},
 errorVerify: ${errorVerify},
 errorUpdateInfo: ${errorUpdateInfo},
+userPayments: ${userPayments},
 isAuth: ${isAuth},
 isSubsriptionDriver: ${isSubsriptionDriver},
 profileNotNull: ${profileNotNull},

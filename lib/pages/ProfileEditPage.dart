@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, file_names, library_prefixes
 
 import 'dart:io';
 
@@ -9,11 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:sticky_headers/sticky_headers.dart';
-import 'package:taxiflutter/components/BAppBar.dart';
-import 'package:taxiflutter/components/StickyErrorHeader.dart';
-import 'package:taxiflutter/models/profile-model.dart';
-import 'package:taxiflutter/stores/user-store.dart';
+import 'package:taxizakaz/components/BAppBar.dart';
+import 'package:taxizakaz/components/StickyErrorHeader.dart';
+import 'package:taxizakaz/models/profile-model.dart';
+import 'package:taxizakaz/stores/user-store.dart';
 
 class ProfileEditPage extends StatefulWidget {
   const ProfileEditPage({Key? key}) : super(key: key);
@@ -170,6 +169,7 @@ class _ProfilePageState extends State<ProfileEditPage> {
                                               last_name_controller?.text));
 
                                   if (userStore.errorUpdateInfo == null) {
+                                    if (!mounted) return;
                                     Navigator.of(context).pop();
                                   }
                                 },

@@ -1,17 +1,12 @@
-import 'dart:io';
+// ignore_for_file: file_names
 
-import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:sticky_headers/sticky_headers.dart';
-import 'package:taxiflutter/components/BAppBar.dart';
-import 'package:taxiflutter/components/FilePicker.dart';
-import 'package:taxiflutter/models/profile-model.dart';
-import 'package:taxiflutter/stores/user-store.dart';
+import 'package:taxizakaz/components/BAppBar.dart';
+import 'package:taxizakaz/stores/user-store.dart';
 
 class PreviewDocumentsPage extends StatefulWidget {
   const PreviewDocumentsPage({Key? key}) : super(key: key);

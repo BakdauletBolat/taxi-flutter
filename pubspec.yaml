@@ -1,4 +1,4 @@
-name: taxiflutter
+name: taxizakaz
 description: A new Flutter project.
 
 publish_to: 'none'
@@ -36,6 +36,10 @@ dependencies:
   sticky_headers: ^0.3.0+2
   intl: ^0.17.0
   lottie: ^1.3.0
+  fluttertoast: ^8.0.9
+  firebase_messaging: ^13.1.0
+  firebase_core: ^1.24.0
+  in_app_notification: ^1.1.2
 
 dev_dependencies:
   flutter_test:

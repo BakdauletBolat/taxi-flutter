@@ -1,7 +1,8 @@
+// ignore_for_file: file_names
+
 import 'package:mobx/mobx.dart';
-import 'package:taxiflutter/api/api-service.dart';
-import 'package:taxiflutter/api/region-service.dart';
-import 'package:taxiflutter/models/city.dart';
+import 'package:taxizakaz/api/region-service.dart';
+import 'package:taxizakaz/models/city.dart';
 
 // Include generated file
 part 'region-store.g.dart';

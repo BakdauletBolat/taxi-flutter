@@ -1,15 +1,19 @@
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:in_app_notification/in_app_notification.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:taxiflutter/WelcomePage.dart';
-import 'package:taxiflutter/pages/VerifyUserPage.dart';
-import 'package:taxiflutter/stores/create-order-store.dart';
-import 'package:taxiflutter/stores/order-store.dart';
-import 'package:taxiflutter/stores/region-store.dart';
-import 'package:taxiflutter/stores/user-store.dart';
+import 'package:taxizakaz/WelcomePage.dart';
+import 'package:taxizakaz/pages/VerifyUserPage.dart';
+import 'package:taxizakaz/stores/create-order-store.dart';
+import 'package:taxizakaz/stores/order-store.dart';
+import 'package:taxizakaz/stores/region-store.dart';
+import 'package:taxizakaz/stores/user-store.dart';
 import 'MainPage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 Map<int, Color> color = const {
   50: Color.fromRGBO(4, 131, 184, .1),
@@ -24,9 +28,21 @@ Map<int, Color> color = const {
   900: Color.fromRGBO(4, 131, 184, 1),
 };
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  String? token = await messaging.getToken();
+
+  FToast fToast = FToast();
+
   runApp(MultiProvider(
     providers: [
+      Provider(create: (context) => fToast.init(context)),
       Provider(create: (_) => UserStore()),
       Provider(create: (_) => RegionStore()),
       Provider(create: (_) => OrderStore()),
@@ -53,31 +69,33 @@ class _TaxiAppState extends State<TaxiApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      initialRoute: '/',
-      theme: ThemeData(
-          primarySwatch: MaterialColor(0xFF14224a, color),
-          primaryColor: const Color(0xFF14224a)),
-      onGenerateRoute: (RouteSettings settings) {
-        switch (settings.name) {
-          case '/':
-            return MaterialWithModalsPageRoute(
-                builder: (_) => Observer(builder: (context) {
-                      UserStore userStore = Provider.of<UserStore>(context);
-                      if (userStore.isAuth) {
-                        return const MainPage();
-                      }
-                      return const WelcomePage();
-                    }),
-                settings: settings);
-          case '/verify-user':
-            return MaterialWithModalsPageRoute(
-              builder: (context) => VerifyPage(),
-            );
-        }
-        return null;
-      },
-      debugShowCheckedModeBanner: false,
+    return InAppNotification(
+      child: MaterialApp(
+        initialRoute: '/',
+        theme: ThemeData(
+            primarySwatch: MaterialColor(0xFF14224a, color),
+            primaryColor: const Color(0xFF14224a)),
+        onGenerateRoute: (RouteSettings settings) {
+          switch (settings.name) {
+            case '/':
+              return MaterialWithModalsPageRoute(
+                  builder: (_) => Observer(builder: (context) {
+                        UserStore userStore = Provider.of<UserStore>(context);
+                        if (userStore.isAuth) {
+                          return const MainPage();
+                        }
+                        return const WelcomePage();
+                      }),
+                  settings: settings);
+            case '/verify-user':
+              return MaterialWithModalsPageRoute(
+                builder: (context) => const VerifyPage(),
+              );
+          }
+          return null;
+        },
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }

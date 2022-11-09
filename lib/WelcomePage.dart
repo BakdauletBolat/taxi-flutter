@@ -1,16 +1,14 @@
-import 'dart:async';
+// ignore_for_file: file_names
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:taxiflutter/components/BAppBar.dart';
-import 'package:taxiflutter/components/StickyErrorHeader.dart';
-import 'package:taxiflutter/stores/user-store.dart';
+import 'package:taxizakaz/components/StickyErrorHeader.dart';
+import 'package:taxizakaz/stores/user-store.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -27,21 +25,38 @@ class _WelcomePageState extends State<WelcomePage> {
       filter: {"#": RegExp(r'[0-9]')},
       type: MaskAutoCompletionType.lazy);
 
-  void _showAlertDialog(BuildContext context) {
-    showCupertinoModalPopup<void>(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-          title: CupertinoActivityIndicator(
-        color: Theme.of(context).primaryColor,
-      )),
-    );
-  }
-
   void register() async {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
-    await userStore.register();
+
+    FToast fToast = Provider.of<FToast>(context, listen: false);
+
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: Colors.greenAccent,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(Icons.check),
+          SizedBox(
+            width: 12.0,
+          ),
+          Text("This is a Custom Toast"),
+        ],
+      ),
+    );
+    fToast.showToast(child: toast);
+
+    // try {
+    //   await userStore.register();
+    // } catch (e) {
+    //   print(e);
+    // }
+
     if (userStore.isCanRegister) {
+      if (!mounted) return;
       Navigator.pushNamed(context, '/verify-user');
     }
   }
@@ -236,7 +251,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                               const SizedBox(
                                                 width: 10,
                                               ),
-                                              Text('Поехали'),
+                                              const Text('Поехали'),
                                               const SizedBox(
                                                 width: 20,
                                               ),

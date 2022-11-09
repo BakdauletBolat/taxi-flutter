@@ -1,9 +1,8 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:dio/dio.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:taxiflutter/models/city.dart';
-import 'package:taxiflutter/models/profile-model.dart';
+import 'package:taxizakaz/models/city.dart';
+import 'package:taxizakaz/models/profile-model.dart';
 
 part 'order.g.dart';
 

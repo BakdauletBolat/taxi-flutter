@@ -1,13 +1,12 @@
+// ignore_for_file: file_names, non_constant_identifier_names
+
 import 'dart:async';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:taxiflutter/api/api-service.dart';
-import 'package:taxiflutter/models/city.dart';
-import 'package:taxiflutter/models/create-order.dart';
-import 'package:taxiflutter/models/order.dart';
-import 'package:taxiflutter/models/profile-model.dart';
+import 'package:taxizakaz/api/api-service.dart';
+import 'package:taxizakaz/models/create-order.dart';
+import 'package:taxizakaz/models/order.dart';
 import 'package:tuple/tuple.dart';
 
 class OrderService extends ApiService {
@@ -19,9 +18,7 @@ class OrderService extends ApiService {
     try {
       String url = '/order/?';
 
-      if (type_order != null) {
-        url += 'type_order=$type_order&';
-      }
+      url += 'type_order=$type_order&';
 
       if (date_time != null) {
         url += 'date_time=$date_time&';
@@ -45,15 +42,20 @@ class OrderService extends ApiService {
     }
   }
 
-  Future<Tuple3<Order?, String?, bool>> createOrder(
+  Future<Tuple3<Order?, dynamic?, bool>> createOrder(
       CreateOrder createOrder) async {
     try {
       var res = await authApi.post('/order/order-create/',
           data: createOrder.toJson());
-      return Tuple3.fromList([Order.fromJson(res.data), null, false]);
+
+      if (res.statusCode == 200) {
+        return Tuple3.fromList([Order.fromJson(res.data), null, false]);
+      } else {
+        return Tuple3.fromList([null, res.data, false]);
+      }
     } on DioError catch (e) {
-      print(e.response!.data);
-      return Tuple3.fromList([null, e.response!.data.toString(), true]);
+      print(e);
+      return Tuple3.fromList([null, e.response!.data, true]);
     } catch (e) {
       print(e);
       return Tuple3.fromList([null, e.toString(), true]);

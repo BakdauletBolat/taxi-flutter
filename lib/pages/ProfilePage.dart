@@ -1,13 +1,15 @@
+// ignore_for_file: file_names
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
-import 'package:taxiflutter/components/BAppBar.dart';
-import 'package:taxiflutter/pages/PreviewDocumentsPage.dart';
-import 'package:taxiflutter/pages/ProfileEditPage.dart';
-import 'package:taxiflutter/pages/RequestDriverPage.dart';
-import 'package:taxiflutter/stores/user-store.dart';
+import 'package:taxizakaz/components/BAppBar.dart';
+import 'package:taxizakaz/pages/PreviewDocumentsPage.dart';
+import 'package:taxizakaz/pages/ProfileEditPage.dart';
+import 'package:taxizakaz/pages/RequestDriverPage.dart';
+import 'package:taxizakaz/stores/user-store.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -79,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Positioned(
                       bottom: 20,
                       child: CupertinoButton.filled(
-                          child: Text('Изменить данные'),
+                          child: const Text('Изменить данные'),
                           onPressed: () {
                             var route = CupertinoPageRoute(builder: (context) {
                               return const ProfileEditPage();
@@ -97,6 +99,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: Colors.white,
                 child: Column(
                   children: [
+                    ListTile(
+                      subtitle: Text(
+                          '${userStore.profile?.coins?.toString()} (${userStore.profile?.coins_expected?.toString()})'),
+                      title: const Text('Баланс'),
+                    ),
                     ListTile(
                       subtitle: renderTypeUser(),
                       title: const Text('Тип аккаунта'),

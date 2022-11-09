@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
@@ -6,13 +8,15 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
-import 'package:taxiflutter/MainPage.dart';
-import 'package:taxiflutter/components/BAppBar.dart';
-import 'package:taxiflutter/components/StickyErrorHeader.dart';
-import 'package:taxiflutter/stores/user-store.dart';
+import 'package:taxizakaz/MainPage.dart';
+import 'package:taxizakaz/components/BAppBar.dart';
+import 'package:taxizakaz/components/StickyErrorHeader.dart';
+import 'package:taxizakaz/stores/user-store.dart';
+
+import '../models/profile-model.dart';
 
 class VerifyPage extends StatefulWidget {
-  VerifyPage({Key? key}) : super(key: key);
+  const VerifyPage({Key? key}) : super(key: key);
 
   @override
   State<VerifyPage> createState() => _VerifyPageState();
@@ -131,12 +135,12 @@ class _VerifyPageState extends State<VerifyPage> {
                   Expanded(
                     child: CupertinoButton.filled(
                       onPressed: () async {
-                        await userStore.verifyUser();
+                       Profile? profile = await userStore.verifyUser();
 
-                        if (userStore.errorVerify == null) {
+                        if (profile != null) {
                           var route = CupertinoPageRoute(
                               builder: (context) => const MainPage());
-
+                          if (!mounted) return;
                           Navigator.of(context)
                               .pushAndRemoveUntil(route, (route) => false);
                         }

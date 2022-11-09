@@ -1,22 +1,19 @@
-import 'dart:developer';
+// ignore_for_file: file_names
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:taxiflutter/components/BAppBar.dart';
-import 'package:taxiflutter/components/ListTile.dart';
-import 'package:taxiflutter/components/OrderItem.dart';
-import 'package:taxiflutter/components/Select.dart';
-import 'package:taxiflutter/models/order.dart';
-import 'package:taxiflutter/stores/order-store.dart';
-import 'package:taxiflutter/stores/region-store.dart';
-import 'package:taxiflutter/stores/user-store.dart';
+import 'package:taxizakaz/components/BAppBar.dart';
+import 'package:taxizakaz/components/ListTile.dart';
+import 'package:taxizakaz/components/OrderItem.dart';
+import 'package:taxizakaz/components/Select.dart';
+import 'package:taxizakaz/models/order.dart';
+import 'package:taxizakaz/stores/order-store.dart';
+import 'package:taxizakaz/stores/region-store.dart';
 import 'package:intl/intl.dart';
 
 enum TypeOrder { driver, passenger }

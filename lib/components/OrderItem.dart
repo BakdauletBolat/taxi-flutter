@@ -1,10 +1,10 @@
+// ignore_for_file: file_names
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:taxiflutter/models/order.dart';
-import 'package:taxiflutter/stores/user-store.dart';
+import 'package:taxizakaz/models/order.dart';
 
 class OrderItem extends StatelessWidget {
   OrderItem({Key? key, required this.order}) : super(key: key);
@@ -14,7 +14,6 @@ class OrderItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserStore userStore = Provider.of<UserStore>(context, listen: false);
     Widget renderPhoto() {
       if (order.user.profile_info?.avatar != null) {
         return ClipRRect(

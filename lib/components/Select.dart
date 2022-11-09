@@ -1,7 +1,29 @@
+// ignore_for_file: file_names, non_constant_identifier_names
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/material.dart'
+    show
+        BoxDecoration,
+        BuildContext,
+        Color,
+        Colors,
+        Column,
+        Container,
+        CrossAxisAlignment,
+        FontWeight,
+        GestureDetector,
+        Icon,
+        IconData,
+        Key,
+        MainAxisAlignment,
+        MediaQuery,
+        Row,
+        SizedBox,
+        StatelessWidget,
+        Text,
+        TextStyle,
+        Theme,
+        Widget;
 
 class Select extends StatelessWidget {
   const Select(

@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, must_be_immutable
+
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
