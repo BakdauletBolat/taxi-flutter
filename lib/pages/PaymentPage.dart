@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
@@ -107,91 +108,95 @@ class _ProfilePageState extends State<PaymentPage> {
           title: 'Платежи',
           type: 'transparent',
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Form(
-                key: _formKey,
-                child: CupertinoTextFormFieldRow(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  placeholder: 'Сумма',
-                  controller: coinController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Обязтельно';
-                    }
-                    return null;
-                  },
-                  keyboardType: TextInputType.number,
-                  prefix:
-                      Icon(Icons.wallet, color: Theme.of(context).primaryColor),
+        body: RefreshIndicator(
+          onRefresh: userStore.loadUserPayments,
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              Observer(builder: (context) {
-                if (userStore.error != null) {
-                  return Column(
-                    children: [
-                      Text(userStore.error.toString()),
-                      const SizedBox(
-                        height: 25,
-                      ),
-                    ],
-                  );
-                }
-                return const SizedBox.shrink();
-              }),
-              Row(
-                children: [
-                  Expanded(
-                    child: Observer(builder: (context) {
-                      return CupertinoButton.filled(
-                          onPressed: submitCreatePayment,
-                          child: Text(userStore.isLoadingCreatePayment == true
-                              ? 'Загрузка'
-                              : 'Оплатить'));
-                    }),
+                Form(
+                  key: _formKey,
+                  child: CupertinoTextFormFieldRow(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    placeholder: 'Сумма',
+                    controller: coinController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Обязтельно';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.number,
+                    prefix: Icon(Icons.wallet,
+                        color: Theme.of(context).primaryColor),
                   ),
-                ],
-              ),
-              const SizedBox(
-                height: 35,
-              ),
-              const Text(
-                'История заказов',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Observer(builder: (context) {
-                if (userStore.isLoadingPayments) {
-                  return const SizedBox(
-                    height: 200,
-                    child: Center(
-                      child: CircularProgressIndicator(),
+                const SizedBox(
+                  height: 25,
+                ),
+                Observer(builder: (context) {
+                  if (userStore.error != null) {
+                    return Column(
+                      children: [
+                        Text(userStore.error.toString()),
+                        const SizedBox(
+                          height: 25,
+                        ),
+                      ],
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Observer(builder: (context) {
+                        return CupertinoButton.filled(
+                            onPressed: submitCreatePayment,
+                            child: Text(userStore.isLoadingCreatePayment == true
+                                ? 'Загрузка'
+                                : 'Оплатить'));
+                      }),
                     ),
-                  );
-                }
-                return ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: userStore.userPayments.length,
-                    itemBuilder: (_, index) =>
-                        renderPaymentItem(userStore.userPayments[index]));
-              })
-            ],
+                  ],
+                ),
+                const SizedBox(
+                  height: 35,
+                ),
+                const Text(
+                  'История заказов',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Observer(builder: (context) {
+                  if (userStore.isLoadingPayments) {
+                    return const SizedBox(
+                      height: 200,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: userStore.userPayments.length,
+                      itemBuilder: (_, index) =>
+                          renderPaymentItem(userStore.userPayments[index]));
+                })
+              ],
+            ),
           ),
         ));
   }

@@ -2,8 +2,10 @@
 
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:taxizakaz/api/order-service.dart';
+import 'package:taxizakaz/models/city.dart';
 import 'package:taxizakaz/models/create-order.dart';
 
 // Include generated file
@@ -33,7 +35,7 @@ abstract class CreateOrderBase with Store {
   String? to_city_name;
 
   @observable
-  int? price = 0;
+  int? price;
 
   @observable
   String? to_address;
@@ -45,7 +47,16 @@ abstract class CreateOrderBase with Store {
   String? comment;
 
   @observable
+  int? city_to_city_coin;
+
+  @observable
+  CityToCityPrice? city_to_city_price;
+
+  @observable
   dynamic? error;
+
+  @observable
+  bool isLoadingCreate = false;
 
   @computed
   bool get isCreate =>
@@ -70,24 +81,46 @@ abstract class CreateOrderBase with Store {
       price = 0;
       date = null;
       time = null;
+      city_to_city_coin = 0;
     });
+  }
+
+  Future setCityToCityPrice() async {
+    try {
+      CityToCityPrice? city_to_city_price_value =
+          await service.getCityToCityPrice(
+              to_city_id: to_city_id!, from_city_id: from_city_id!);
+
+      runInAction(() {
+        city_to_city_coin = city_to_city_price_value!.coin;
+        city_to_city_price = city_to_city_price_value;
+      });
+    } on DioError catch (e) {
+      log(e.response.toString());
+      runInAction(() => city_to_city_coin = null);
+    }
   }
 
   Future create() async {
     if (isCreate) {
-      var order = await service.createOrder(CreateOrder(
-          from_city_id: from_city_id!,
-          to_city_id: to_city_id!,
-          from_address: from_address,
-          to_address: to_address,
-          price: price!,
-          comment: comment,
-          date_time: '$date $time'));
+      try {
+        runInAction(() {
+          isLoadingCreate = true;
+          error = null;
+        });
 
-      if (order.item3) {
-        error = order.item2;
-      } else {
-        error = null;
+        return await service.createOrder(CreateOrder(
+            from_city_id: from_city_id!,
+            to_city_id: to_city_id!,
+            from_address: from_address,
+            to_address: to_address,
+            price: price!,
+            comment: comment,
+            date_time: '$date $time'));
+      } catch (e) {
+        runInAction(() => error = e.toString());
+      } finally {
+        runInAction(() => isLoadingCreate = false);
       }
     }
   }

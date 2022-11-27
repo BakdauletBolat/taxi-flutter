@@ -19,6 +19,9 @@ abstract class UserBase with Store {
   @observable
   Profile? profile;
 
+  @observable
+  bool isLoadingCallToPhone = false;
+
   @computed
   bool get isAuth => profile == null ? false : true;
 
@@ -54,6 +57,9 @@ abstract class UserBase with Store {
   bool isLoadingPayments = false;
 
   @observable
+  bool isLoadingUploadDocument = false;
+
+  @observable
   String? phone;
 
   @observable
@@ -76,16 +82,20 @@ abstract class UserBase with Store {
 
   UserService userService = UserService();
 
-  Future loadUser() async {
+  Future loadUser({String? token}) async {
     try {
       SharedPreferences instance = await SharedPreferences.getInstance();
       if (instance.getString('token') != null) {
-        Profile? profile = await userService.getUser();
+        Profile? profile = await userService.getUser(token: token);
         runInAction(() {
           this.profile = profile;
         });
       }
     } finally {}
+  }
+
+  void setIsCallToPhone(bool value) {
+    runInAction(() => isLoadingCallToPhone = value);
   }
 
   Future loadUserPayments() async {
@@ -144,28 +154,29 @@ abstract class UserBase with Store {
       return;
     }
 
-    final profileObject =
-        await userService.verifyUser(phone: phone!, otp: otp!);
-
-    runInAction(() {
-      isLoadingVerify = false;
-      profile = profileObject;
-    });
+    try {
+      final profileObject =
+          await userService.verifyUser(phone: phone!, otp: otp!);
+      runInAction(() => profile = profileObject);
+    } catch (e) {
+      runInAction(() => {isLoadingVerify = false});
+      rethrow;
+    }
   }
 
   Future requestUserDocument(UserDocumentsCreate userDocumentsCreate) async {
-    final profileObject =
-        await userService.requestUserDocument(userDocumentsCreate);
-
-    if (profileObject.item3) {
+    runInAction(() => isLoadingUploadDocument = true);
+    try {
+      final profileObject =
+          await userService.requestUserDocument(userDocumentsCreate);
       runInAction(() {
-        error = profileObject.item2;
-      });
-    } else {
-      runInAction(() {
-        profile = profileObject.item1;
+        profile = profileObject;
         error = null;
       });
+    } catch (e) {
+      runInAction(() => {error = e.toString()});
+    } finally {
+      runInAction(() => isLoadingUploadDocument = false);
     }
   }
 
@@ -208,5 +219,6 @@ abstract class UserBase with Store {
   void logout() async {
     SharedPreferences instance = await SharedPreferences.getInstance();
     instance.remove('token');
+    runInAction(() => profile = null);
   }
 }

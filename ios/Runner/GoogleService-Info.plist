@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>493521214399-rilde5sdl88j0sltp8hckgcqgtsobtuj.apps.googleusercontent.com</string>
+	<string>493521214399-hjmg01bqt4e1o6o2dmi3h213fsjvqglg.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.493521214399-rilde5sdl88j0sltp8hckgcqgtsobtuj</string>
+	<string>com.googleusercontent.apps.493521214399-hjmg01bqt4e1o6o2dmi3h213fsjvqglg</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBnhgBHMVOnhz-gery5fU6oUFqguVyzv0E</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.taxizakaz</string>
+	<string>com.baqdauled.taxizakaz</string>
 	<key>PROJECT_ID</key>
 	<string>taxizakaz-d4d41</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:493521214399:ios:ccb42aa825fc4c5e9bdf0a</string>
+	<string>1:493521214399:ios:cbacb233212194739bdf0a</string>
 </dict>
 </plist>

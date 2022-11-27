@@ -8,6 +8,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:taxizakaz/components/StickyErrorHeader.dart';
+import 'package:taxizakaz/hooks/showSnackBar.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -19,45 +20,40 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   int sliderIndex = 0;
+
   PageController pageController = PageController();
   var maskFormatter = MaskTextInputFormatter(
       mask: '(###) ###-##-##',
       filter: {"#": RegExp(r'[0-9]')},
       type: MaskAutoCompletionType.lazy);
 
-  void register() async {
-    UserStore userStore = Provider.of<UserStore>(context, listen: false);
+  bool validatePhoneNumber(String? text) {
+    if (text == null || text.isEmpty || text.length < 10) {
+      showSnackBar(context, 'Введите правильный номер телефона');
+      return false;
+    }
+    return true;
+  }
 
-    FToast fToast = Provider.of<FToast>(context, listen: false);
-
-    Widget toast = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25.0),
-        color: Colors.greenAccent,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.check),
-          SizedBox(
-            width: 12.0,
-          ),
-          Text("This is a Custom Toast"),
-        ],
-      ),
-    );
-    fToast.showToast(child: toast);
-
-    // try {
-    //   await userStore.register();
-    // } catch (e) {
-    //   print(e);
-    // }
-
+  void navigateToVerifyPage(UserStore userStore) {
     if (userStore.isCanRegister) {
       if (!mounted) return;
       Navigator.pushNamed(context, '/verify-user');
+    }
+  }
+
+  void onRegisterClick() async {
+    UserStore userStore = Provider.of<UserStore>(context, listen: false);
+
+    bool status = validatePhoneNumber(userStore.phone);
+    if (!status) return;
+
+    try {
+      await userStore.register();
+      navigateToVerifyPage(userStore);
+    } catch (e) {
+      showSnackBar(
+          context, 'Ошибка при отправка кода пожалуйсто повторите попытку');
     }
   }
 
@@ -73,7 +69,7 @@ class _WelcomePageState extends State<WelcomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: 600,
+                height: 500,
                 child: PageView(
                     onPageChanged: (int value) {
                       setState(() {
@@ -114,24 +110,6 @@ class _WelcomePageState extends State<WelcomePage> {
                             const SizedBox(
                               height: 45,
                             ),
-                            CupertinoButton(
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: const [
-                                      Text('Дальше'),
-                                      Icon(
-                                        CupertinoIcons.chevron_right,
-                                        size: 20,
-                                      )
-                                    ]),
-                                onPressed: () {
-                                  pageController.nextPage(
-                                      duration:
-                                          const Duration(milliseconds: 400),
-                                      curve: Curves.easeOutQuad);
-                                })
                           ],
                         ),
                       ),
@@ -166,24 +144,6 @@ class _WelcomePageState extends State<WelcomePage> {
                             const SizedBox(
                               height: 45,
                             ),
-                            CupertinoButton(
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: const [
-                                      Text('Дальше'),
-                                      Icon(
-                                        CupertinoIcons.chevron_right,
-                                        size: 20,
-                                      )
-                                    ]),
-                                onPressed: () {
-                                  pageController.nextPage(
-                                      duration:
-                                          const Duration(milliseconds: 400),
-                                      curve: Curves.easeOutQuad);
-                                })
                           ],
                         ),
                       ),
@@ -192,10 +152,6 @@ class _WelcomePageState extends State<WelcomePage> {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Observer(builder: (context) {
-                                return StickyErrorHeader(
-                                    error: userStore.errorRegister);
-                              }),
                               const SizedBox(
                                 width: 240,
                                 child: Text(
@@ -210,6 +166,7 @@ class _WelcomePageState extends State<WelcomePage> {
                               ),
                               CupertinoTextFormFieldRow(
                                 padding: const EdgeInsets.all(0),
+                                keyboardType: TextInputType.number,
                                 prefix: Row(
                                   children: const [
                                     SizedBox(
@@ -218,12 +175,15 @@ class _WelcomePageState extends State<WelcomePage> {
                                     Text('+7'),
                                   ],
                                 ),
-                                onChanged: userStore.onChangePhone,
+                                onChanged: (value) {
+                                  userStore.onChangePhone(
+                                      "7${maskFormatter.getUnmaskedText()}");
+                                },
                                 inputFormatters: [maskFormatter],
                                 placeholder: '747 005 66 89',
                                 validator: (String? value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Please enter a value';
+                                    return 'Напишите свой номер';
                                   }
                                   return null;
                                 },
@@ -235,30 +195,28 @@ class _WelcomePageState extends State<WelcomePage> {
                                 children: [
                                   Expanded(
                                     child: CupertinoButton.filled(
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Observer(builder: (context) {
-                                                if (userStore
-                                                    .isLoadingRegister) {
-                                                  return const CupertinoActivityIndicator(
-                                                    color: Colors.white,
-                                                  );
-                                                }
-                                                return const SizedBox.shrink();
-                                              }),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              const Text('Поехали'),
-                                              const SizedBox(
-                                                width: 20,
-                                              ),
-                                            ]),
-                                        onPressed: () {
-                                          register();
-                                        }),
+                                      onPressed: onRegisterClick,
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Observer(builder: (context) {
+                                              if (userStore.isLoadingRegister) {
+                                                return const CupertinoActivityIndicator(
+                                                  color: Colors.white,
+                                                );
+                                              }
+                                              return const SizedBox.shrink();
+                                            }),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            const Text('Поехали'),
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                          ]),
+                                    ),
                                   )
                                 ],
                               )
@@ -266,14 +224,43 @@ class _WelcomePageState extends State<WelcomePage> {
                       )
                     ]),
               ),
-              AnimatedSmoothIndicator(
-                activeIndex: sliderIndex,
-                count: 3,
-                effect: ExpandingDotsEffect(
-                    dotWidth: 10,
-                    dotHeight: 10,
-                    activeDotColor: CupertinoTheme.of(context).primaryColor),
-              )
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    width: 50,
+                  ),
+                  AnimatedSmoothIndicator(
+                    activeIndex: sliderIndex,
+                    count: 3,
+                    effect: ExpandingDotsEffect(
+                        dotWidth: 10,
+                        dotHeight: 10,
+                        activeDotColor:
+                            CupertinoTheme.of(context).primaryColor),
+                  ),
+                  const SizedBox(
+                    width: 50,
+                  ),
+                  if (sliderIndex != 2)
+                    CupertinoButton(
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: const [
+                              Text('Дальше'),
+                              Icon(
+                                CupertinoIcons.chevron_right,
+                                size: 20,
+                              )
+                            ]),
+                        onPressed: () {
+                          pageController.nextPage(
+                              duration: const Duration(milliseconds: 400),
+                              curve: Curves.easeOutQuad);
+                        })
+                ],
+              ),
             ],
           ),
         ),

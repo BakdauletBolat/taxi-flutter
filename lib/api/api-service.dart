@@ -5,17 +5,12 @@ import 'package:taxizakaz/api/interceptor.dart';
 import 'dart:io' show Platform;
 
 class ApiService {
+  String urlApple = 'http://127.0.0.1:8000/api';
   Dio authApi = Dio()..interceptors.add(AuthInterceptor());
-  Dio api = Dio(BaseOptions(
-    baseUrl: Platform.isAndroid
-        ? 'http://192.168.18.142:8000/api'
-        : 'http://192.168.18.142:8000/api',
-  ))
-    ..interceptors.add(BaseInterceptor());
+  Dio api = Dio();
 
   ApiService() {
-    authApi.options.baseUrl = Platform.isAndroid
-        ? 'http://192.168.18.142:8000/api'
-        : 'http://192.168.18.142:8000/api';
+    api.options.baseUrl = Platform.isAndroid ? urlApple : urlApple;
+    authApi.options.baseUrl = Platform.isAndroid ? urlApple : urlApple;
   }
 }

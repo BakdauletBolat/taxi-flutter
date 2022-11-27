@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -11,9 +12,10 @@ import 'package:provider/provider.dart';
 import 'package:taxizakaz/MainPage.dart';
 import 'package:taxizakaz/components/BAppBar.dart';
 import 'package:taxizakaz/components/StickyErrorHeader.dart';
+import 'package:taxizakaz/hooks/showSnackBar.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 
-import '../models/profile-model.dart';
+import '../../models/profile-model.dart';
 
 class VerifyPage extends StatefulWidget {
   const VerifyPage({Key? key}) : super(key: key);
@@ -40,6 +42,35 @@ class _VerifyPageState extends State<VerifyPage> {
     super.dispose();
   }
 
+  bool validatePinCode({String? otp}) {
+    if (otp == null || otp.isEmpty || otp.length != 4) {
+      showSnackBar(context, 'Введите код сверху');
+      return false;
+    }
+    return true;
+  }
+
+  void navigateToMainPage() {
+    if (!mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+  }
+
+  void onVerifyClicked() async {
+    UserStore userStore = Provider.of<UserStore>(context, listen: false);
+    bool status = validatePinCode(otp: userStore.otp);
+    if (!status) return;
+    try {
+      await userStore.verifyUser();
+      navigateToMainPage();
+    } on DioError catch (e) {
+      if (e.response != null) {
+        showSnackBar(context, 'Код неверный');
+      }
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     const String assetName = 'assets/svg/smart-phone-sms.svg';
@@ -54,11 +85,6 @@ class _VerifyPageState extends State<VerifyPage> {
         body: SingleChildScrollView(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Observer(builder: (context) {
-              return StickyErrorHeader(
-                error: userStore.errorVerify,
-              );
-            }),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 50),
               child: svgIcon,
@@ -105,27 +131,8 @@ class _VerifyPageState extends State<VerifyPage> {
                 // onTap: () {
                 //   print("Pressed");
                 // },
-                onChanged: (value) {
-                  debugPrint(value);
-                  setState(() {
-                    currentText = value;
-                  });
-                },
-                beforeTextPaste: (text) {
-                  debugPrint("Allowing to paste $text");
-                  //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
-                  //but you can show anything you want here, like your pop up saying wrong paste format or etc
-                  return true;
-                },
+                onChanged: userStore.onChangeOtp,
               ),
-            ),
-            Observer(
-              builder: (context) {
-                if (userStore.error != null) {
-                  return Text(userStore.error!);
-                }
-                return const SizedBox.shrink();
-              },
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -134,17 +141,7 @@ class _VerifyPageState extends State<VerifyPage> {
                 children: [
                   Expanded(
                     child: CupertinoButton.filled(
-                      onPressed: () async {
-                       Profile? profile = await userStore.verifyUser();
-
-                        if (profile != null) {
-                          var route = CupertinoPageRoute(
-                              builder: (context) => const MainPage());
-                          if (!mounted) return;
-                          Navigator.of(context)
-                              .pushAndRemoveUntil(route, (route) => false);
-                        }
-                      },
+                      onPressed: onVerifyClicked,
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

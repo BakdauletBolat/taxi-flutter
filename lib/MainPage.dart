@@ -3,14 +3,18 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_notification/in_app_notification.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/Notification.dart';
+import 'package:taxizakaz/pages/ActiveOrderPage.dart';
 import 'package:taxizakaz/pages/CreateOrderPage.dart';
 import 'package:taxizakaz/pages/PaymentPage.dart';
-import 'package:taxizakaz/pages/ProfilePage.dart';
+import 'package:taxizakaz/pages/Profile/ProfilePage.dart';
 import 'package:taxizakaz/pages/RidePage.dart';
+import 'package:taxizakaz/pages/StartPage.dart';
+import 'package:taxizakaz/stores/order-store.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 
 class MainPage extends StatefulWidget {
@@ -37,8 +41,6 @@ class _MyHomePageState extends State<MainPage> {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Message data: ${message.data}');
-
       if (message.notification != null) {
         showNotification(
             message.notification!.title!, message.notification?.body);
@@ -60,43 +62,46 @@ class _MyHomePageState extends State<MainPage> {
     );
   }
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    CreateOrderPage(),
-    RidePage(),
-    ProfilePage(),
-    PaymentPage(),
+  List<Widget> widgetOptions = <Widget>[
+    const StartPage(),
+    const RidePage(),
+    const ProfilePage(),
+    const PaymentPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        elevation: 0,
-        enableFeedback: true,
-        selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Theme.of(context).primaryColor,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.text_badge_plus),
-            label: 'Заказать',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.car_detailed),
-            label: 'Попутки',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.supervised_user_circle),
-            label: 'Профиль',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.payment),
-            label: 'Платежи',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-      body: _widgetOptions.elementAt(_selectedIndex),
-    );
+        bottomNavigationBar: BottomNavigationBar(
+          elevation: 0,
+          enableFeedback: true,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Theme.of(context).primaryColor,
+          unselectedItemColor: Theme.of(context).primaryColor.withOpacity(.60),
+          unselectedFontSize: 14,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.text_badge_plus),
+              label: 'Заказать',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.car_detailed),
+              label: 'Попутки',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.supervised_user_circle),
+              label: 'Профиль',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.payment),
+              label: 'Платежи',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
+        body: widgetOptions.elementAt(_selectedIndex));
   }
 }

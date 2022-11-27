@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,19 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDjVlTAXrsxeelcJE0q7dTD_QMJfLP3cms',
-    appId: '1:493521214399:web:2efa039aee8a993a9bdf0a',
-    messagingSenderId: '493521214399',
-    projectId: 'taxizakaz-d4d41',
-    authDomain: 'taxizakaz-d4d41.firebaseapp.com',
-    storageBucket: 'taxizakaz-d4d41.appspot.com',
-    measurementId: 'G-RK29LZC3Q6',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBXAUGpfNFjqTkUIFRbbmqjPcUD8PDbrnk',
-    appId: '1:493521214399:android:7a94b90b1d1dc3c69bdf0a',
+    appId: '1:493521214399:android:04f3537ec4a531029bdf0a',
     messagingSenderId: '493521214399',
     projectId: 'taxizakaz-d4d41',
     storageBucket: 'taxizakaz-d4d41.appspot.com',
@@ -63,21 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBnhgBHMVOnhz-gery5fU6oUFqguVyzv0E',
-    appId: '1:493521214399:ios:ccb42aa825fc4c5e9bdf0a',
+    appId: '1:493521214399:ios:8b12fabb8f191aa99bdf0a',
     messagingSenderId: '493521214399',
     projectId: 'taxizakaz-d4d41',
     storageBucket: 'taxizakaz-d4d41.appspot.com',
-    iosClientId: '493521214399-rilde5sdl88j0sltp8hckgcqgtsobtuj.apps.googleusercontent.com',
-    iosBundleId: 'com.example.taxizakaz',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBnhgBHMVOnhz-gery5fU6oUFqguVyzv0E',
-    appId: '1:493521214399:ios:ccb42aa825fc4c5e9bdf0a',
-    messagingSenderId: '493521214399',
-    projectId: 'taxizakaz-d4d41',
-    storageBucket: 'taxizakaz-d4d41.appspot.com',
-    iosClientId: '493521214399-rilde5sdl88j0sltp8hckgcqgtsobtuj.apps.googleusercontent.com',
-    iosBundleId: 'com.example.taxizakaz',
+    iosClientId: '493521214399-hjmg01bqt4e1o6o2dmi3h213fsjvqglg.apps.googleusercontent.com',
+    iosBundleId: 'com.baqdauled.taxizakaz',
   );
 }

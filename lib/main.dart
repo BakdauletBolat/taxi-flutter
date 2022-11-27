@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -6,7 +8,7 @@ import 'package:in_app_notification/in_app_notification.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/WelcomePage.dart';
-import 'package:taxizakaz/pages/VerifyUserPage.dart';
+import 'package:taxizakaz/pages/Auth/VerifyUserPage.dart';
 import 'package:taxizakaz/stores/create-order-store.dart';
 import 'package:taxizakaz/stores/order-store.dart';
 import 'package:taxizakaz/stores/region-store.dart';
@@ -36,13 +38,18 @@ void main() async {
 
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  String? token = await messaging.getToken();
-
-  FToast fToast = FToast();
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
 
   runApp(MultiProvider(
     providers: [
-      Provider(create: (context) => fToast.init(context)),
       Provider(create: (_) => UserStore()),
       Provider(create: (_) => RegionStore()),
       Provider(create: (_) => OrderStore()),
@@ -62,9 +69,15 @@ class TaxiApp extends StatefulWidget {
 class _TaxiAppState extends State<TaxiApp> {
   @override
   void initState() {
-    UserStore userStore = Provider.of<UserStore>(context, listen: false);
-    userStore.loadUser();
+    loadUser();
     super.initState();
+  }
+
+  void loadUser() async {
+    UserStore userStore = Provider.of<UserStore>(context, listen: false);
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? token = await messaging.getToken();
+    userStore.loadUser(token: token);
   }
 
   @override

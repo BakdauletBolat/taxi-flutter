@@ -2,6 +2,8 @@
 
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:taxizakaz/api/order-service.dart';
 import 'package:taxizakaz/models/order.dart';
@@ -14,11 +16,24 @@ class OrderStore = OrderBase with _$OrderStore;
 
 // The store-class
 abstract class OrderBase with Store {
+  final DateTime now = DateTime.now();
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+
+  @observable
+  String? date;
+
+  OrderBase() {
+    date = formatter.format(now);
+  }
+
   @observable
   List<Order> orders = [];
 
   @observable
-  String? date;
+  bool isLoadingLastOrder = false;
+
+  @observable
+  bool isLoadingOrders = false;
 
   @observable
   int? from_city_id;
@@ -32,9 +47,36 @@ abstract class OrderBase with Store {
   @observable
   String? to_city_name;
 
+  @observable
+  Order? order;
+
   OrderService service = OrderService();
 
+  Future cancelOrder() async {
+    try {
+      bool result = await service.cancelOrder(order!.id);
+      runInAction(() => order = null);
+    } on DioError catch (e) {
+      print(e.response!.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future loadLastOrder() async {
+    runInAction(() => isLoadingLastOrder = true);
+    try {
+      Order? data = await service.getLastOrder();
+      runInAction(() => order = data);
+    } catch (e) {
+      runInAction(() => order = null);
+    } finally {
+      runInAction(() => isLoadingLastOrder = false);
+    }
+  }
+
   void loadOrders({int? type_order}) async {
+    runInAction(() => isLoadingOrders = true);
     var data = await service.getOrders(
         type_order: type_order ?? 1,
         from_city_id: from_city_id,
@@ -46,5 +88,7 @@ abstract class OrderBase with Store {
     } else {
       runInAction(() => {orders = data.item1!});
     }
+
+    runInAction(() => isLoadingOrders = false);
   }
 }

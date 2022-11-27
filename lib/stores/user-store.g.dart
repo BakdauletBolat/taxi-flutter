@@ -52,6 +52,23 @@ mixin _$UserStore on UserBase, Store {
     });
   }
 
+  late final _$isLoadingCallToPhoneAtom =
+      Atom(name: 'UserBase.isLoadingCallToPhone', context: context);
+
+  @override
+  bool get isLoadingCallToPhone {
+    _$isLoadingCallToPhoneAtom.reportRead();
+    return super.isLoadingCallToPhone;
+  }
+
+  @override
+  set isLoadingCallToPhone(bool value) {
+    _$isLoadingCallToPhoneAtom.reportWrite(value, super.isLoadingCallToPhone,
+        () {
+      super.isLoadingCallToPhone = value;
+    });
+  }
+
   late final _$isLoadingRegisterAtom =
       Atom(name: 'UserBase.isLoadingRegister', context: context);
 
@@ -130,6 +147,23 @@ mixin _$UserStore on UserBase, Store {
   set isLoadingPayments(bool value) {
     _$isLoadingPaymentsAtom.reportWrite(value, super.isLoadingPayments, () {
       super.isLoadingPayments = value;
+    });
+  }
+
+  late final _$isLoadingUploadDocumentAtom =
+      Atom(name: 'UserBase.isLoadingUploadDocument', context: context);
+
+  @override
+  bool get isLoadingUploadDocument {
+    _$isLoadingUploadDocumentAtom.reportRead();
+    return super.isLoadingUploadDocument;
+  }
+
+  @override
+  set isLoadingUploadDocument(bool value) {
+    _$isLoadingUploadDocumentAtom
+        .reportWrite(value, super.isLoadingUploadDocument, () {
+      super.isLoadingUploadDocument = value;
     });
   }
 
@@ -246,11 +280,13 @@ mixin _$UserStore on UserBase, Store {
   String toString() {
     return '''
 profile: ${profile},
+isLoadingCallToPhone: ${isLoadingCallToPhone},
 isLoadingRegister: ${isLoadingRegister},
 isLoadingVerify: ${isLoadingVerify},
 isCanRegister: ${isCanRegister},
 isLoadingCreatePayment: ${isLoadingCreatePayment},
 isLoadingPayments: ${isLoadingPayments},
+isLoadingUploadDocument: ${isLoadingUploadDocument},
 phone: ${phone},
 otp: ${otp},
 error: ${error},

@@ -175,6 +175,38 @@ mixin _$CreateOrderStore on CreateOrderBase, Store {
     });
   }
 
+  late final _$city_to_city_coinAtom =
+      Atom(name: 'CreateOrderBase.city_to_city_coin', context: context);
+
+  @override
+  int? get city_to_city_coin {
+    _$city_to_city_coinAtom.reportRead();
+    return super.city_to_city_coin;
+  }
+
+  @override
+  set city_to_city_coin(int? value) {
+    _$city_to_city_coinAtom.reportWrite(value, super.city_to_city_coin, () {
+      super.city_to_city_coin = value;
+    });
+  }
+
+  late final _$city_to_city_priceAtom =
+      Atom(name: 'CreateOrderBase.city_to_city_price', context: context);
+
+  @override
+  CityToCityPrice? get city_to_city_price {
+    _$city_to_city_priceAtom.reportRead();
+    return super.city_to_city_price;
+  }
+
+  @override
+  set city_to_city_price(CityToCityPrice? value) {
+    _$city_to_city_priceAtom.reportWrite(value, super.city_to_city_price, () {
+      super.city_to_city_price = value;
+    });
+  }
+
   late final _$errorAtom =
       Atom(name: 'CreateOrderBase.error', context: context);
 
@@ -191,6 +223,22 @@ mixin _$CreateOrderStore on CreateOrderBase, Store {
     });
   }
 
+  late final _$isLoadingCreateAtom =
+      Atom(name: 'CreateOrderBase.isLoadingCreate', context: context);
+
+  @override
+  bool get isLoadingCreate {
+    _$isLoadingCreateAtom.reportRead();
+    return super.isLoadingCreate;
+  }
+
+  @override
+  set isLoadingCreate(bool value) {
+    _$isLoadingCreateAtom.reportWrite(value, super.isLoadingCreate, () {
+      super.isLoadingCreate = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
@@ -204,7 +252,10 @@ price: ${price},
 to_address: ${to_address},
 from_address: ${from_address},
 comment: ${comment},
+city_to_city_coin: ${city_to_city_coin},
+city_to_city_price: ${city_to_city_price},
 error: ${error},
+isLoadingCreate: ${isLoadingCreate},
 isCreate: ${isCreate}
     ''';
   }

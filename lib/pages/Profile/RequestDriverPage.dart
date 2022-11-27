@@ -6,8 +6,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/BAppBar.dart';
 import 'package:taxizakaz/pages/PreviewDocumentsPage.dart';
-import 'package:taxizakaz/pages/ProfileEditPage.dart';
-import 'package:taxizakaz/pages/UploadDocumentsPage.dart';
+import 'package:taxizakaz/pages/Profile/ProfileEditPage.dart';
+import 'package:taxizakaz/pages/Profile/UploadDocumentsPage.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 
 class RequestDriverPage extends StatefulWidget {
@@ -20,63 +20,68 @@ class RequestDriverPage extends StatefulWidget {
 class _RequestDriverPageState extends State<RequestDriverPage> {
   int _index = 0;
 
+  Widget renderUserDocumentsNotNull() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.check),
+            const SizedBox(
+              width: 10,
+            ),
+            SizedBox(
+                width: MediaQuery.of(context).size.width - 150,
+                child: const Text(
+                    'Документы загружены, ждите ответа от менеджеров')),
+          ],
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        CupertinoButton.filled(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: const Text('Смотреть документы'),
+            onPressed: () {
+              var route = CupertinoPageRoute(builder: (context) {
+                return const PreviewDocumentsPage();
+              });
+              Navigator.of(context).push(route);
+            })
+      ],
+    );
+  }
+
+  Widget renderVerificationStep() {
+    UserStore userStore = Provider.of<UserStore>(context, listen: false);
+
+    if (userStore.userDocumentsNotNull) {
+      return renderUserDocumentsNotNull();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Загрузите документы для верификацию водителя'),
+        const SizedBox(
+          height: 20,
+        ),
+        CupertinoButton.filled(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: const Text('Перейти'),
+            onPressed: () {
+              var route = CupertinoPageRoute(builder: (context) {
+                return const UploadDocumentsPage();
+              });
+              Navigator.of(context).push(route);
+            })
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
-
-    Widget renderVerificationStep() {
-      if (userStore.userDocumentsNotNull) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.check),
-                const SizedBox(
-                  width: 10,
-                ),
-                SizedBox(
-                    width: MediaQuery.of(context).size.width - 150,
-                    child: const Text(
-                        'Документы загружены, ждите ответа от менеджеров')),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            CupertinoButton.filled(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: const Text('Смотреть документы'),
-                onPressed: () {
-                  var route = CupertinoPageRoute(builder: (context) {
-                    return const PreviewDocumentsPage();
-                  });
-                  Navigator.of(context).push(route);
-                })
-          ],
-        );
-      }
-      return Observer(builder: ((context) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Загрузите документы для верификацию водителя'),
-            const SizedBox(
-              height: 20,
-            ),
-            CupertinoButton.filled(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: const Text('Перейти'),
-                onPressed: () {
-                  var route = CupertinoPageRoute(builder: (context) {
-                    return const UploadDocumentsPage();
-                  });
-                  Navigator.of(context).push(route);
-                })
-          ],
-        );
-      }));
-    }
 
     Widget renderProfileInfoStep() {
       return Observer(
@@ -174,7 +179,9 @@ class _RequestDriverPageState extends State<RequestDriverPage> {
                 title: const Text('Верификация авто и водителя'),
                 content: Container(
                     alignment: Alignment.centerLeft,
-                    child: renderVerificationStep()),
+                    child: Observer(builder: (context) {
+                      return renderVerificationStep();
+                    })),
               ),
             ],
           ),

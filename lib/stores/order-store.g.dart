@@ -9,6 +9,21 @@ part of 'order-store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$OrderStore on OrderBase, Store {
+  late final _$dateAtom = Atom(name: 'OrderBase.date', context: context);
+
+  @override
+  String? get date {
+    _$dateAtom.reportRead();
+    return super.date;
+  }
+
+  @override
+  set date(String? value) {
+    _$dateAtom.reportWrite(value, super.date, () {
+      super.date = value;
+    });
+  }
+
   late final _$ordersAtom = Atom(name: 'OrderBase.orders', context: context);
 
   @override
@@ -24,18 +39,35 @@ mixin _$OrderStore on OrderBase, Store {
     });
   }
 
-  late final _$dateAtom = Atom(name: 'OrderBase.date', context: context);
+  late final _$isLoadingLastOrderAtom =
+      Atom(name: 'OrderBase.isLoadingLastOrder', context: context);
 
   @override
-  String? get date {
-    _$dateAtom.reportRead();
-    return super.date;
+  bool get isLoadingLastOrder {
+    _$isLoadingLastOrderAtom.reportRead();
+    return super.isLoadingLastOrder;
   }
 
   @override
-  set date(String? value) {
-    _$dateAtom.reportWrite(value, super.date, () {
-      super.date = value;
+  set isLoadingLastOrder(bool value) {
+    _$isLoadingLastOrderAtom.reportWrite(value, super.isLoadingLastOrder, () {
+      super.isLoadingLastOrder = value;
+    });
+  }
+
+  late final _$isLoadingOrdersAtom =
+      Atom(name: 'OrderBase.isLoadingOrders', context: context);
+
+  @override
+  bool get isLoadingOrders {
+    _$isLoadingOrdersAtom.reportRead();
+    return super.isLoadingOrders;
+  }
+
+  @override
+  set isLoadingOrders(bool value) {
+    _$isLoadingOrdersAtom.reportWrite(value, super.isLoadingOrders, () {
+      super.isLoadingOrders = value;
     });
   }
 
@@ -103,15 +135,33 @@ mixin _$OrderStore on OrderBase, Store {
     });
   }
 
+  late final _$orderAtom = Atom(name: 'OrderBase.order', context: context);
+
+  @override
+  Order? get order {
+    _$orderAtom.reportRead();
+    return super.order;
+  }
+
+  @override
+  set order(Order? value) {
+    _$orderAtom.reportWrite(value, super.order, () {
+      super.order = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
-orders: ${orders},
 date: ${date},
+orders: ${orders},
+isLoadingLastOrder: ${isLoadingLastOrder},
+isLoadingOrders: ${isLoadingOrders},
 from_city_id: ${from_city_id},
 from_city_name: ${from_city_name},
 to_city_id: ${to_city_id},
-to_city_name: ${to_city_name}
+to_city_name: ${to_city_name},
+order: ${order}
     ''';
   }
 }

@@ -5,7 +5,13 @@ import 'package:taxizakaz/models/city.dart';
 
 class RegionService extends ApiService {
   Future<List<City>> getCities({String? name}) async {
-    var res = await api.get('/regions/city/');
+    String url = '/regions/city/?';
+    if (name != null) {
+      url += 'search=$name';
+    }
+
+    print(url);
+    var res = await api.get(url);
     List<City> cities =
         res.data.map<City>((obj) => City.fromJson(obj)).toList();
     return cities;

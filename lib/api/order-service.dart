@@ -5,11 +5,30 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:taxizakaz/api/api-service.dart';
+import 'package:taxizakaz/models/city.dart';
 import 'package:taxizakaz/models/create-order.dart';
 import 'package:taxizakaz/models/order.dart';
 import 'package:tuple/tuple.dart';
 
 class OrderService extends ApiService {
+  Future<Order?> getLastOrder() async {
+    try {
+      var res = await authApi.get('/order/get-last-order/');
+      return Order.fromJson(res.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> cancelOrder(int id) async {
+    try {
+      var res = await authApi.get('/order/cancel/${id}/');
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Tuple3<List<Order>?, String?, bool>> getOrders(
       {int type_order = 1,
       String? date_time,
@@ -32,7 +51,6 @@ class OrderService extends ApiService {
         url += 'to_city_id=$to_city_id&';
       }
 
-      log(url);
       var res = await authApi.get(url);
       List<Order> orderList =
           res.data.map<Order>((json) => Order.fromJson(json)).toList();
@@ -42,23 +60,40 @@ class OrderService extends ApiService {
     }
   }
 
-  Future<Tuple3<Order?, dynamic?, bool>> createOrder(
-      CreateOrder createOrder) async {
+  Future<Order?> createOrder(CreateOrder createOrder) async {
     try {
-      var res = await authApi.post('/order/order-create/',
-          data: createOrder.toJson());
-
-      if (res.statusCode == 200) {
-        return Tuple3.fromList([Order.fromJson(res.data), null, false]);
-      } else {
-        return Tuple3.fromList([null, res.data, false]);
-      }
-    } on DioError catch (e) {
-      print(e);
-      return Tuple3.fromList([null, e.response!.data, true]);
+      var res =
+          await authApi.post('/order/create/', data: createOrder.toJson());
+      print(res.data);
+      return Order.fromJson(res.data);
     } catch (e) {
-      print(e);
-      return Tuple3.fromList([null, e.toString(), true]);
+      rethrow;
     }
+  }
+
+  Future<CityToCityPrice?> getCityToCityPrice(
+      {required int from_city_id, required int to_city_id}) async {
+    try {
+      var res = await authApi.post('/order/city-to-city-price/',
+          data: {'from_city_id': from_city_id, 'to_city_id': to_city_id});
+      return CityToCityPrice.fromJson(res.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> getStatusToPhone(
+      {required int from_city_id, required int to_city_id}) async {
+    try {
+      var res = await authApi.post('/order/get-status-to-call-phone/',
+          data: {'from_city_id': from_city_id, 'to_city_id': to_city_id});
+      if (res.data['status'] == true) {
+        return true;
+      }
+    } catch (e) {
+      return false;
+    }
+
+    return false;
   }
 }

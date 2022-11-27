@@ -1,19 +1,51 @@
 // ignore_for_file: file_names
 
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:taxizakaz/api/order-service.dart';
+import 'package:taxizakaz/dialogs/NotAcceptableDialog.dart';
+import 'package:taxizakaz/hooks/showSnackBar.dart';
 import 'package:taxizakaz/models/order.dart';
+import 'package:taxizakaz/stores/user-store.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class OrderItem extends StatelessWidget {
   OrderItem({Key? key, required this.order}) : super(key: key);
 
   final Order order;
-  final DateFormat dateFormat = DateFormat("dd MMMM yyyy, HH:mm");
+  final DateFormat dateFormat = DateFormat("dd.MM.yyyy, HH:mm");
 
   @override
   Widget build(BuildContext context) {
+    UserStore userStore = Provider.of<UserStore>(context, listen: false);
+    void callToPhone() async {
+      userStore.setIsCallToPhone(true);
+      OrderService orderService = OrderService();
+
+      bool status = await orderService.getStatusToPhone(
+          from_city_id: order.from_city.id!, to_city_id: order.to_city.id!);
+
+      if (status || userStore.profile?.type_user == 2) {
+        try {
+          launchUrlString('tel:${order.user.phone}');
+        } catch (e) {
+          showSnackBar(context, 'Не верный телефон');
+        }
+        userStore.setIsCallToPhone(false);
+      } else {
+        showDialog(
+            context: context,
+            builder: (context) => NotAcceptableDialog(order: order));
+        userStore.setIsCallToPhone(false);
+      }
+    }
+
     Widget renderPhoto() {
       if (order.user.profile_info?.avatar != null) {
         return ClipRRect(
@@ -124,15 +156,25 @@ class OrderItem extends StatelessWidget {
           ],
         ),
         GestureDetector(
+          onTap: callToPhone,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5),
             child: Container(
               color: Colors.green,
+              height: 40,
+              width: 40,
               padding: const EdgeInsets.all(7),
-              child: const Icon(
-                Icons.phone,
-                color: Colors.white,
-              ),
+              child: Observer(builder: (context) {
+                if (userStore.isLoadingCallToPhone) {
+                  return const CupertinoActivityIndicator(
+                    color: Colors.white,
+                  );
+                }
+                return const Icon(
+                  Icons.phone,
+                  color: Colors.white,
+                );
+              }),
             ),
           ),
         )

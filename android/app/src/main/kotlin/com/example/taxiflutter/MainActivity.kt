@@ -1,4 +1,4 @@
-package com.example.taxizakaz
+package com.baqdauled.taxizakaz
 
 import io.flutter.embedding.android.FlutterActivity
 

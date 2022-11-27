@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:493521214399:android:7a94b90b1d1dc3c69bdf0a",
+        "mobilesdk_app_id": "1:493521214399:android:04f3537ec4a531029bdf0a",
         "android_client_info": {
-          "package_name": "com.example.taxizakaz"
+          "package_name": "com.baqdauled.taxizakaz"
         }
       },
       "oauth_client": [
@@ -29,6 +29,13 @@
             {
               "client_id": "493521214399-8mg6i3525gjolrcgktfj5a8uhu0huvpf.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "493521214399-hjmg01bqt4e1o6o2dmi3h213fsjvqglg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.baqdauled.taxizakaz"
+              }
             }
           ]
         }

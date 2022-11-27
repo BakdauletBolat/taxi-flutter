@@ -26,3 +26,23 @@ class City {
 
   Map<String, dynamic> toJson() => _$CityToJson(this);
 }
+
+@JsonSerializable()
+@JsonSerializable()
+class CityToCityPrice {
+  final int id;
+  final int coin;
+  final City from_city;
+  final City to_city;
+
+  CityToCityPrice(
+      {required this.id,
+      required this.coin,
+      required this.from_city,
+      required this.to_city});
+
+  factory CityToCityPrice.fromJson(Map<String, dynamic> json) =>
+      _$CityToCityPriceFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CityToCityPriceToJson(this);
+}

@@ -19,9 +19,11 @@ class UserService extends ApiService {
     }
   }
 
-  FutureOr<Profile?> getUser() async {
+  FutureOr<Profile?> getUser({String? token}) async {
     try {
-      var res = await authApi.get('/users/me/');
+      var res = await authApi.get(
+        '/users/me/?token=$token',
+      );
       return Profile.fromJson(res.data);
     } catch (e) {
       print(e.toString());
@@ -40,8 +42,7 @@ class UserService extends ApiService {
     }
   }
 
-  Future<Tuple3<Profile?, String?, bool>> requestUserDocument(
-      UserDocumentsCreate userDocument) async {
+  Future<Profile?> requestUserDocument(UserDocumentsCreate userDocument) async {
     try {
       var formData = FormData.fromMap({
         'passport_photo_back':
@@ -51,11 +52,10 @@ class UserService extends ApiService {
         'car_passport': MultipartFile.fromFileSync(userDocument.car_passport!),
       });
       var res = await authApi.post('/users/request-driver/', data: formData);
-      return Tuple3(Profile.fromJson(res.data), null, false);
-    } on DioError catch (e) {
-      return Tuple3(null, e.response!.data, true);
+
+      return Profile.fromJson(res.data);
     } catch (e) {
-      return Tuple3(null, e.toString(), true);
+      rethrow;
     }
   }
 
