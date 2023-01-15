@@ -73,8 +73,8 @@ class _CitiesListModalState extends State<CitiesListModal> {
                               regionStore.searched_cities[index].id;
                         }
 
-                        if (userStore.profile?.type_user != null &&
-                            userStore.profile?.type_user == 2) {
+                        if (userStore.user?.type_user != null &&
+                            userStore.user?.type_user == 2) {
                           var res = await openSecondModal(widget.type);
 
                           if (res == 'exit') {

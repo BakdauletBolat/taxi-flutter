@@ -10,6 +10,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/BAppBar.dart';
 import 'package:taxizakaz/components/ListTile.dart';
+import 'package:taxizakaz/components/NotFoundOrder.dart';
 import 'package:taxizakaz/components/OrderItem.dart';
 import 'package:taxizakaz/components/Select.dart';
 import 'package:taxizakaz/modals/RidePageCityList.dart';
@@ -47,7 +48,7 @@ class _RidePageState extends State<RidePage> {
   @override
   void initState() {
     OrderStore orderStore = Provider.of<OrderStore>(context, listen: false);
-    orderStore.loadOrders();
+    orderStore.loadOrders(type_order: 1);
     super.initState();
   }
 
@@ -57,22 +58,22 @@ class _RidePageState extends State<RidePage> {
 
   Map<TypeOrder, Widget> buildChildrens() {
     return <TypeOrder, Widget>{
-      TypeOrder.driver: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Text(
-          'Водителские',
-          style: TextStyle(
-              color: _selectedSegment == TypeOrder.driver
-                  ? Theme.of(context).primaryColor
-                  : Colors.white),
-        ),
-      ),
       TypeOrder.passenger: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Text(
           'Пассажирские',
           style: TextStyle(
               color: _selectedSegment == TypeOrder.passenger
+                  ? Theme.of(context).primaryColor
+                  : Colors.white),
+        ),
+      ),
+      TypeOrder.driver: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Text(
+          'Водителские',
+          style: TextStyle(
+              color: _selectedSegment == TypeOrder.driver
                   ? Theme.of(context).primaryColor
                   : Colors.white),
         ),
@@ -93,6 +94,7 @@ class _RidePageState extends State<RidePage> {
         },
         child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Observer(builder: (context) {
               return Column(
                 children: [
@@ -130,7 +132,7 @@ class _RidePageState extends State<RidePage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  if (userStore.profile?.type_user == 1)
+                  if (userStore.user?.type_user == 1)
                     CupertinoSlidingSegmentedControl<TypeOrder>(
                         backgroundColor: Theme.of(context).primaryColor,
                         thumbColor: Colors.white,
@@ -157,6 +159,9 @@ class _RidePageState extends State<RidePage> {
                                 Lottie.asset('assets/lottie/loading_car.json')),
                       );
                     }
+                    if (orderStore.orders.isEmpty) {
+                      return const NotFoundOrder();
+                    }
                     return ListView.separated(
                         physics: const NeverScrollableScrollPhysics(),
                         separatorBuilder: ((context, index) => const Divider(
@@ -170,9 +175,6 @@ class _RidePageState extends State<RidePage> {
                           return OrderItem(order: order);
                         });
                   }),
-                  const SizedBox(
-                    height: 500,
-                  )
                 ],
               );
             })),

@@ -52,6 +52,7 @@ class _WelcomePageState extends State<WelcomePage> {
       await userStore.register();
       navigateToVerifyPage(userStore);
     } catch (e) {
+      print(e);
       showSnackBar(
           context, 'Ошибка при отправка кода пожалуйсто повторите попытку');
     }

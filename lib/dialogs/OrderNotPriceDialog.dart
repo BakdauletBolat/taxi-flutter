@@ -21,7 +21,7 @@ class _ErrorDialogState extends State<OrderNotPriceDialog>
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoAlertDialog(
+    return const CupertinoAlertDialog(
         title: Text('К сожелению нет для этих направлений'));
   }
 }

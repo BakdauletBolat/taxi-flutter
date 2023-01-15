@@ -22,9 +22,12 @@ class UploadDocumentsPage extends StatefulWidget {
 class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
   final ImagePicker _picker = ImagePicker();
 
-  String? frontPassport, backPassport, carPassport;
+  String? frontPassport, backPassport, carPassportFront, carPassportBack;
 
-  XFile? frontPassportLocal, backPassportLocal, carPassportLocal;
+  XFile? frontPassportLocal,
+      backPassportLocal,
+      carPassportFrontLocal,
+      carPassportBackLocal;
 
   void pickFrontPassport() async {
     XFile? picked_file = await _picker.pickImage(source: ImageSource.gallery);
@@ -42,31 +45,45 @@ class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
     });
   }
 
-  void pickCarPassport() async {
+  void pickCarPassportFront() async {
     XFile? picked_file = await _picker.pickImage(source: ImageSource.gallery);
-    carPassport = picked_file!.path;
+    carPassportFront = picked_file!.path;
     setState(() {
-      carPassportLocal = picked_file;
+      carPassportFrontLocal = picked_file;
+    });
+  }
+
+  void pickCarPassportBack() async {
+    XFile? picked_file = await _picker.pickImage(source: ImageSource.gallery);
+    carPassportBack = picked_file!.path;
+    setState(() {
+      carPassportBackLocal = picked_file;
     });
   }
 
   void onUploadClicked() async {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
-    try {
-      await userStore.requestUserDocument(UserDocumentsCreate(
-          passport_photo_back: frontPassport,
-          passport_photo_front: frontPassport,
-          car_passport: carPassport));
+
+    await userStore.requestUserDocument(UserDocumentsCreate(
+        passport_photo_back: frontPassport,
+        passport_photo_front: backPassport,
+        car_passport_front: carPassportFront,
+        car_passport_back: carPassportBack));
+
+    if (userStore.error == null) {
+      if (!mounted) return;
       showSuccessSnackBar(context, 'Документы успешно загружены');
-    } catch (e) {
-      showSnackBar(context, e.toString());
+    } else {
+      if (!mounted) return;
+      showSnackBar(context, 'Ошибка при загрузке документа');
     }
   }
 
   bool get useDocumentsNotNull =>
       frontPassportLocal != null &&
       backPassportLocal != null &&
-      carPassportLocal != null;
+      carPassportFrontLocal != null &&
+      carPassportBackLocal != null;
 
   @override
   Widget build(BuildContext context) {
@@ -91,10 +108,16 @@ class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
             title: 'Загрузите задную часть документа',
           ),
           FilePicker(
-            onPress: pickCarPassport,
-            photo: carPassportLocal,
+            onPress: pickCarPassportFront,
+            photo: carPassportFrontLocal,
             subtitle: 'Паспорт машины',
-            title: 'Загрузите паспорт машины часть документа',
+            title: 'Загрузите передную часть паспорт машины часть документа',
+          ),
+          FilePicker(
+            onPress: pickCarPassportBack,
+            photo: carPassportBackLocal,
+            subtitle: 'Паспорт машины',
+            title: 'Загрузите задную паспорт машины часть документа',
           ),
           const SizedBox(
             height: 10,

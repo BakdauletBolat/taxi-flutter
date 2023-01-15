@@ -68,7 +68,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
       return;
     }
 
-    if (userStore.profile!.coins! < createOrderStore.city_to_city_coin!) {
+    if (userStore.user!.coins! < createOrderStore.city_to_city_coin!) {
       showDialog(
           context: context,
           builder: (context) => const OrderNotBalanceDialog());
@@ -109,7 +109,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
 
     if (createOrderStore.isCreate) {
-      if (userStore.profile?.type_user == 2) {
+      if (userStore.user?.type_user == 2) {
         createPassengerOrder();
       } else {
         createDriverOrder();
@@ -159,6 +159,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               ),
               CupertinoTextFormFieldRow(
                 padding: const EdgeInsets.symmetric(vertical: 5),
+                keyboardType: TextInputType.number,
                 placeholder: 'Цена',
                 onChanged: (value) {
                   createOrderStore.price = int.tryParse(value);
@@ -222,7 +223,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                         child: CupertinoButton.filled(
                       onPressed: onOrderCreateClicked,
                       child: Observer(builder: (context) {
-                        if (userStore.profile?.type_user == 2) {
+                        if (userStore.user?.type_user == 2) {
                           return const Text('Заказать');
                         }
                         return const Text('Создать заказ');
@@ -233,7 +234,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               ),
               Observer(
                 builder: (context) {
-                  if (userStore.profile?.type_user == 1) {
+                  if (userStore.user?.type_user == 1) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(

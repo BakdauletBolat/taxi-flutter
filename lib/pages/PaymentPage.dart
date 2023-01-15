@@ -1,18 +1,21 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/BAppBar.dart';
+import 'package:taxizakaz/components/NotFoundOrder.dart';
 import 'package:taxizakaz/models/profile-model.dart';
+import 'package:taxizakaz/pages/MessagePage.dart';
 import 'package:taxizakaz/pages/SuccessPaymentPage.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 
 class PaymentPage extends StatefulWidget {
-  const PaymentPage({Key? key}) : super(key: key);
+  const PaymentPage({Key? key, this.coin}) : super(key: key);
+
+  final int? coin;
 
   @override
   State<PaymentPage> createState() => _ProfilePageState();
@@ -79,19 +82,25 @@ class _ProfilePageState extends State<PaymentPage> {
     );
   }
 
+  void routeToMessagePage() {
+    var route = CupertinoPageRoute(builder: (context) => const MessagePage());
+    Navigator.of(context).push(route);
+  }
+
   bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     UserStore userStore = Provider.of<UserStore>(context);
 
-    TextEditingController coinController = TextEditingController();
+    TextEditingController coinController = TextEditingController(
+        text: widget.coin != null ? widget.coin.toString() : '');
     final _formKey = GlobalKey<FormState>();
 
     Future submitCreatePayment() async {
       if (_formKey.currentState!.validate()) {
         Payment? payment = await userStore.createPayment(
-            userStore.profile!.id!, coinController.text);
+            userStore.user!.id!, coinController.text);
 
         if (payment != null && mounted) {
           var route = CupertinoPageRoute(
@@ -104,20 +113,68 @@ class _ProfilePageState extends State<PaymentPage> {
 
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: const BAppBar(
-          title: 'Платежи',
+        appBar: BAppBar(
+          title: 'Кабинет',
           type: 'transparent',
+          actions: [
+            IconButton(
+                onPressed: routeToMessagePage, icon: const Icon(Icons.send))
+          ],
         ),
         body: RefreshIndicator(
           onRefresh: userStore.loadUserPayments,
           child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(
-                  height: 20,
+                  height: 30,
+                ),
+                Observer(builder: (context) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          Icon(
+                            Icons.attach_money_rounded,
+                            size: 30,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          Text(
+                            "${userStore.user?.coins!.toString() ?? '0'}₸",
+                            style: const TextStyle(
+                                fontSize: 25, fontWeight: FontWeight.bold),
+                          ),
+                          const Text('Баланс')
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      Column(
+                        children: [
+                          Icon(
+                            Icons.watch_later_outlined,
+                            size: 30,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          Text(
+                            "${userStore.user?.coins_expected!.toString() ?? '0'}₸",
+                            style: const TextStyle(
+                                fontSize: 25, fontWeight: FontWeight.bold),
+                          ),
+                          const Text('Ожидается')
+                        ],
+                      ),
+                    ],
+                  );
+                }),
+                const SizedBox(
+                  height: 30,
                 ),
                 Form(
                   key: _formKey,
@@ -140,19 +197,6 @@ class _ProfilePageState extends State<PaymentPage> {
                 const SizedBox(
                   height: 25,
                 ),
-                Observer(builder: (context) {
-                  if (userStore.error != null) {
-                    return Column(
-                      children: [
-                        Text(userStore.error.toString()),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                      ],
-                    );
-                  }
-                  return const SizedBox.shrink();
-                }),
                 Row(
                   children: [
                     Expanded(
@@ -180,6 +224,9 @@ class _ProfilePageState extends State<PaymentPage> {
                   height: 20,
                 ),
                 Observer(builder: (context) {
+                  if (userStore.userPayments.isEmpty) {
+                    return const NotFoundOrder();
+                  }
                   if (userStore.isLoadingPayments) {
                     return const SizedBox(
                       height: 200,

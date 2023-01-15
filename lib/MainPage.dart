@@ -3,18 +3,15 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
+
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_notification/in_app_notification.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/Notification.dart';
-import 'package:taxizakaz/pages/ActiveOrderPage.dart';
-import 'package:taxizakaz/pages/CreateOrderPage.dart';
 import 'package:taxizakaz/pages/PaymentPage.dart';
 import 'package:taxizakaz/pages/Profile/ProfilePage.dart';
 import 'package:taxizakaz/pages/RidePage.dart';
 import 'package:taxizakaz/pages/StartPage.dart';
-import 'package:taxizakaz/stores/order-store.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 
 class MainPage extends StatefulWidget {
@@ -65,8 +62,8 @@ class _MyHomePageState extends State<MainPage> {
   List<Widget> widgetOptions = <Widget>[
     const StartPage(),
     const RidePage(),
-    const ProfilePage(),
     const PaymentPage(),
+    const ProfilePage(),
   ];
 
   @override
@@ -91,12 +88,12 @@ class _MyHomePageState extends State<MainPage> {
               label: 'Попутки',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.supervised_user_circle),
-              label: 'Профиль',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.payment),
               label: 'Платежи',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.supervised_user_circle),
+              label: 'Профиль',
             ),
           ],
           currentIndex: _selectedIndex,

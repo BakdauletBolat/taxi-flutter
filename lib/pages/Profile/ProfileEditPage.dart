@@ -10,7 +10,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/BAppBar.dart';
+import 'package:taxizakaz/components/ProfileImage.dart';
 import 'package:taxizakaz/components/StickyErrorHeader.dart';
+import 'package:taxizakaz/hooks/showSnackBar.dart';
 import 'package:taxizakaz/models/profile-model.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 
@@ -33,13 +35,16 @@ class _ProfilePageState extends State<ProfileEditPage> {
 
   void pickImage() async {
     XFile? avatar_not_state =
-        await _picker.pickImage(source: ImageSource.gallery);
-    avatar_form = await MultipartFile.fromFile(
-        File(avatar_not_state!.path).path,
-        filename: avatar_not_state.name);
-    setState(() {
-      avatar = avatar_not_state;
-    });
+        await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+
+    if (avatar_not_state != null) {
+      avatar_form = await MultipartFile.fromFile(
+          File(avatar_not_state!.path).path,
+          filename: avatar_not_state.name);
+      setState(() {
+        avatar = avatar_not_state;
+      });
+    }
   }
 
   Widget _renderImage() {
@@ -52,28 +57,19 @@ class _ProfilePageState extends State<ProfileEditPage> {
       );
     }
 
-    return Observer(builder: (context) {
-      UserStore userStore = Provider.of<UserStore>(context, listen: false);
-      return Ex.ExtendedImage.network(
-        userStore.profile?.profile_info?.avatar ??
-            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWVufGVufDB8fDB8fA%3D%3D&w=1000&q=80',
-        width: 142,
-        height: 142,
-        fit: BoxFit.cover,
-      );
-    });
+    return const ProfileImage();
   }
 
   @override
   void initState() {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
 
-    first_name_controller = TextEditingController(
-        text: userStore.profile?.profile_info?.first_name);
+    first_name_controller =
+        TextEditingController(text: userStore.user?.user_info?.first_name);
     last_name_controller =
-        TextEditingController(text: userStore.profile?.profile_info?.last_name);
+        TextEditingController(text: userStore.user?.user_info?.last_name);
     email_controller =
-        TextEditingController(text: userStore.profile?.profile_info?.email);
+        TextEditingController(text: userStore.user?.user_info?.email);
     super.initState();
   }
 
@@ -122,13 +118,9 @@ class _ProfilePageState extends State<ProfileEditPage> {
                 color: Colors.white,
                 child: Column(
                   children: [
-                    Observer(builder: (context) {
-                      return StickyErrorHeader(
-                          error: userStore.errorUpdateInfo);
-                    }),
                     ListTile(
-                      subtitle: Text(
-                          userStore.profile?.phone ?? 'Телеофон не указано'),
+                      subtitle:
+                          Text(userStore.user?.phone ?? 'Телеофон не указано'),
                       title: const Text('Телеофон'),
                     ),
                     Padding(
@@ -159,18 +151,21 @@ class _ProfilePageState extends State<ProfileEditPage> {
                             Expanded(
                               child: CupertinoButton.filled(
                                 onPressed: () async {
-                                  await userStore.updateUserInfo(
-                                      ProfileInfoCreate(
-                                          email: email_controller?.text,
-                                          avatar: avatar_form,
-                                          first_name:
-                                              first_name_controller?.text,
-                                          last_name:
-                                              last_name_controller?.text));
+                                  await userStore.updateUserInfo(UserInfoCreate(
+                                      email: email_controller?.text,
+                                      avatar: avatar_form,
+                                      first_name: first_name_controller?.text,
+                                      last_name: last_name_controller?.text));
 
                                   if (userStore.errorUpdateInfo == null) {
                                     if (!mounted) return;
+                                    showSuccessSnackBar(
+                                        context, 'Данные успешно обновлены');
                                     Navigator.of(context).pop();
+                                  } else {
+                                    if (!mounted) return;
+                                    showSnackBar(
+                                        context, 'Ошибка при обновлений');
                                   }
                                 },
                                 child: const Text('Сохранить'),

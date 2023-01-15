@@ -50,10 +50,11 @@ class OrderService extends ApiService {
       if (to_city_id != null) {
         url += 'to_city_id=$to_city_id&';
       }
-
+      print(url);
       var res = await authApi.get(url);
-      List<Order> orderList =
-          res.data.map<Order>((json) => Order.fromJson(json)).toList();
+      List<Order> orderList = res.data['results']
+          .map<Order>((json) => Order.fromJson(json))
+          .toList();
       return Tuple3.fromList([orderList, null, false]);
     } on DioError catch (e) {
       return Tuple3.fromList([null, e.message, true]);
@@ -64,7 +65,6 @@ class OrderService extends ApiService {
     try {
       var res =
           await authApi.post('/order/create/', data: createOrder.toJson());
-      print(res.data);
       return Order.fromJson(res.data);
     } catch (e) {
       rethrow;
@@ -74,7 +74,7 @@ class OrderService extends ApiService {
   Future<CityToCityPrice?> getCityToCityPrice(
       {required int from_city_id, required int to_city_id}) async {
     try {
-      var res = await authApi.post('/order/city-to-city-price/',
+      var res = await authApi.post('/order/access/',
           data: {'from_city_id': from_city_id, 'to_city_id': to_city_id});
       return CityToCityPrice.fromJson(res.data);
     } catch (e) {

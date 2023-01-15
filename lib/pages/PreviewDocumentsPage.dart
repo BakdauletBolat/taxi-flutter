@@ -65,7 +65,7 @@ class _UploadDocumentsPageState extends State<PreviewDocumentsPage> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: ExtendedImage.network(
-                    userStore.profile!.user_document!.passport_photo_front!,
+                    userStore.user!.user_document!.passport_photo_front!,
                     width: MediaQuery.of(context).size.width,
                     height: 200,
                     fit: BoxFit.cover,
@@ -89,7 +89,7 @@ class _UploadDocumentsPageState extends State<PreviewDocumentsPage> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: ExtendedImage.network(
-                    userStore.profile!.user_document!.passport_photo_front!,
+                    userStore.user!.user_document!.passport_photo_front!,
                     width: MediaQuery.of(context).size.width,
                     height: 200,
                     fit: BoxFit.cover,
@@ -104,7 +104,7 @@ class _UploadDocumentsPageState extends State<PreviewDocumentsPage> {
                   height: 10,
                 ),
                 const Text(
-                  'Паспорт автомобиля',
+                  'Паспорт автомобиля фронт',
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(
@@ -113,7 +113,31 @@ class _UploadDocumentsPageState extends State<PreviewDocumentsPage> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: ExtendedImage.network(
-                    userStore.profile!.user_document!.car_passport!,
+                    userStore.user!.user_document!.car_passport_front!,
+                    width: MediaQuery.of(context).size.width,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                const Text(
+                  'Паспорт автомобиля задняя',
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: ExtendedImage.network(
+                    userStore.user!.user_document!.car_passport_back!,
                     width: MediaQuery.of(context).size.width,
                     height: 200,
                     fit: BoxFit.cover,

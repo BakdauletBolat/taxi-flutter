@@ -86,7 +86,7 @@ class _RequestDriverPageState extends State<RequestDriverPage> {
     Widget renderProfileInfoStep() {
       return Observer(
         builder: (context) {
-          if (userStore.profileNotNull) {
+          if (userStore.userNotNull) {
             return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -147,7 +147,7 @@ class _RequestDriverPageState extends State<RequestDriverPage> {
               }
             },
             onStepTapped: (int index) {
-              if (index == 0 && userStore.profileNotNull) {
+              if (index == 0 && userStore.userNotNull) {
                 setState(() {
                   _index = index;
                 });
@@ -162,8 +162,8 @@ class _RequestDriverPageState extends State<RequestDriverPage> {
             },
             steps: <Step>[
               Step(
-                isActive: _index == 0 || userStore.profileNotNull,
-                state: userStore.profileNotNull
+                isActive: _index == 0 || userStore.userNotNull,
+                state: userStore.userNotNull
                     ? StepState.complete
                     : StepState.indexed,
                 title: const Text('Информация о пользователя'),
@@ -173,7 +173,7 @@ class _RequestDriverPageState extends State<RequestDriverPage> {
               ),
               Step(
                 isActive: _index == 1 || userStore.userDocumentsNotNull,
-                state: userStore.profileNotNull
+                state: userStore.userNotNull
                     ? StepState.complete
                     : StepState.indexed,
                 title: const Text('Верификация авто и водителя'),

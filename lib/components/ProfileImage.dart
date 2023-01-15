@@ -10,11 +10,10 @@ class ProfileImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
-
     return ClipRRect(
       borderRadius: BorderRadius.circular(142),
       child: Observer(builder: (context) {
-        if (userStore.profile?.profile_info?.avatar == null) {
+        if (userStore.user?.user_info?.avatar == null) {
           return Image.asset(
             'assets/not-found.png',
             width: 142,
@@ -23,7 +22,7 @@ class ProfileImage extends StatelessWidget {
           );
         }
         return ExtendedImage.network(
-          userStore.profile?.profile_info?.avatar ??
+          userStore.user?.user_info?.avatar ??
               'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWVufGVufDB8fDB8fA%3D%3D&w=1000&q=80',
           width: 142,
           height: 142,

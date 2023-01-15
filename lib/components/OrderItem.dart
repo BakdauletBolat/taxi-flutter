@@ -31,7 +31,7 @@ class OrderItem extends StatelessWidget {
       bool status = await orderService.getStatusToPhone(
           from_city_id: order.from_city.id!, to_city_id: order.to_city.id!);
 
-      if (status || userStore.profile?.type_user == 2) {
+      if (status || userStore.user?.type_user == 2) {
         try {
           launchUrlString('tel:${order.user.phone}');
         } catch (e) {
@@ -47,14 +47,14 @@ class OrderItem extends StatelessWidget {
     }
 
     Widget renderPhoto() {
-      if (order.user.profile_info?.avatar != null) {
+      if (order.user.user_info?.avatar != null) {
         return ClipRRect(
           borderRadius: BorderRadius.circular(50),
-          child: ExtendedImage.network(order.user.profile_info!.avatar!,
+          child: ExtendedImage.network(order.user.user_info!.avatar!,
               fit: BoxFit.cover, width: 56, height: 56),
         );
       }
-      return Image.asset('assets/profile-photo.png', width: 56, height: 56);
+      return Image.asset('assets/not-found.png', width: 56, height: 56);
     }
 
     return Row(
@@ -74,8 +74,8 @@ class OrderItem extends StatelessWidget {
                 SizedBox(
                     width: 80,
                     child: Text(
-                      order.user.profile_info?.first_name != null
-                          ? order.user.profile_info!.first_name!
+                      order.user.user_info?.first_name != null
+                          ? order.user.user_info!.first_name!
                           : '',
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 12),
@@ -84,8 +84,8 @@ class OrderItem extends StatelessWidget {
                 SizedBox(
                     width: 80,
                     child: Text(
-                      order.user.profile_info?.last_name != null
-                          ? order.user.profile_info!.last_name!
+                      order.user.user_info?.last_name != null
+                          ? order.user.user_info!.last_name!
                           : '',
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 12),
@@ -119,23 +119,21 @@ class OrderItem extends StatelessWidget {
                 Text(
                   order.to_city.name,
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                RatingBarIndicator(
-                  rating: 4,
-                  itemBuilder: (context, index) => const Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  itemCount: 5,
-                  itemSize: 14,
-                ),
+
+                // RatingBarIndicator(
+                //   rating: 4,
+                //   itemBuilder: (context, index) => const Icon(
+                //     Icons.star,
+                //     color: Colors.amber,
+                //   ),
+                //   itemCount: 5,
+                //   itemSize: 14,
+                // ),
                 const SizedBox(
                   height: 10,
                 ),
                 Builder(builder: (context) {
-                  if (order.comment != null) {
+                  if (order.comment != null && order.comment != '') {
                     return Column(
                       children: [
                         SizedBox(

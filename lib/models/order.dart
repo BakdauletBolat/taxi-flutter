@@ -25,7 +25,7 @@ class Order {
   final int id, price;
   final City from_city, to_city;
   final TypeOrder type_order;
-  final Profile user;
+  final User user;
   final DateTime date_time;
   final bool is_active;
 

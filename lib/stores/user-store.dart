@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxizakaz/api/user-service.dart';
+import 'package:taxizakaz/models/message.dart';
 import 'package:taxizakaz/models/profile-model.dart';
 
 // Include generated file
@@ -17,29 +18,30 @@ class UserStore = UserBase with _$UserStore;
 // The store-class
 abstract class UserBase with Store {
   @observable
-  Profile? profile;
+  User? user;
 
   @observable
   bool isLoadingCallToPhone = false;
 
   @computed
-  bool get isAuth => profile == null ? false : true;
+  bool get isAuth => user == null ? false : true;
 
   @computed
   bool get isSubsriptionDriver => DateTime.now().isBefore(DateTime.parse(
-      profile?.driver_can_view_order_date?.toString() ?? '2022-01-01'));
+      user?.driver_can_view_order_date?.toString() ?? '2022-01-01'));
 
   @computed
-  bool get profileNotNull =>
-      profile?.profile_info?.avatar != null &&
-      profile?.profile_info?.first_name != null &&
-      profile?.profile_info?.last_name != null;
+  bool get userNotNull =>
+      user?.user_info?.avatar != null &&
+      user?.user_info?.first_name != null &&
+      user?.user_info?.last_name != null;
 
   @computed
   bool get userDocumentsNotNull =>
-      profile?.user_document?.passport_photo_back != null &&
-      profile?.user_document?.passport_photo_front != null &&
-      profile?.user_document?.car_passport != null;
+      user?.user_document?.passport_photo_back != null &&
+      user?.user_document?.passport_photo_front != null &&
+      user?.user_document?.passport_photo_back != null &&
+      user?.user_document?.car_passport_back != null;
 
   @observable
   bool isLoadingRegister = false;
@@ -49,6 +51,9 @@ abstract class UserBase with Store {
 
   @observable
   bool isCanRegister = false;
+
+  @observable
+  bool isLoadingMessage = false;
 
   @observable
   bool isLoadingCreatePayment = false;
@@ -80,16 +85,37 @@ abstract class UserBase with Store {
   @observable
   List<Payment> userPayments = [];
 
+  @observable
+  List<Message> userMessages = [];
+
   UserService userService = UserService();
 
   Future loadUser({String? token}) async {
     try {
       SharedPreferences instance = await SharedPreferences.getInstance();
       if (instance.getString('token') != null) {
-        Profile? profile = await userService.getUser(token: token);
+        User? user = await userService.getUser(token: token);
         runInAction(() {
-          this.profile = profile;
+          this.user = user;
         });
+      }
+    } finally {}
+  }
+
+  Future changeUserType() async {
+    try {
+      int change_user_type = 1;
+      if (user!.type_user! == 1) {
+        change_user_type = 2;
+      } else if (user!.type_user == 2) {
+        change_user_type = 1;
+      }
+
+      User? userData = await userService.changeUserType(
+          change_user_type_id: change_user_type, user_id: user!.id!);
+
+      if (userData != null) {
+        runInAction(() => user = userData);
       }
     } finally {}
   }
@@ -112,6 +138,18 @@ abstract class UserBase with Store {
             error = null,
             isLoadingPayments = false
           });
+    }
+  }
+
+  Future loadUserMessages() async {
+    runInAction(() => {isLoadingMessage = true});
+    try {
+      List<Message> messages = await userService.getUserMessages();
+      runInAction(() => userMessages = messages);
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      runInAction(() => isLoadingMessage = false);
     }
   }
 
@@ -155,9 +193,8 @@ abstract class UserBase with Store {
     }
 
     try {
-      final profileObject =
-          await userService.verifyUser(phone: phone!, otp: otp!);
-      runInAction(() => profile = profileObject);
+      final userObject = await userService.verifyUser(phone: phone!, otp: otp!);
+      runInAction(() => user = userObject);
     } catch (e) {
       runInAction(() => {isLoadingVerify = false});
       rethrow;
@@ -167,10 +204,10 @@ abstract class UserBase with Store {
   Future requestUserDocument(UserDocumentsCreate userDocumentsCreate) async {
     runInAction(() => isLoadingUploadDocument = true);
     try {
-      final profileObject =
+      final userObject =
           await userService.requestUserDocument(userDocumentsCreate);
       runInAction(() {
-        profile = profileObject;
+        user = userObject;
         error = null;
       });
     } catch (e) {
@@ -180,11 +217,11 @@ abstract class UserBase with Store {
     }
   }
 
-  Future updateUserInfo(ProfileInfoCreate profileInfo) async {
+  Future updateUserInfo(UserInfoCreate userInfo) async {
     try {
-      Profile? profile = await userService.updateProfileInfo(profileInfo);
+      User? user = await userService.updateUserInfo(userInfo);
       runInAction(() {
-        this.profile = profile;
+        this.user = user;
         errorUpdateInfo = null;
       });
     } on DioError catch (e) {
@@ -219,6 +256,6 @@ abstract class UserBase with Store {
   void logout() async {
     SharedPreferences instance = await SharedPreferences.getInstance();
     instance.remove('token');
-    runInAction(() => profile = null);
+    runInAction(() => user = null);
   }
 }

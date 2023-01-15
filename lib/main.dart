@@ -1,9 +1,7 @@
-import 'dart:developer';
-
+import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_notification/in_app_notification.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -67,10 +65,20 @@ class TaxiApp extends StatefulWidget {
 }
 
 class _TaxiAppState extends State<TaxiApp> {
+  late Timer timer;
   @override
   void initState() {
     loadUser();
+    interval();
     super.initState();
+  }
+
+  void interval() {
+    UserStore userStore = Provider.of<UserStore>(context, listen: false);
+    timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      userStore.loadUserMessages();
+    });
+    // timer.cancel();
   }
 
   void loadUser() async {
@@ -78,6 +86,12 @@ class _TaxiAppState extends State<TaxiApp> {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     String? token = await messaging.getToken();
     userStore.loadUser(token: token);
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   @override

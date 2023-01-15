@@ -22,13 +22,12 @@ mixin _$UserStore on UserBase, Store {
           Computed<bool>(() => super.isSubsriptionDriver,
               name: 'UserBase.isSubsriptionDriver'))
       .value;
-  Computed<bool>? _$profileNotNullComputed;
+  Computed<bool>? _$userNotNullComputed;
 
   @override
-  bool get profileNotNull =>
-      (_$profileNotNullComputed ??= Computed<bool>(() => super.profileNotNull,
-              name: 'UserBase.profileNotNull'))
-          .value;
+  bool get userNotNull => (_$userNotNullComputed ??=
+          Computed<bool>(() => super.userNotNull, name: 'UserBase.userNotNull'))
+      .value;
   Computed<bool>? _$userDocumentsNotNullComputed;
 
   @override
@@ -37,18 +36,18 @@ mixin _$UserStore on UserBase, Store {
               name: 'UserBase.userDocumentsNotNull'))
       .value;
 
-  late final _$profileAtom = Atom(name: 'UserBase.profile', context: context);
+  late final _$userAtom = Atom(name: 'UserBase.user', context: context);
 
   @override
-  Profile? get profile {
-    _$profileAtom.reportRead();
-    return super.profile;
+  User? get user {
+    _$userAtom.reportRead();
+    return super.user;
   }
 
   @override
-  set profile(Profile? value) {
-    _$profileAtom.reportWrite(value, super.profile, () {
-      super.profile = value;
+  set user(User? value) {
+    _$userAtom.reportWrite(value, super.user, () {
+      super.user = value;
     });
   }
 
@@ -114,6 +113,22 @@ mixin _$UserStore on UserBase, Store {
   set isCanRegister(bool value) {
     _$isCanRegisterAtom.reportWrite(value, super.isCanRegister, () {
       super.isCanRegister = value;
+    });
+  }
+
+  late final _$isLoadingMessageAtom =
+      Atom(name: 'UserBase.isLoadingMessage', context: context);
+
+  @override
+  bool get isLoadingMessage {
+    _$isLoadingMessageAtom.reportRead();
+    return super.isLoadingMessage;
+  }
+
+  @override
+  set isLoadingMessage(bool value) {
+    _$isLoadingMessageAtom.reportWrite(value, super.isLoadingMessage, () {
+      super.isLoadingMessage = value;
     });
   }
 
@@ -276,14 +291,31 @@ mixin _$UserStore on UserBase, Store {
     });
   }
 
+  late final _$userMessagesAtom =
+      Atom(name: 'UserBase.userMessages', context: context);
+
+  @override
+  List<Message> get userMessages {
+    _$userMessagesAtom.reportRead();
+    return super.userMessages;
+  }
+
+  @override
+  set userMessages(List<Message> value) {
+    _$userMessagesAtom.reportWrite(value, super.userMessages, () {
+      super.userMessages = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
-profile: ${profile},
+user: ${user},
 isLoadingCallToPhone: ${isLoadingCallToPhone},
 isLoadingRegister: ${isLoadingRegister},
 isLoadingVerify: ${isLoadingVerify},
 isCanRegister: ${isCanRegister},
+isLoadingMessage: ${isLoadingMessage},
 isLoadingCreatePayment: ${isLoadingCreatePayment},
 isLoadingPayments: ${isLoadingPayments},
 isLoadingUploadDocument: ${isLoadingUploadDocument},
@@ -294,9 +326,10 @@ errorRegister: ${errorRegister},
 errorVerify: ${errorVerify},
 errorUpdateInfo: ${errorUpdateInfo},
 userPayments: ${userPayments},
+userMessages: ${userMessages},
 isAuth: ${isAuth},
 isSubsriptionDriver: ${isSubsriptionDriver},
-profileNotNull: ${profileNotNull},
+userNotNull: ${userNotNull},
 userDocumentsNotNull: ${userDocumentsNotNull}
     ''';
   }

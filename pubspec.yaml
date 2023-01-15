@@ -1,5 +1,5 @@
 name: taxizakaz
-description: A new Flutter project.
+description: Такси приложения
 
 publish_to: 'none'
 
@@ -41,6 +41,7 @@ dependencies:
   firebase_core: ^1.24.0
   in_app_notification: ^1.1.2
   url_launcher: ^6.1.6
+  flutter_launcher_icons: ^0.11.0
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +49,10 @@ dev_dependencies:
 
   flutter_lints: ^2.0.0
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
 flutter:
   uses-material-design: true
 
@@ -62,6 +67,7 @@ flutter:
     - assets/lottie/warning.json
     - assets/lottie/info-animation.json
     - assets/svg/smart-phone-sms.svg
+    - assets/svg/order.svg
     - assets/lottie/active-taxi.json
     - assets/lottie/loading_car.json
     - assets/not-found.png

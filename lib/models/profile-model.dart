@@ -9,10 +9,14 @@ part 'profile-model.g.dart';
 class UserDocumentsGet {
   final String? passport_photo_front;
   final String? passport_photo_back;
-  final String? car_passport;
+  final String? car_passport_front;
+  final String? car_passport_back;
 
   UserDocumentsGet(
-      {this.passport_photo_back, this.passport_photo_front, this.car_passport});
+      {this.passport_photo_back,
+      this.passport_photo_front,
+      this.car_passport_back,
+      this.car_passport_front});
 
   factory UserDocumentsGet.fromJson(Map<String, dynamic> json) =>
       _$UserDocumentsGetFromJson(json);
@@ -27,10 +31,15 @@ class UserDocumentsCreate {
   @JsonKey(ignore: true)
   String? passport_photo_back;
   @JsonKey(ignore: true)
-  String? car_passport;
+  String? car_passport_front;
+  @JsonKey(ignore: true)
+  String? car_passport_back;
 
   UserDocumentsCreate(
-      {this.passport_photo_back, this.passport_photo_front, this.car_passport});
+      {this.passport_photo_back,
+      this.passport_photo_front,
+      this.car_passport_front,
+      this.car_passport_back});
 
   factory UserDocumentsCreate.fromJson(Map<String, dynamic> json) =>
       _$UserDocumentsCreateFromJson(json);
@@ -39,31 +48,31 @@ class UserDocumentsCreate {
 }
 
 @JsonSerializable()
-class ProfileInfo {
+class UserInfo {
   final String? first_name;
   final String? last_name;
   final String? email;
   final DateTime? birthday;
   final int? city_id;
 
-  ProfileInfo(
+  UserInfo(
       {this.first_name,
       this.last_name,
       this.email,
       this.birthday,
       this.city_id});
 
-  factory ProfileInfo.fromJson(Map<String, dynamic> json) =>
-      _$ProfileInfoFromJson(json);
+  factory UserInfo.fromJson(Map<String, dynamic> json) =>
+      _$UserInfoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ProfileInfoToJson(this);
+  Map<String, dynamic> toJson() => _$UserInfoToJson(this);
 }
 
 @JsonSerializable()
-class ProfileInfoGet extends ProfileInfo {
+class UserInfoGet extends UserInfo {
   String? avatar;
 
-  ProfileInfoGet(
+  UserInfoGet(
       {this.avatar,
       String? email,
       String? last_name,
@@ -77,19 +86,19 @@ class ProfileInfoGet extends ProfileInfo {
             birthday: birthday,
             city_id: city_id);
 
-  factory ProfileInfoGet.fromJson(Map<String, dynamic> json) =>
-      _$ProfileInfoGetFromJson(json);
+  factory UserInfoGet.fromJson(Map<String, dynamic> json) =>
+      _$UserInfoGetFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$ProfileInfoGetToJson(this);
+  Map<String, dynamic> toJson() => _$UserInfoGetToJson(this);
 }
 
 @JsonSerializable()
-class ProfileInfoCreate extends ProfileInfo {
+class UserInfoCreate extends UserInfo {
   @JsonKey(ignore: true)
   MultipartFile? avatar;
 
-  ProfileInfoCreate(
+  UserInfoCreate(
       {this.avatar,
       String? email,
       String? last_name,
@@ -103,39 +112,38 @@ class ProfileInfoCreate extends ProfileInfo {
             birthday: birthday,
             city_id: city_id);
 
-  factory ProfileInfoCreate.fromJson(Map<String, dynamic> json) =>
-      _$ProfileInfoCreateFromJson(json);
+  factory UserInfoCreate.fromJson(Map<String, dynamic> json) =>
+      _$UserInfoCreateFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$ProfileInfoCreateToJson(this);
+  Map<String, dynamic> toJson() => _$UserInfoCreateToJson(this);
 }
 
 @JsonSerializable()
-class Profile {
+class User {
   final String phone;
   final int? id, type_user;
-  final ProfileInfoGet? profile_info;
+  final UserInfoGet? user_info;
   final DateTime? driver_can_view_order_date;
   final bool? is_driver;
   final int? coins;
   final int? coins_expected;
   final UserDocumentsGet? user_document;
 
-  Profile(
+  User(
       {required this.phone,
       this.type_user,
       this.id,
       this.user_document,
       this.coins_expected,
       this.coins,
-      required this.profile_info,
+      required this.user_info,
       required this.driver_can_view_order_date,
       required this.is_driver});
 
-  factory Profile.fromJson(Map<String, dynamic> json) =>
-      _$ProfileFromJson(json);
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ProfileToJson(this);
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 }
 
 @JsonSerializable()

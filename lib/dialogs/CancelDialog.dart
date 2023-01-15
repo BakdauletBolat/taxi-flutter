@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -31,7 +33,7 @@ class _ErrorDialogState extends State<CancelOrderDialog> {
       orderStore.cancelOrder();
       Navigator.of(context).pop();
     } catch (e) {
-      print(e);
+      log(e.toString());
       showSnackBar(context, 'Ошибка при отмений');
       Navigator.of(context).pop();
     }

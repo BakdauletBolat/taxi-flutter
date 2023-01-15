@@ -57,7 +57,7 @@ abstract class OrderBase with Store {
       bool result = await service.cancelOrder(order!.id);
       runInAction(() => order = null);
     } on DioError catch (e) {
-      print(e.response!.data);
+      log(e.response!.data.toString());
     } catch (e) {
       rethrow;
     }

@@ -23,7 +23,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      new GlobalKey<RefreshIndicatorState>();
+      GlobalKey<RefreshIndicatorState>();
 
   void onLogoutClicked() {
     showCupertinoDialog(
@@ -35,10 +35,10 @@ class _ProfilePageState extends State<ProfilePage> {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
 
     Widget renderTypeUser() {
-      if (userStore.profile?.type_user != null) {
-        if (userStore.profile!.type_user! == 2) {
+      if (userStore.user?.type_user != null) {
+        if (userStore.user!.type_user! == 2) {
           return const Text('Пассажир');
-        } else if (userStore.profile!.type_user! == 1) {
+        } else if (userStore.user!.type_user! == 1) {
           return const Text('Водитель');
         }
       }
@@ -101,7 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       ListTile(
                         subtitle: Text(
-                            '${userStore.profile?.coins?.toString()} (${userStore.profile?.coins_expected?.toString()})'),
+                            '${userStore.user?.coins?.toString()} (${userStore.user?.coins_expected?.toString()})'),
                         title: const Text('Баланс'),
                       ),
                       ListTile(
@@ -110,67 +110,93 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       ListTile(
                         subtitle: Text(
-                            userStore.profile?.phone ?? 'Телеофон не указано'),
+                            userStore.user?.phone ?? 'Телеофон не указано'),
                         title: const Text('Телефон'),
                       ),
                       ListTile(
-                        subtitle: Text(
-                            userStore.profile?.profile_info?.first_name ??
-                                'Имя не указано'),
+                        subtitle: Text(userStore.user?.user_info?.first_name ??
+                            'Имя не указано'),
                         title: const Text('Имя'),
                       ),
                       ListTile(
-                        subtitle: Text(
-                            userStore.profile?.profile_info?.last_name ??
-                                'Фамилия не указано'),
+                        subtitle: Text(userStore.user?.user_info?.last_name ??
+                            'Фамилия не указано'),
                         title: const Text('Фамилия'),
                       ),
                       ListTile(
-                        subtitle: Text(userStore.profile?.profile_info?.email ??
+                        subtitle: Text(userStore.user?.user_info?.email ??
                             'Почта не указано'),
                         title: const Text('Почта'),
                       ),
                       Builder(builder: (context) {
-                        if (userStore.profile?.type_user == 2) {
-                          return ListTile(
-                            title: CupertinoButton.filled(
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Icon(Icons.drive_eta_rounded),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text('Стать водителям')
-                                    ]),
-                                onPressed: () {
-                                  var route =
-                                      CupertinoPageRoute(builder: (context) {
-                                    return const RequestDriverPage();
-                                  });
-                                  Navigator.of(context).push(route);
-                                }),
+                        if (userStore.user?.is_driver != null ||
+                            userStore.user!.is_driver!) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              children: [
+                                CupertinoButton.filled(
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: const [
+                                          Icon(Icons.document_scanner_outlined),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text('Смотреть документы')
+                                        ]),
+                                    onPressed: () {
+                                      var route = CupertinoPageRoute(
+                                          builder: (context) {
+                                        return const PreviewDocumentsPage();
+                                      });
+                                      Navigator.of(context).push(route);
+                                    }),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                CupertinoButton(
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: const [
+                                          Icon(Icons.supervised_user_circle,
+                                              color: CupertinoColors.systemRed),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            'Сменить аккаунт',
+                                            style: TextStyle(
+                                                color:
+                                                    CupertinoColors.systemRed),
+                                          )
+                                        ]),
+                                    onPressed: () {
+                                      userStore.changeUserType();
+                                    })
+                              ],
+                            ),
                           );
                         }
-                        return ListTile(
-                          title: CupertinoButton.filled(
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(Icons.document_scanner_outlined),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text('Смотреть документы')
-                                  ]),
-                              onPressed: () {
-                                var route =
-                                    CupertinoPageRoute(builder: (context) {
-                                  return const PreviewDocumentsPage();
-                                });
-                                Navigator.of(context).push(route);
-                              }),
-                        );
+                        return CupertinoButton.filled(
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(Icons.drive_eta_rounded),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text('Стать водителям')
+                                ]),
+                            onPressed: () {
+                              var route =
+                                  CupertinoPageRoute(builder: (context) {
+                                return const RequestDriverPage();
+                              });
+                              Navigator.of(context).push(route);
+                            });
                       }),
                       const SizedBox(
                         height: 50,

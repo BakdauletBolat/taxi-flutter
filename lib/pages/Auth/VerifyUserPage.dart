@@ -102,7 +102,6 @@ class _VerifyPageState extends State<VerifyPage> {
                 obscuringCharacter: '*',
                 blinkWhenObscuring: true,
                 animationType: AnimationType.scale,
-
                 pinTheme: PinTheme(
                   selectedColor: Theme.of(context).primaryColor,
                   activeColor: Theme.of(context).primaryColor,
@@ -128,9 +127,6 @@ class _VerifyPageState extends State<VerifyPage> {
                   )
                 ],
                 onCompleted: userStore.onChangeOtp,
-                // onTap: () {
-                //   print("Pressed");
-                // },
                 onChanged: userStore.onChangeOtp,
               ),
             ),

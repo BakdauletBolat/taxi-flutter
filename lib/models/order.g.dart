@@ -26,7 +26,7 @@ Order _$OrderFromJson(Map<String, dynamic> json) => Order(
           TypeOrder.fromJson(json['type_order'] as Map<String, dynamic>),
       from_city: City.fromJson(json['from_city'] as Map<String, dynamic>),
       to_city: City.fromJson(json['to_city'] as Map<String, dynamic>),
-      user: Profile.fromJson(json['user'] as Map<String, dynamic>),
+      user: User.fromJson(json['user'] as Map<String, dynamic>),
       is_active: json['is_active'] as bool,
       date_time: DateTime.parse(json['date_time'] as String),
     );

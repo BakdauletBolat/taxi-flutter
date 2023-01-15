@@ -1,11 +1,14 @@
 // ignore_for_file: file_names
 
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/models/profile-model.dart';
 import 'package:taxizakaz/stores/user-store.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SuccessPaymentPage extends StatefulWidget {
   const SuccessPaymentPage({Key? key, required this.payment}) : super(key: key);
@@ -34,7 +37,7 @@ class _ProfilePageState extends State<SuccessPaymentPage> {
           child: Column(
             children: [
               const SizedBox(
-                height: 50,
+                height: 90,
               ),
               Lottie.asset('assets/lottie/success.json', height: 200),
               const SizedBox(
@@ -83,6 +86,24 @@ class _ProfilePageState extends State<SuccessPaymentPage> {
               ),
               const SizedBox(
                 height: 40,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CupertinoButton(
+                      color: CupertinoColors.systemRed,
+                      child: const Text('Перейти в Kaspi'),
+                      onPressed: () async {
+                        Uri url = Uri.parse('https://dz3a4.app.goo.gl/dNzt');
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        } else
+                          log('not open');
+                      })
+                ],
+              ),
+              const SizedBox(
+                height: 20,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

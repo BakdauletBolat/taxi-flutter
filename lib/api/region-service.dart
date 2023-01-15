@@ -10,7 +10,6 @@ class RegionService extends ApiService {
       url += 'search=$name';
     }
 
-    print(url);
     var res = await api.get(url);
     List<City> cities =
         res.data.map<City>((obj) => City.fromJson(obj)).toList();
