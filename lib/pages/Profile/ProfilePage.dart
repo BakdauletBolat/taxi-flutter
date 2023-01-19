@@ -51,7 +51,6 @@ class _ProfilePageState extends State<ProfilePage> {
         extendBodyBehindAppBar: true,
         appBar: BAppBar(
           title: 'Профиль',
-          type: 'transparent',
           actions: [
             IconButton(
                 onPressed: onLogoutClicked, icon: const Icon(Icons.exit_to_app))
@@ -175,6 +174,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                         ]),
                                     onPressed: () {
                                       userStore.changeUserType();
+                                      showSuccessSnackBar(context,
+                                          'Изменился тип пользователя');
                                     })
                               ],
                             ),

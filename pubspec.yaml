@@ -42,6 +42,7 @@ dependencies:
   in_app_notification: ^1.1.2
   url_launcher: ^6.1.6
   flutter_launcher_icons: ^0.11.0
+  webview_flutter: ^4.0.1
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +68,7 @@ flutter:
     - assets/lottie/warning.json
     - assets/lottie/info-animation.json
     - assets/svg/smart-phone-sms.svg
+    - assets/icons/car.png
     - assets/svg/order.svg
     - assets/lottie/active-taxi.json
     - assets/lottie/loading_car.json

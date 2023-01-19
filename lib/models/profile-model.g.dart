@@ -6,9 +6,50 @@ part of 'profile-model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+Car _$CarFromJson(Map<String, dynamic> json) => Car(
+      id: json['id'] as int,
+      name: json['name'] as String,
+    );
+
+Map<String, dynamic> _$CarToJson(Car instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+    };
+
+CarModel _$CarModelFromJson(Map<String, dynamic> json) => CarModel(
+      id: json['id'] as int,
+      name: json['name'] as String,
+    );
+
+Map<String, dynamic> _$CarModelToJson(CarModel instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+    };
+
+CarInfo _$CarInfoFromJson(Map<String, dynamic> json) => CarInfo(
+      id: json['id'] as int,
+      car: Car.fromJson(json['car'] as Map<String, dynamic>),
+      model: CarModel.fromJson(json['model'] as Map<String, dynamic>),
+      year: json['year'] as String?,
+      color: json['color'] as String?,
+      number: json['number'] as String?,
+    );
+
+Map<String, dynamic> _$CarInfoToJson(CarInfo instance) => <String, dynamic>{
+      'id': instance.id,
+      'car': instance.car,
+      'year': instance.year,
+      'number': instance.number,
+      'color': instance.color,
+      'model': instance.model,
+    };
+
 UserDocumentsGet _$UserDocumentsGetFromJson(Map<String, dynamic> json) =>
     UserDocumentsGet(
       passport_photo_back: json['passport_photo_back'] as String?,
+      car: json['car'] == null
+          ? null
+          : CarInfo.fromJson(json['car'] as Map<String, dynamic>),
       passport_photo_front: json['passport_photo_front'] as String?,
       car_passport_back: json['car_passport_back'] as String?,
       car_passport_front: json['car_passport_front'] as String?,
@@ -20,6 +61,7 @@ Map<String, dynamic> _$UserDocumentsGetToJson(UserDocumentsGet instance) =>
       'passport_photo_back': instance.passport_photo_back,
       'car_passport_front': instance.car_passport_front,
       'car_passport_back': instance.car_passport_back,
+      'car': instance.car,
     };
 
 UserDocumentsCreate _$UserDocumentsCreateFromJson(Map<String, dynamic> json) =>
@@ -98,6 +140,9 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
               json['user_document'] as Map<String, dynamic>),
       coins_expected: json['coins_expected'] as int?,
       coins: json['coins'] as int?,
+      access_orders_ids: (json['access_orders_ids'] as List<dynamic>)
+          .map((e) => e as int)
+          .toList(),
       user_info: json['user_info'] == null
           ? null
           : UserInfoGet.fromJson(json['user_info'] as Map<String, dynamic>),
@@ -117,6 +162,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'is_driver': instance.is_driver,
       'coins': instance.coins,
       'coins_expected': instance.coins_expected,
+      'access_orders_ids': instance.access_orders_ids,
       'user_document': instance.user_document,
     };
 

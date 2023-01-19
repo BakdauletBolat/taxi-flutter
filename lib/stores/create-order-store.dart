@@ -66,6 +66,8 @@ abstract class CreateOrderBase with Store {
       to_city_id != null &&
       price != null;
 
+  int? access_id;
+
   OrderService service = OrderService();
 
   void clear() {
@@ -94,6 +96,7 @@ abstract class CreateOrderBase with Store {
       runInAction(() {
         city_to_city_coin = city_to_city_price_value!.coin;
         city_to_city_price = city_to_city_price_value;
+        access_id = city_to_city_price_value.id;
       });
     } on DioError catch (e) {
       log(e.response.toString());

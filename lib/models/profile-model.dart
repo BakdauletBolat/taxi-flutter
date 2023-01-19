@@ -6,14 +6,64 @@ import 'package:json_annotation/json_annotation.dart';
 part 'profile-model.g.dart';
 
 @JsonSerializable()
+class Car {
+  final int id;
+  final String name;
+
+  Car({required this.id, required this.name});
+
+  factory Car.fromJson(Map<String, dynamic> json) => _$CarFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CarToJson(this);
+}
+
+@JsonSerializable()
+class CarModel {
+  final int id;
+  final String name;
+
+  CarModel({required this.id, required this.name});
+
+  factory CarModel.fromJson(Map<String, dynamic> json) =>
+      _$CarModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CarModelToJson(this);
+}
+
+@JsonSerializable()
+class CarInfo {
+  final int id;
+  final Car car;
+  final String? year;
+  final String? number;
+  final String? color;
+  final CarModel model;
+
+  CarInfo(
+      {required this.id,
+      required this.car,
+      required this.model,
+      this.year,
+      this.color,
+      this.number});
+
+  factory CarInfo.fromJson(Map<String, dynamic> json) =>
+      _$CarInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CarInfoToJson(this);
+}
+
+@JsonSerializable()
 class UserDocumentsGet {
   final String? passport_photo_front;
   final String? passport_photo_back;
   final String? car_passport_front;
   final String? car_passport_back;
+  final CarInfo? car;
 
   UserDocumentsGet(
       {this.passport_photo_back,
+      this.car,
       this.passport_photo_front,
       this.car_passport_back,
       this.car_passport_front});
@@ -128,6 +178,7 @@ class User {
   final bool? is_driver;
   final int? coins;
   final int? coins_expected;
+  final List<int> access_orders_ids;
   final UserDocumentsGet? user_document;
 
   User(
@@ -137,6 +188,7 @@ class User {
       this.user_document,
       this.coins_expected,
       this.coins,
+      required this.access_orders_ids,
       required this.user_info,
       required this.driver_can_view_order_date,
       required this.is_driver});

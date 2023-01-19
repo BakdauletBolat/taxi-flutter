@@ -3,6 +3,7 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -18,6 +19,7 @@ import 'package:taxizakaz/dialogs/OrderConfirmDialog.dart';
 import 'package:taxizakaz/hooks/showSnackBar.dart';
 import 'package:taxizakaz/modals/CitiesListModal.dart';
 import 'package:taxizakaz/modals/PlaceInputModal.dart';
+import 'package:taxizakaz/pages/FeedBackPage.dart';
 import 'package:taxizakaz/stores/create-order-store.dart';
 import 'package:taxizakaz/stores/order-store.dart';
 import 'package:taxizakaz/stores/region-store.dart';
@@ -59,12 +61,30 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
         Provider.of<CreateOrderStore>(context, listen: false);
 
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
+    OrderStore orderStore = Provider.of<OrderStore>(context, listen: false);
     await createOrderStore.setCityToCityPrice();
     await userStore.loadUser();
 
     if (createOrderStore.city_to_city_coin == null) {
       showDialog(
           context: context, builder: (context) => const OrderNotPriceDialog());
+      return;
+    }
+
+    if (userStore.user!.access_orders_ids
+        .contains(createOrderStore.access_id!)) {
+      await createOrderStore.create();
+      if (createOrderStore.error == null) {
+        createOrderStore.clear();
+        await orderStore.loadLastOrder();
+        if (mounted) {
+          showSuccessSnackBar(context, 'Успешно создано');
+        }
+      } else {
+        if (mounted) {
+          showSnackBar(context, 'Что то пошло не так');
+        }
+      }
       return;
     }
 
@@ -100,6 +120,11 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
       }
     }
     return;
+  }
+
+  void navigateToFeedBackPage() {
+    var route = CupertinoPageRoute(builder: (context) => const FeedBackPage());
+    Navigator.of(context).push(route);
   }
 
   void onOrderCreateClicked() async {
@@ -145,6 +170,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 onPress: () {
                   openModal('from_city');
                 },
+                placeholder: 'Откуда',
                 city_name: createOrderStore.from_city_name,
                 address: createOrderStore.from_address,
               ),
@@ -153,7 +179,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                 onPress: () {
                   openModal('to_city');
                 },
-                placeholder: 'Туда',
+                placeholder: 'Куда',
                 city_name: createOrderStore.to_city_name,
                 address: createOrderStore.to_address,
               ),
@@ -254,6 +280,22 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   return const SizedBox.shrink();
                 },
               ),
+              SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: RichText(
+                    text: TextSpan(
+                        style: TextStyle(color: Colors.black),
+                        text: 'Если у вас возникли проблемы, ',
+                        children: [
+                          TextSpan(
+                              style: const TextStyle(
+                                  color: Colors.blueGrey,
+                                  decoration: TextDecoration.underline),
+                              text: 'напишите нам',
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = navigateToFeedBackPage)
+                        ]),
+                  ))
             ],
           )),
     );

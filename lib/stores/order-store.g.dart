@@ -119,6 +119,22 @@ mixin _$OrderStore on OrderBase, Store {
     });
   }
 
+  late final _$user_ordersAtom =
+      Atom(name: 'OrderBase.user_orders', context: context);
+
+  @override
+  List<Order> get user_orders {
+    _$user_ordersAtom.reportRead();
+    return super.user_orders;
+  }
+
+  @override
+  set user_orders(List<Order> value) {
+    _$user_ordersAtom.reportWrite(value, super.user_orders, () {
+      super.user_orders = value;
+    });
+  }
+
   late final _$to_city_nameAtom =
       Atom(name: 'OrderBase.to_city_name', context: context);
 
@@ -160,6 +176,7 @@ isLoadingOrders: ${isLoadingOrders},
 from_city_id: ${from_city_id},
 from_city_name: ${from_city_name},
 to_city_id: ${to_city_id},
+user_orders: ${user_orders},
 to_city_name: ${to_city_name},
 order: ${order}
     ''';

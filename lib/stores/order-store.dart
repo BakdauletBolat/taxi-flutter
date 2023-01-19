@@ -45,6 +45,9 @@ abstract class OrderBase with Store {
   int? to_city_id;
 
   @observable
+  List<Order> user_orders = [];
+
+  @observable
   String? to_city_name;
 
   @observable
@@ -90,5 +93,14 @@ abstract class OrderBase with Store {
     }
 
     runInAction(() => isLoadingOrders = false);
+  }
+
+  void loadUserOrders() async {
+    runInAction(() => isLoadingOrders = true);
+    var data = await service.getUserOrders();
+    print(data);
+    if (data != null) {
+      runInAction(() => {user_orders = data});
+    }
   }
 }

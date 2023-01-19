@@ -1,17 +1,14 @@
 // ignore_for_file: non_constant_identifier_names, file_names, library_prefixes
 
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart' as Ex;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/BAppBar.dart';
 import 'package:taxizakaz/components/ProfileImage.dart';
-import 'package:taxizakaz/components/StickyErrorHeader.dart';
 import 'package:taxizakaz/hooks/showSnackBar.dart';
 import 'package:taxizakaz/models/profile-model.dart';
 import 'package:taxizakaz/stores/user-store.dart';

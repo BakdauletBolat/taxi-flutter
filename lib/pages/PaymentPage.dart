@@ -9,6 +9,8 @@ import 'package:taxizakaz/components/BAppBar.dart';
 import 'package:taxizakaz/components/NotFoundOrder.dart';
 import 'package:taxizakaz/models/profile-model.dart';
 import 'package:taxizakaz/pages/MessagePage.dart';
+import 'package:taxizakaz/pages/Paymants/ListPaymantsPage.dart';
+import 'package:taxizakaz/pages/Profile/UserOrdersPage.dart';
 import 'package:taxizakaz/pages/SuccessPaymentPage.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 
@@ -27,59 +29,6 @@ class _ProfilePageState extends State<PaymentPage> {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
     userStore.loadUserPayments();
     super.initState();
-  }
-
-  Widget renderPaymentItem(Payment paymentItem) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-                color: paymentItem.is_confirmed
-                    ? Colors.green
-                    : const Color.fromARGB(255, 253, 238, 101),
-                borderRadius: BorderRadius.circular(10)),
-            child: Icon(
-              paymentItem.is_confirmed ? Icons.check : Icons.timelapse,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(
-            width: 20,
-          ),
-          Expanded(
-            child: Column(mainAxisSize: MainAxisSize.max, children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '#${paymentItem.gen_id.toString()}',
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Text(DateFormat('yyyy.MM.d').format(paymentItem.created_at))
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('${paymentItem.coin.toString()} тг'),
-                  Text(paymentItem.is_confirmed
-                      ? 'Подвержден'
-                      : 'На рассмотрений')
-                ],
-              ),
-            ]),
-          ),
-        ],
-      ),
-    );
   }
 
   void routeToMessagePage() {
@@ -115,7 +64,6 @@ class _ProfilePageState extends State<PaymentPage> {
         backgroundColor: Colors.white,
         appBar: BAppBar(
           title: 'Кабинет',
-          type: 'transparent',
           actions: [
             IconButton(
                 onPressed: routeToMessagePage, icon: const Icon(Icons.send))
@@ -223,25 +171,36 @@ class _ProfilePageState extends State<PaymentPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                Observer(builder: (context) {
-                  if (userStore.userPayments.isEmpty) {
-                    return const NotFoundOrder();
-                  }
-                  if (userStore.isLoadingPayments) {
-                    return const SizedBox(
-                      height: 200,
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: userStore.userPayments.length,
-                      itemBuilder: (_, index) =>
-                          renderPaymentItem(userStore.userPayments[index]));
-                })
+                Column(
+                  children: [
+                    ListTile(
+                      onTap: () {
+                        var route = CupertinoPageRoute(
+                            builder: (context) => const UserOrdersPage());
+                        Navigator.of(context).push(route);
+                      },
+                      enableFeedback: true,
+                      visualDensity: VisualDensity.comfortable,
+                      trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+                      title: const Text('Заказы',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                    ListTile(
+                      onTap: () {
+                        var route = CupertinoPageRoute(
+                            builder: (context) => const ListPaymentsPage());
+                        Navigator.of(context).push(route);
+                      },
+                      enableFeedback: true,
+                      visualDensity: VisualDensity.comfortable,
+                      trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+                      title: const Text('Покупки',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

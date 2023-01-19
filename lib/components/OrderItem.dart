@@ -11,14 +11,17 @@ import 'package:taxizakaz/api/order-service.dart';
 import 'package:taxizakaz/dialogs/NotAcceptableDialog.dart';
 import 'package:taxizakaz/hooks/showSnackBar.dart';
 import 'package:taxizakaz/models/order.dart';
+import 'package:taxizakaz/pages/OrderDetailPage.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class OrderItem extends StatelessWidget {
-  OrderItem({Key? key, required this.order}) : super(key: key);
+  OrderItem({Key? key, required this.order, this.visiblePhone = false})
+      : super(key: key);
 
   final Order order;
+  final bool visiblePhone;
   final DateFormat dateFormat = DateFormat("dd.MM.yyyy, HH:mm");
 
   @override
@@ -46,12 +49,45 @@ class OrderItem extends StatelessWidget {
       }
     }
 
+    Widget renderPhone() {
+      if (visiblePhone) {
+        return const SizedBox.shrink();
+      }
+      return GestureDetector(
+        onTap: callToPhone,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: Container(
+            color: Colors.green,
+            height: 40,
+            width: 40,
+            padding: const EdgeInsets.all(7),
+            child: Observer(builder: (context) {
+              if (userStore.isLoadingCallToPhone) {
+                return const CupertinoActivityIndicator(
+                  color: Colors.white,
+                );
+              }
+              return const Icon(
+                Icons.phone,
+                color: Colors.white,
+              );
+            }),
+          ),
+        ),
+      );
+    }
+
     Widget renderPhoto() {
       if (order.user.user_info?.avatar != null) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(50),
-          child: ExtendedImage.network(order.user.user_info!.avatar!,
-              fit: BoxFit.cover, width: 56, height: 56),
+        return Hero(
+          transitionOnUserGestures: true,
+          tag: order.id,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: ExtendedImage.network(order.user.user_info!.avatar!,
+                fit: BoxFit.cover, width: 56, height: 56),
+          ),
         );
       }
       return Image.asset('assets/not-found.png', width: 56, height: 56);
@@ -67,7 +103,13 @@ class OrderItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                renderPhoto(),
+                InkWell(
+                    onTap: () {
+                      var route = MaterialPageRoute(
+                          builder: (context) => OrderDetailPage(order: order));
+                      Navigator.of(context).push(route);
+                    },
+                    child: renderPhoto()),
                 const SizedBox(
                   height: 10,
                 ),
@@ -153,29 +195,7 @@ class OrderItem extends StatelessWidget {
             ),
           ],
         ),
-        GestureDetector(
-          onTap: callToPhone,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: Container(
-              color: Colors.green,
-              height: 40,
-              width: 40,
-              padding: const EdgeInsets.all(7),
-              child: Observer(builder: (context) {
-                if (userStore.isLoadingCallToPhone) {
-                  return const CupertinoActivityIndicator(
-                    color: Colors.white,
-                  );
-                }
-                return const Icon(
-                  Icons.phone,
-                  color: Colors.white,
-                );
-              }),
-            ),
-          ),
-        )
+        renderPhone()
       ],
     );
   }

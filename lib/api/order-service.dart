@@ -20,6 +20,18 @@ class OrderService extends ApiService {
     }
   }
 
+  Future<List<Order>?> getUserOrders() async {
+    try {
+      var res = await authApi.get('/order/user/');
+      List<Order> orderList = res.data['results']
+          .map<Order>((json) => Order.fromJson(json))
+          .toList();
+      return orderList;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<bool> cancelOrder(int id) async {
     try {
       var res = await authApi.get('/order/cancel/${id}/');
@@ -50,7 +62,6 @@ class OrderService extends ApiService {
       if (to_city_id != null) {
         url += 'to_city_id=$to_city_id&';
       }
-      print(url);
       var res = await authApi.get(url);
       List<Order> orderList = res.data['results']
           .map<Order>((json) => Order.fromJson(json))
@@ -87,9 +98,12 @@ class OrderService extends ApiService {
     try {
       var res = await authApi.post('/order/get-status-to-call-phone/',
           data: {'from_city_id': from_city_id, 'to_city_id': to_city_id});
+
       if (res.data['status'] == true) {
         return true;
       }
+    } on DioError catch (e) {
+      log(e.toString());
     } catch (e) {
       return false;
     }
