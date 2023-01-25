@@ -7,6 +7,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/BAppBar.dart';
 import 'package:taxizakaz/components/ProfileImage.dart';
+import 'package:taxizakaz/dialogs/DeleteUserDialog.dart';
 import 'package:taxizakaz/dialogs/ExitDialog.dart';
 import 'package:taxizakaz/hooks/showSnackBar.dart';
 import 'package:taxizakaz/pages/PreviewDocumentsPage.dart';
@@ -28,6 +29,11 @@ class _ProfilePageState extends State<ProfilePage> {
   void onLogoutClicked() {
     showCupertinoDialog(
         context: context, builder: (context) => const ExitDialog());
+  }
+
+  void onDeleteUser() {
+    showCupertinoDialog(
+        context: context, builder: (context) => const DeleteUserDialog());
   }
 
   @override
@@ -127,8 +133,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             'Почта не указано'),
                         title: const Text('Почта'),
                       ),
-                      Builder(builder: (context) {
-                        if (userStore.user?.is_driver != null ||
+                      Observer(builder: (context) {
+                        if (userStore.user!.is_driver != null &&
                             userStore.user!.is_driver!) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -181,24 +187,44 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           );
                         }
-                        return CupertinoButton.filled(
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Icon(Icons.drive_eta_rounded),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text('Стать водителям')
-                                ]),
-                            onPressed: () {
-                              var route =
-                                  CupertinoPageRoute(builder: (context) {
-                                return const RequestDriverPage();
-                              });
-                              Navigator.of(context).push(route);
-                            });
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: CupertinoButton.filled(
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons.drive_eta_rounded),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text('Стать водителям'),
+                                  ]),
+                              onPressed: () {
+                                var route =
+                                    CupertinoPageRoute(builder: (context) {
+                                  return const RequestDriverPage();
+                                });
+                                Navigator.of(context).push(route);
+                              }),
+                        );
                       }),
+                      CupertinoButton(
+                        onPressed: onDeleteUser,
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.delete,
+                                  color: CupertinoColors.systemRed),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Удалить аккаунт',
+                                style:
+                                    TextStyle(color: CupertinoColors.systemRed),
+                              )
+                            ]),
+                      ),
                       const SizedBox(
                         height: 50,
                       ),

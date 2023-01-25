@@ -258,4 +258,17 @@ abstract class UserBase with Store {
     instance.remove('token');
     runInAction(() => user = null);
   }
+
+  void deleteUser() async {
+    try {
+      int? status = await userService.deleteUser();
+      if (status == 200) {
+        SharedPreferences instance = await SharedPreferences.getInstance();
+        instance.remove('token');
+        runInAction(() => user = null);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

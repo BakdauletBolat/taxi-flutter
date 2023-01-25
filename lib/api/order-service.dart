@@ -62,12 +62,14 @@ class OrderService extends ApiService {
       if (to_city_id != null) {
         url += 'to_city_id=$to_city_id&';
       }
+
       var res = await authApi.get(url);
       List<Order> orderList = res.data['results']
           .map<Order>((json) => Order.fromJson(json))
           .toList();
       return Tuple3.fromList([orderList, null, false]);
     } on DioError catch (e) {
+      print(e.response!.data);
       return Tuple3.fromList([null, e.message, true]);
     }
   }

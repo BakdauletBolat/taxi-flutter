@@ -6,6 +6,7 @@ import 'package:extended_image/extended_image.dart' as Ex;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/BAppBar.dart';
 import 'package:taxizakaz/components/ProfileImage.dart';
@@ -36,7 +37,7 @@ class _ProfilePageState extends State<ProfileEditPage> {
 
     if (avatar_not_state != null) {
       avatar_form = await MultipartFile.fromFile(
-          File(avatar_not_state!.path).path,
+          File(avatar_not_state.path).path,
           filename: avatar_not_state.name);
       setState(() {
         avatar = avatar_not_state;

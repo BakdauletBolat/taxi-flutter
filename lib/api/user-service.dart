@@ -137,4 +137,9 @@ class UserService extends ApiService {
       return Tuple3(null, e.toString(), true);
     }
   }
+
+  Future<int?> deleteUser() async {
+    var res = await authApi.delete('/users/me/');
+    return res.statusCode;
+  }
 }

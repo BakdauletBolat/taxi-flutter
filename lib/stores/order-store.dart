@@ -98,7 +98,6 @@ abstract class OrderBase with Store {
   void loadUserOrders() async {
     runInAction(() => isLoadingOrders = true);
     var data = await service.getUserOrders();
-    print(data);
     if (data != null) {
       runInAction(() => {user_orders = data});
     }

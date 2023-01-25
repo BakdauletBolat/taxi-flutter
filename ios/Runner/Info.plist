@@ -33,7 +33,7 @@
 		<key>LSRequiresIPhoneOS</key>
 		<true />
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>NSCameraUsageDescription</string>
+		<string>Нам нужно разрешение для камеры и галерей, чтобы загрузить документы и фотографий профиля</string>
 		<key>BGTaskSchedulerPermittedIdentifiers</key>
 		<array>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>

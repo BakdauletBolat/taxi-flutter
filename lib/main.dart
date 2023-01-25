@@ -85,7 +85,7 @@ class _TaxiAppState extends State<TaxiApp> {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     String? token = await messaging.getToken();
-    userStore.loadUser(token: token);
+    userStore.loadUser(token: token ?? '');
   }
 
   @override

@@ -39,7 +39,7 @@ class _UserOrdersPageState extends State<UserOrdersPage> {
         //   );
         // }
         if (orderStore.orders.isEmpty) {
-          return const NotFoundOrder();
+          return const Center(child: NotFoundOrder());
         }
         return ListView.separated(
             padding: const EdgeInsets.all(20),
@@ -48,9 +48,9 @@ class _UserOrdersPageState extends State<UserOrdersPage> {
                   height: 30,
                 )),
             shrinkWrap: true,
-            itemCount: orderStore.orders.length,
+            itemCount: orderStore.user_orders.length,
             itemBuilder: (context, int index) {
-              Order order = orderStore.orders[index];
+              Order order = orderStore.user_orders[index];
 
               return OrderItem(order: order, visiblePhone: true);
             });

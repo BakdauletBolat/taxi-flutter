@@ -6,7 +6,7 @@
      <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
    <application
-        android:label="ZaKaz Такси"
+        android:label="Za-Kaz Такси"
         android:name="${applicationName}"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">

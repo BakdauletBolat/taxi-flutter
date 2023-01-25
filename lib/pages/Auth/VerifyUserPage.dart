@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -61,6 +62,9 @@ class _VerifyPageState extends State<VerifyPage> {
     if (!status) return;
     try {
       await userStore.verifyUser();
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+      String? token = await messaging.getToken();
+      userStore.loadUser(token: token ?? '');
       navigateToMainPage();
     } on DioError catch (e) {
       if (e.response != null) {
