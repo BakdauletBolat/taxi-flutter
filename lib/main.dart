@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:in_app_notification/in_app_notification.dart';
+import 'package:lottie/lottie.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/WelcomePage.dart';
@@ -69,7 +70,7 @@ class _TaxiAppState extends State<TaxiApp> {
   @override
   void initState() {
     loadUser();
-    interval();
+    // interval();
     super.initState();
   }
 
@@ -90,7 +91,7 @@ class _TaxiAppState extends State<TaxiApp> {
 
   @override
   void dispose() {
-    timer.cancel();
+    // timer.cancel();
     super.dispose();
   }
 
@@ -108,6 +109,14 @@ class _TaxiAppState extends State<TaxiApp> {
               return MaterialWithModalsPageRoute(
                   builder: (_) => Observer(builder: (context) {
                         UserStore userStore = Provider.of<UserStore>(context);
+                        if (userStore.isLoadingUser) {
+                          return Scaffold(
+                            body: Center(
+                                child: Lottie.asset(
+                                    'assets/lottie/loading_car.json')),
+                          );
+                        }
+
                         if (userStore.isAuth) {
                           return const MainPage();
                         }

@@ -78,104 +78,127 @@ class _ProfilePageState extends State<ProfileEditPage> {
         backgroundColor: Colors.white,
         extendBodyBehindAppBar: true,
         appBar: const BAppBar(title: 'Изменение профиля', type: 'transparent'),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                height: 350,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.white,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned(
-                        top: 0,
-                        child: Container(
-                            height: 200,
-                            width: MediaQuery.of(context).size.width,
-                            color: Theme.of(context).primaryColor)),
-                    Positioned(
-                      top: 129,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(142),
-                          child: _renderImage()),
-                    ),
-                    Positioned(
-                        bottom: 20,
-                        child: CupertinoButton.filled(
-                          onPressed: pickImage,
-                          child: const Text('Изменить фото'),
-                        ))
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                color: Colors.white,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height,
                 child: Column(
                   children: [
-                    ListTile(
-                      subtitle:
-                          Text(userStore.user?.phone ?? 'Телеофон не указано'),
-                      title: const Text('Телеофон'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: CupertinoTextField.borderless(
-                        controller: first_name_controller,
-                        placeholder: 'Укажите имя',
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: CupertinoTextField.borderless(
-                        controller: last_name_controller,
-                        placeholder: 'Укажите фамилия',
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: CupertinoTextField.borderless(
-                        controller: email_controller,
-                        placeholder: 'Укажите почту',
-                      ),
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Row(
-                          children: [
-                            Expanded(
+                    Container(
+                      height: 350,
+                      width: MediaQuery.of(context).size.width,
+                      color: Colors.white,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Positioned(
+                              top: 0,
+                              child: Container(
+                                  height: 200,
+                                  width: MediaQuery.of(context).size.width,
+                                  color: Theme.of(context).primaryColor)),
+                          Positioned(
+                            top: 129,
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(142),
+                                child: _renderImage()),
+                          ),
+                          Positioned(
+                              bottom: 20,
                               child: CupertinoButton.filled(
-                                onPressed: () async {
-                                  await userStore.updateUserInfo(UserInfoCreate(
-                                      email: email_controller?.text,
-                                      avatar: avatar_form,
-                                      first_name: first_name_controller?.text,
-                                      last_name: last_name_controller?.text));
-
-                                  if (userStore.errorUpdateInfo == null) {
-                                    if (!mounted) return;
-                                    showSuccessSnackBar(
-                                        context, 'Данные успешно обновлены');
-                                    Navigator.of(context).pop();
-                                  } else {
-                                    if (!mounted) return;
-                                    showSnackBar(
-                                        context, 'Ошибка при обновлений');
-                                  }
-                                },
-                                child: const Text('Сохранить'),
-                              ),
+                                onPressed: pickImage,
+                                child: const Text('Изменить фото'),
+                              ))
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            subtitle: Text(
+                                userStore.user?.phone ?? 'Телеофон не указано'),
+                            title: const Text('Телеофон'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: CupertinoTextField.borderless(
+                              controller: first_name_controller,
+                              placeholder: 'Укажите имя',
                             ),
-                          ],
-                        )),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: CupertinoTextField.borderless(
+                              controller: last_name_controller,
+                              placeholder: 'Укажите фамилия',
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: CupertinoTextField.borderless(
+                              controller: email_controller,
+                              placeholder: 'Укажите почту',
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
-              )
-            ],
-          ),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        width: MediaQuery.of(context).size.width - 20,
+                        child: CupertinoButton.filled(
+                          onPressed: () async {
+                            if (email_controller != null ||
+                                email_controller!.value.toString().isNotEmpty) {
+                              final bool emailValid = RegExp(
+                                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                  .hasMatch(email_controller!.text);
+                              if (!emailValid) {
+                                if (!mounted) return;
+                                showSnackBar(
+                                    context, 'Введите правильный email');
+                                return;
+                              }
+                            }
+                            await userStore.updateUserInfo(UserInfoCreate(
+                                email: email_controller?.text,
+                                avatar: avatar_form,
+                                first_name: first_name_controller?.text,
+                                last_name: last_name_controller?.text));
+
+                            if (userStore.errorUpdateInfo == null) {
+                              if (!mounted) return;
+                              showSuccessSnackBar(
+                                  context, 'Данные успешно обновлены');
+                              Navigator.of(context).pop();
+                            } else {
+                              if (!mounted) return;
+                              showSnackBar(context, 'Ошибка при обновлений');
+                            }
+                          },
+                          child: const Text('Сохранить'),
+                        ),
+                      ),
+                    ],
+                  )),
+            ),
+          ],
         ));
   }
 }

@@ -62,207 +62,214 @@ class _WelcomePageState extends State<WelcomePage> {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 500,
-                child: PageView(
-                    onPageChanged: (int value) {
-                      setState(() {
-                        sliderIndex = value;
-                      });
-                    },
-                    controller: pageController,
-                    pageSnapping: true,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/welcome-screen/first.png',
-                              width: 257,
-                              height: 257,
-                              fit: BoxFit.cover,
-                            ),
-                            const SizedBox(
-                              height: 40,
-                            ),
-                            const Text(
-                              'Заказать такси между городами стало удобнее',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                            ),
-                            const SizedBox(
-                              height: 40,
-                            ),
-                            const Text(
-                              'Сервис предзначен для удобного поиска, такси для поездки между городами и асболютно бесплатно для использование',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 14, color: Color(0xFF929292)),
-                            ),
-                            const SizedBox(
-                              height: 45,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/welcome-screen/second.png',
-                              width: 257,
-                              height: 257,
-                              fit: BoxFit.cover,
-                            ),
-                            const SizedBox(
-                              height: 40,
-                            ),
-                            const Text(
-                              'Полностью отечественный проект',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                            ),
-                            const SizedBox(
-                              height: 40,
-                            ),
-                            const Text(
-                              'Сервис создан с нуля чтобы предоставить все возможности для водителя и для пассажира ',
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Expanded(
+              child: PageView(
+                  onPageChanged: (int value) {
+                    setState(() {
+                      sliderIndex = value;
+                    });
+                  },
+                  controller: pageController,
+                  pageSnapping: true,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 100,
+                          ),
+                          Image.asset(
+                            'assets/welcome-screen/screen-1.png',
+                            width: 257,
+                            height: 257,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(
+                            height: 40,
+                          ),
+                          const Text(
+                            'Заказать такси стало удобнее',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Text(
+                              'Заказать такси стало удобнее благодаря новому приложению: быстро, просто и без лишних звонков.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 14, color: Color(0xFF929292)),
                             ),
-                            const SizedBox(
-                              height: 45,
-                            ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(25),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(
-                                width: 240,
-                                child: Text(
-                                  'Введите ваш номер телефона для входа',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500),
-                                ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 100,
+                          ),
+                          Image.asset(
+                            'assets/welcome-screen/screen-2.png',
+                            width: 257,
+                            height: 257,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          const Text(
+                            'Полностью отечественный проект',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Text(
+                              'Этот проект полностью создан в Казахстане, от идеи до реализации, без иностранных инвестиций.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 14, color: Color(0xFF929292)),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(25),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              width: 240,
+                              child: Text(
+                                'Введите ваш номер телефона для входа',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w500),
                               ),
-                              const SizedBox(
-                                height: 25,
-                              ),
-                              CupertinoTextFormFieldRow(
-                                padding: const EdgeInsets.all(0),
-                                keyboardType: TextInputType.number,
-                                prefix: Row(
-                                  children: const [
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text('+7'),
-                                  ],
-                                ),
-                                onChanged: (value) {
-                                  userStore.onChangePhone(
-                                      "7${maskFormatter.getUnmaskedText()}");
-                                },
-                                inputFormatters: [maskFormatter],
-                                placeholder: '747 005 66 89',
-                                validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Напишите свой номер';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(
-                                height: 25,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: CupertinoButton.filled(
-                                      onPressed: onRegisterClick,
-                                      child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Observer(builder: (context) {
-                                              if (userStore.isLoadingRegister) {
-                                                return const CupertinoActivityIndicator(
-                                                  color: Colors.white,
-                                                );
-                                              }
-                                              return const SizedBox.shrink();
-                                            }),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            const Text('Поехали'),
-                                            const SizedBox(
-                                              width: 20,
-                                            ),
-                                          ]),
-                                    ),
-                                  )
+                            ),
+                            const SizedBox(
+                              height: 25,
+                            ),
+                            CupertinoTextFormFieldRow(
+                              padding: const EdgeInsets.all(0),
+                              keyboardType: TextInputType.number,
+                              prefix: Row(
+                                children: const [
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text('+7'),
                                 ],
-                              )
-                            ]),
-                      )
-                    ]),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    width: 50,
-                  ),
-                  AnimatedSmoothIndicator(
-                    activeIndex: sliderIndex,
-                    count: 3,
-                    effect: ExpandingDotsEffect(
-                        dotWidth: 10,
-                        dotHeight: 10,
-                        activeDotColor:
-                            CupertinoTheme.of(context).primaryColor),
-                  ),
-                  const SizedBox(
-                    width: 50,
-                  ),
-                  if (sliderIndex != 2)
-                    CupertinoButton(
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
-                              Text('Дальше'),
-                              Icon(
-                                CupertinoIcons.chevron_right,
-                                size: 20,
-                              )
-                            ]),
-                        onPressed: () {
-                          pageController.nextPage(
-                              duration: const Duration(milliseconds: 400),
-                              curve: Curves.easeOutQuad);
-                        })
-                ],
-              ),
-            ],
-          ),
+                              ),
+                              onChanged: (value) {
+                                userStore.onChangePhone(
+                                    "7${maskFormatter.getUnmaskedText()}");
+                              },
+                              inputFormatters: [maskFormatter],
+                              placeholder: '747 005 66 89',
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Напишите свой номер';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 25,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CupertinoButton.filled(
+                                    onPressed: onRegisterClick,
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Observer(builder: (context) {
+                                            if (userStore.isLoadingRegister) {
+                                              return const CupertinoActivityIndicator(
+                                                color: Colors.white,
+                                              );
+                                            }
+                                            return const SizedBox.shrink();
+                                          }),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          const Text('Поехали'),
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                        ]),
+                                  ),
+                                )
+                              ],
+                            )
+                          ]),
+                    )
+                  ]),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  width: 50,
+                ),
+                AnimatedSmoothIndicator(
+                  activeIndex: sliderIndex,
+                  count: 3,
+                  effect: ExpandingDotsEffect(
+                      dotWidth: 10,
+                      dotHeight: 10,
+                      activeDotColor: CupertinoTheme.of(context).primaryColor),
+                ),
+                const SizedBox(
+                  width: 50,
+                ),
+                CupertinoButton(
+                    onPressed: sliderIndex != 2
+                        ? () {
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.easeOutQuad);
+                          }
+                        : onRegisterClick,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(sliderIndex != 2 ? 'Дальше' : 'Поехали'),
+                          const Icon(
+                            CupertinoIcons.chevron_right,
+                            size: 20,
+                          )
+                        ]))
+              ],
+            ),
+          ],
         ),
       ),
     );

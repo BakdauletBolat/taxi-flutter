@@ -51,6 +51,22 @@ mixin _$UserStore on UserBase, Store {
     });
   }
 
+  late final _$isLoadingUserAtom =
+      Atom(name: 'UserBase.isLoadingUser', context: context);
+
+  @override
+  bool get isLoadingUser {
+    _$isLoadingUserAtom.reportRead();
+    return super.isLoadingUser;
+  }
+
+  @override
+  set isLoadingUser(bool value) {
+    _$isLoadingUserAtom.reportWrite(value, super.isLoadingUser, () {
+      super.isLoadingUser = value;
+    });
+  }
+
   late final _$isLoadingCallToPhoneAtom =
       Atom(name: 'UserBase.isLoadingCallToPhone', context: context);
 
@@ -311,6 +327,7 @@ mixin _$UserStore on UserBase, Store {
   String toString() {
     return '''
 user: ${user},
+isLoadingUser: ${isLoadingUser},
 isLoadingCallToPhone: ${isLoadingCallToPhone},
 isLoadingRegister: ${isLoadingRegister},
 isLoadingVerify: ${isLoadingVerify},

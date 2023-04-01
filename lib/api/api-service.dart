@@ -12,5 +12,6 @@ class ApiService {
   ApiService() {
     api.options.baseUrl = Platform.isAndroid ? urlApple : urlApple;
     authApi.options.baseUrl = Platform.isAndroid ? urlApple : urlApple;
+    api.options.headers['Content-Type'] = "application/json";
   }
 }

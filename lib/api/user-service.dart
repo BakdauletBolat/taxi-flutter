@@ -15,8 +15,10 @@ class UserService extends ApiService {
     try {
       var res =
           await api.post('/users/sign-in/', data: {'phone_number': phone});
+      print(res.headers);
       return res.statusCode;
-    } catch (e) {
+    } on DioError catch (e) {
+      print(e.response!.headers);
       rethrow;
     }
   }

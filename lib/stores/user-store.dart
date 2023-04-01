@@ -21,6 +21,9 @@ abstract class UserBase with Store {
   User? user;
 
   @observable
+  bool isLoadingUser = false;
+
+  @observable
   bool isLoadingCallToPhone = false;
 
   @computed
@@ -91,6 +94,9 @@ abstract class UserBase with Store {
   UserService userService = UserService();
 
   Future loadUser({String? token}) async {
+    runInAction(() {
+      isLoadingUser = true;
+    });
     try {
       SharedPreferences instance = await SharedPreferences.getInstance();
       if (instance.getString('token') != null) {
@@ -99,7 +105,11 @@ abstract class UserBase with Store {
           this.user = user;
         });
       }
-    } finally {}
+    } finally {
+      runInAction(() {
+        isLoadingUser = false;
+      });
+    }
   }
 
   Future changeUserType() async {

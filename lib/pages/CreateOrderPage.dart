@@ -283,8 +283,9 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: RichText(
+                    textAlign: TextAlign.center,
                     text: TextSpan(
-                        style: TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.black),
                         text: 'Если у вас возникли проблемы, ',
                         children: [
                           TextSpan(
