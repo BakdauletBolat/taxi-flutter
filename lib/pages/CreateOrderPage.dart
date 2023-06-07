@@ -5,7 +5,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart' as PluginDatetimePicker;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -211,13 +211,13 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   placeholder: 'Выезд',
                   value: createOrderStore.date,
                   onPress: () {
-                    DatePicker.showDatePicker(context, showTitleActions: true,
+                    PluginDatetimePicker.DatePicker.showDatePicker(context, showTitleActions: true,
                         onConfirm: (date) {
                       createOrderStore.date = dateFormat.format(date);
                     },
                         currentTime: DateTime.now(),
-                        locale: LocaleType.ru,
-                        theme: DatePickerTheme(
+                        locale: PluginDatetimePicker.LocaleType.ru,
+                        theme: PluginDatetimePicker.DatePickerTheme(
                             doneStyle: TextStyle(
                                 color: Theme.of(context).primaryColor)));
                   },
@@ -229,13 +229,13 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   placeholder: 'Время выезда',
                   value: createOrderStore.time,
                   onPress: () {
-                    DatePicker.showTimePicker(context, showTitleActions: true,
+                    PluginDatetimePicker.DatePicker.showTimePicker(context, showTitleActions: true,
                         onConfirm: (date) {
                       createOrderStore.time = timeFormat.format(date);
                     },
                         currentTime: DateTime.now(),
-                        locale: LocaleType.ru,
-                        theme: DatePickerTheme(
+                        locale: PluginDatetimePicker.LocaleType.ru,
+                        theme: PluginDatetimePicker.DatePickerTheme(
                             doneStyle: TextStyle(
                                 color: Theme.of(context).primaryColor)));
                   },

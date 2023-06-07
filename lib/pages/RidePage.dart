@@ -3,20 +3,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart' as PluginDatetimePicker;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lottie/lottie.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/BAppBar.dart';
-import 'package:taxizakaz/components/ListTile.dart';
 import 'package:taxizakaz/components/NotFoundOrder.dart';
 import 'package:taxizakaz/components/OrderItem.dart';
 import 'package:taxizakaz/components/Select.dart';
 import 'package:taxizakaz/modals/RidePageCityList.dart';
 import 'package:taxizakaz/models/order.dart';
 import 'package:taxizakaz/stores/order-store.dart';
-import 'package:taxizakaz/stores/region-store.dart';
 import 'package:intl/intl.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 
@@ -120,13 +118,13 @@ class _RidePageState extends State<RidePage> {
                     placeholder: 'Выезд',
                     value: orderStore.date,
                     onPress: () {
-                      DatePicker.showDatePicker(context, showTitleActions: true,
+                      PluginDatetimePicker.DatePicker.showDatePicker(context, showTitleActions: true,
                           onConfirm: (date) {
                         orderStore.date = dateFormat.format(date);
 
                         orderStore.loadOrders(
                             type_order: skyColors[_selectedSegment]);
-                      }, currentTime: DateTime.now(), locale: LocaleType.ru);
+                      }, currentTime: DateTime.now(), locale: PluginDatetimePicker.LocaleType.ru);
                     },
                   ),
                   const SizedBox(
