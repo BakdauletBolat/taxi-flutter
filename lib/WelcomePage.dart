@@ -84,7 +84,7 @@ class _WelcomePageState extends State<WelcomePage> {
                             height: 100,
                           ),
                           Image.asset(
-                            'assets/welcome-screen/screen-1.png',
+                            'assets/welcome-screen/first.png',
                             width: 257,
                             height: 257,
                             fit: BoxFit.contain,
@@ -124,7 +124,7 @@ class _WelcomePageState extends State<WelcomePage> {
                             height: 100,
                           ),
                           Image.asset(
-                            'assets/welcome-screen/screen-2.png',
+                            'assets/welcome-screen/second.png',
                             width: 257,
                             height: 257,
                             fit: BoxFit.contain,

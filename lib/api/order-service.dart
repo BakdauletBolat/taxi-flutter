@@ -69,7 +69,6 @@ class OrderService extends ApiService {
           .toList();
       return Tuple3.fromList([orderList, null, false]);
     } on DioError catch (e) {
-      print(e.response!.data);
       return Tuple3.fromList([null, e.message, true]);
     }
   }

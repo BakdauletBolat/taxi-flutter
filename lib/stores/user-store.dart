@@ -163,18 +163,25 @@ abstract class UserBase with Store {
     }
   }
 
-  FutureOr<Payment?> createPayment(int user_id, String coin) async {
+  FutureOr<Object?> createPayment(int user_id, String coin) async {
     runInAction(() => {isLoadingCreatePayment = true});
-    final paymentObject =
+
+    try {
+      final paymentObject =
         await userService.createPayment(user_id, int.parse(coin));
-    if (paymentObject.item3) {
-      runInAction(() => {error = paymentObject.item2});
-    } else {
-      runInAction(() => {error = null, isLoadingCreatePayment = false});
-      return paymentObject.item1!;
+      return paymentObject;
     }
-    runInAction(() => {isLoadingCreatePayment = false});
-    return null;
+    catch (e) {
+        runInAction(() => {error = e.toString()});
+    }
+    finally {
+      runInAction(() => {isLoadingCreatePayment = false});
+    }
+  }
+
+  Future<String?> updatePayment(String? gen_id) async {
+    String link = await userService.updatePayment(gen_id);
+    return link;
   }
 
   Future register() async {

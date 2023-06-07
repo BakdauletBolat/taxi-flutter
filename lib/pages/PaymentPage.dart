@@ -4,14 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/BAppBar.dart';
+import 'package:taxizakaz/components/FreedomPay.dart';
 import 'package:taxizakaz/components/NotFoundOrder.dart';
 import 'package:taxizakaz/models/profile-model.dart';
 import 'package:taxizakaz/pages/MessagePage.dart';
 import 'package:taxizakaz/pages/Paymants/ListPaymantsPage.dart';
 import 'package:taxizakaz/pages/Profile/UserOrdersPage.dart';
-import 'package:taxizakaz/pages/SuccessPaymentPage.dart';
+import 'package:taxizakaz/pages/PaymentDetailPage.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -38,6 +40,20 @@ class _ProfilePageState extends State<PaymentPage> {
 
   bool isLoading = false;
 
+  Future<String> openSecondModal(String url, int order_id) async {
+    var res = await showCupertinoModalBottomSheet(
+      enableDrag: false,
+      context: context,
+      useRootNavigator: true,
+      expand: false,
+      builder: (context) => FreedomPay(url: url, order_id: order_id),
+    );
+    // var route = CupertinoPageRoute(
+    //           builder: (context) => SuccessPaymentPage(payment: payment));
+    //       await Navigator.of(context).push(route);
+    return res.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     UserStore userStore = Provider.of<UserStore>(context);
@@ -48,13 +64,11 @@ class _ProfilePageState extends State<PaymentPage> {
 
     Future submitCreatePayment() async {
       if (_formKey.currentState!.validate()) {
-        Payment? payment = await userStore.createPayment(
+        dynamic payment = await userStore.createPayment(
             userStore.user!.id!, coinController.text);
 
         if (payment != null && mounted) {
-          var route = CupertinoPageRoute(
-              builder: (context) => SuccessPaymentPage(payment: payment));
-          await Navigator.of(context).push(route);
+          openSecondModal(payment['link'],payment['payment_order_id']);
           coinController.text = '0';
         }
       }
@@ -70,7 +84,7 @@ class _ProfilePageState extends State<PaymentPage> {
           ],
         ),
         body: RefreshIndicator(
-          onRefresh: userStore.loadUserPayments,
+          onRefresh: userStore.loadUser,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,

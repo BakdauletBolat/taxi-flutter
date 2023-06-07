@@ -109,14 +109,7 @@ class _TaxiAppState extends State<TaxiApp> {
               return MaterialWithModalsPageRoute(
                   builder: (_) => Observer(builder: (context) {
                         UserStore userStore = Provider.of<UserStore>(context);
-                        if (userStore.isLoadingUser) {
-                          return Scaffold(
-                            body: Center(
-                                child: Lottie.asset(
-                                    'assets/lottie/loading_car.json')),
-                          );
-                        }
-
+                        
                         if (userStore.isAuth) {
                           return const MainPage();
                         }

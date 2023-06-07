@@ -5,7 +5,7 @@ import 'package:taxizakaz/api/interceptor.dart';
 import 'dart:io' show Platform;
 
 class ApiService {
-  String urlApple = 'http://195.49.215.203/api';
+  String urlApple = 'http://127.0.0.1:8000/api';
   Dio authApi = Dio()..interceptors.add(AuthInterceptor());
   Dio api = Dio();
 
@@ -13,5 +13,6 @@ class ApiService {
     api.options.baseUrl = Platform.isAndroid ? urlApple : urlApple;
     authApi.options.baseUrl = Platform.isAndroid ? urlApple : urlApple;
     api.options.headers['Content-Type'] = "application/json";
+    authApi.options.headers['Content-Type'] = "application/json";
   }
 }

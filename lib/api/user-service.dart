@@ -92,14 +92,14 @@ class UserService extends ApiService {
 
   Future<Tuple3<List<Payment>?, String?, bool>> getUserPayments() async {
     try {
-      var res = await authApi.get('/users/payments/');
+      var res = await authApi.get('/users/payment/');
       List<Payment> data =
           res.data!.map<Payment>((item) => Payment.fromJson(item)).toList();
 
       return Tuple3(data, null, false);
     } on DioError catch (e) {
       if (e.response != null) {
-        return Tuple3(null, e.response!.data['details'], true);
+        return Tuple3(null, e.response!.data, true);
       } else {
         return Tuple3(null, e.message, true);
       }
@@ -122,26 +122,37 @@ class UserService extends ApiService {
     }
   }
 
-  Future<Tuple3<Payment?, String?, bool>> createPayment(
+  Future<Object> createPayment(
       int userId, int coin) async {
-    try {
       var dataObj = {
         'user_id': userId,
         'coin': coin,
       };
-
       var res = await authApi.post('/users/payment/', data: dataObj);
-      Payment data = Payment.fromJson(res.data);
-      return Tuple3(data, null, false);
-    } on DioError catch (e) {
-      return Tuple3(null, e.response.toString(), true);
-    } catch (e) {
-      return Tuple3(null, e.toString(), true);
-    }
+      return res.data;
+  }
+
+
+ 
+
+  Future<String> updatePayment(String? gen_id) async {
+    var res = await authApi.patch('/users/payment/$gen_id/');
+    return res.data['link'];
   }
 
   Future<int?> deleteUser() async {
     var res = await authApi.delete('/users/me/');
     return res.statusCode;
+  }
+
+  Future<Payment?> getPayment(int paymentId) async {
+    try {
+var res = await authApi.get('/users/payment/$paymentId/');
+return Payment.fromJson(res.data);
+    } 
+    on DioError catch (e) {
+      print(e.response?.data);
+    }
+    
   }
 }

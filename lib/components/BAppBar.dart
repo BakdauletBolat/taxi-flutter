@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class BAppBar extends StatefulWidget implements PreferredSizeWidget {
   const BAppBar(
       {Key? key, required this.title, this.type, this.leading, this.actions})
-      : preferredSize = const Size.fromHeight(42),
+      : preferredSize = const Size.fromHeight(52),
         super(key: key);
 
   final String? type;
@@ -32,6 +32,7 @@ class CustomAppBarState extends State<BAppBar> {
       foregroundColor = Colors.white;
     }
     return AppBar(
+      leadingWidth: 100,
       actions: widget.actions,
       leading: widget.leading,
       title: Text(widget.title,
