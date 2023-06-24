@@ -27,7 +27,8 @@ class City {
   Map<String, dynamic> toJson() => _$CityToJson(this);
 }
 
-@JsonSerializable()
+
+
 @JsonSerializable()
 class CityToCityPrice {
   final int id;

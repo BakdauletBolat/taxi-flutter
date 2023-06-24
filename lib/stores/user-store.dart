@@ -171,7 +171,8 @@ abstract class UserBase with Store {
         await userService.createPayment(user_id, int.parse(coin));
       return paymentObject;
     }
-    catch (e) {
+    on DioException catch  (e) {
+      
         runInAction(() => {error = e.toString()});
     }
     finally {

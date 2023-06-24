@@ -66,7 +66,6 @@ class _ProfilePageState extends State<PaymentPage> {
       if (_formKey.currentState!.validate()) {
         dynamic payment = await userStore.createPayment(
             userStore.user!.id!, coinController.text);
-
         if (payment != null && mounted) {
           openSecondModal(payment['link'],payment['payment_order_id']);
           coinController.text = '0';

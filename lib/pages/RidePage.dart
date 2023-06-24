@@ -3,7 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart' as PluginDatetimePicker;
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as PluginDatetimePicker;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lottie/lottie.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
