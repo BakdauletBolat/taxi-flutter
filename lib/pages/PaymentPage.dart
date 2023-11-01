@@ -94,7 +94,7 @@ class _ProfilePageState extends State<PaymentPage> {
                 const SizedBox(
                   height: 30,
                 ),
-                Observer(builder: (context) {
+                userStore.user?.type_user == 1 ? Observer(builder: (context) {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -133,11 +133,11 @@ class _ProfilePageState extends State<PaymentPage> {
                       ),
                     ],
                   );
-                }),
+                }) : const SizedBox.shrink(),
                 const SizedBox(
                   height: 30,
                 ),
-                Form(
+                userStore.user?.type_user == 1 ? Form(
                   key: _formKey,
                   child: CupertinoTextFormFieldRow(
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -154,11 +154,11 @@ class _ProfilePageState extends State<PaymentPage> {
                     prefix: Icon(Icons.wallet,
                         color: Theme.of(context).primaryColor),
                   ),
-                ),
+                ) : const SizedBox.shrink(),
                 const SizedBox(
                   height: 25,
                 ),
-                Row(
+                userStore.user?.type_user == 1 ? Row(
                   children: [
                     Expanded(
                       child: Observer(builder: (context) {
@@ -170,7 +170,7 @@ class _ProfilePageState extends State<PaymentPage> {
                       }),
                     ),
                   ],
-                ),
+                ) : const SizedBox.shrink(),
                 const SizedBox(
                   height: 35,
                 ),
@@ -199,7 +199,7 @@ class _ProfilePageState extends State<PaymentPage> {
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
                     ),
-                    ListTile(
+                    userStore.user?.type_user == 1 ? ListTile(
                       onTap: () {
                         var route = CupertinoPageRoute(
                             builder: (context) => const ListPaymentsPage());
@@ -211,7 +211,7 @@ class _ProfilePageState extends State<PaymentPage> {
                       title: const Text('Покупки',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
-                    ),
+                    ) : const SizedBox.shrink(),
                   ],
                 ),
               ],

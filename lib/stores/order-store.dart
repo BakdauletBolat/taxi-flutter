@@ -59,7 +59,7 @@ abstract class OrderBase with Store {
     try {
       bool result = await service.cancelOrder(order!.id);
       runInAction(() => order = null);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       log(e.response!.data.toString());
     } catch (e) {
       rethrow;
@@ -71,7 +71,7 @@ abstract class OrderBase with Store {
     try {
       Order? data = await service.getLastOrder();
       runInAction(() => order = data);
-    } catch (e) {
+    } on DioException catch (_) {
       runInAction(() => order = null);
     } finally {
       runInAction(() => isLoadingLastOrder = false);

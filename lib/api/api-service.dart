@@ -5,7 +5,8 @@ import 'package:taxizakaz/api/interceptor.dart';
 import 'dart:io' show Platform;
 
 class ApiService {
-  String urlApple = 'http://185.4.180.190/api';
+  String urlApple = 'http://213.171.4.132/api';
+  BaseOptions baseOptions = BaseOptions();
   Dio authApi = Dio()..interceptors.add(AuthInterceptor());
   Dio api = Dio();
 

@@ -15,9 +15,11 @@ class OrderService extends ApiService {
     try {
       var res = await authApi.get('/order/get-last-order/');
       return Order.fromJson(res.data);
-    } catch (e) {
-      rethrow;
     }
+    catch (e) {
+      print(e);
+    }
+    
   }
 
   Future<List<Order>?> getUserOrders() async {
