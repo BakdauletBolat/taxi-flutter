@@ -5,7 +5,8 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as PluginDatetimePicker;
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
+    as PluginDatetimePicker;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -16,8 +17,9 @@ import 'package:taxizakaz/dialogs/ErrorDialog.dart';
 import 'package:taxizakaz/dialogs/OrderNotBalanceDialog.dart';
 import 'package:taxizakaz/dialogs/OrderNotPriceDialog.dart';
 import 'package:taxizakaz/dialogs/OrderConfirmDialog.dart';
+import 'package:taxizakaz/hooks/showModal.dart';
 import 'package:taxizakaz/hooks/showSnackBar.dart';
-import 'package:taxizakaz/modals/CitiesListModal.dart';
+import 'package:taxizakaz/modals/ListModal.dart';
 import 'package:taxizakaz/modals/PlaceInputModal.dart';
 import 'package:taxizakaz/pages/FeedBackPage.dart';
 import 'package:taxizakaz/stores/create-order-store.dart';
@@ -36,7 +38,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   @override
   void initState() {
     RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
-    regionStore.loadCities(context);
+    regionStore.loadRegions(context);
     super.initState();
   }
 
@@ -45,68 +47,26 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     super.dispose();
   }
 
-  void openModal(type) {
-    showCupertinoModalBottomSheet(
-      context: context,
-      expand: false,
-      builder: (context) => CitiesListModal(type: type),
-    );
-  }
+  // void openModal(type) {
+  //   RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
+
+  //   showCupertinoModalBottomSheet(
+  //     context: context,
+  //     expand: false,
+  //     builder: (context) => ListModal(items: regionStore.regions, ),
+  //   );
+  // }
 
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
   DateFormat timeFormat = DateFormat("HH:mm:ss");
 
-  void createDriverOrder() async {
+  void createOrder() async {
     CreateOrderStore createOrderStore =
         Provider.of<CreateOrderStore>(context, listen: false);
 
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
     OrderStore orderStore = Provider.of<OrderStore>(context, listen: false);
-    await createOrderStore.setCityToCityPrice();
     await userStore.loadUser();
-
-    if (createOrderStore.city_to_city_coin == null) {
-      showDialog(
-          context: context, builder: (context) => const OrderNotPriceDialog());
-      return;
-    }
-
-    if (userStore.user!.access_orders_ids
-        .contains(createOrderStore.access_id!)) {
-      await createOrderStore.create();
-      if (createOrderStore.error == null) {
-        createOrderStore.clear();
-        await orderStore.loadLastOrder();
-        if (mounted) {
-          showSuccessSnackBar(context, 'Успешно создано');
-        }
-      } else {
-        if (mounted) {
-          showSnackBar(context, 'Что то пошло не так');
-        }
-      }
-      return;
-    }
-
-    if (userStore.user!.coins! < createOrderStore.city_to_city_coin!) {
-      showDialog(
-          context: context,
-          builder: (context) => const OrderNotBalanceDialog());
-      return;
-    }
-
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const OrderConfirmDialog();
-        });
-  }
-
-  void createPassengerOrder() async {
-    CreateOrderStore createOrderStore =
-        Provider.of<CreateOrderStore>(context, listen: false);
-
-    OrderStore orderStore = Provider.of<OrderStore>(context, listen: false);
     await createOrderStore.create();
     if (createOrderStore.error == null) {
       createOrderStore.clear();
@@ -116,10 +76,21 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
       }
     } else {
       if (mounted) {
-        showSnackBar(context, 'Что то пошло не так');
+        if (createOrderStore.error?.response?.statusCode == 431) {
+          return showDialog(
+            barrierDismissible: true,
+            context: context,
+            builder: (context) {
+              return OrderNotBalanceDialog(
+                errorsData: createOrderStore.error?.response?.data['errors'],
+              );
+            },
+          );
+        }
+        showSnackBar(
+            context, createOrderStore.error?.response?.statusCode.toString());
       }
     }
-    return;
   }
 
   void navigateToFeedBackPage() {
@@ -131,14 +102,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     CreateOrderStore createOrderStore =
         Provider.of<CreateOrderStore>(context, listen: false);
 
-    UserStore userStore = Provider.of<UserStore>(context, listen: false);
-
     if (createOrderStore.isCreate) {
-      if (userStore.user?.type_user == 2) {
-        createPassengerOrder();
-      } else {
-        createDriverOrder();
-      }
+      createOrder();
     } else {
       showDialog(
         barrierDismissible: true,
@@ -155,7 +120,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     CreateOrderStore createOrderStore =
         Provider.of<CreateOrderStore>(context, listen: false);
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
-
+    RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const BAppBar(
@@ -168,7 +133,18 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               Select(
                 iconData: Icons.directions,
                 onPress: () {
-                  openModal('from_city');
+                  showModal(
+                      context,
+                      ListModal(
+                          items: regionStore.regions,
+                          placeWidget:
+                              PlaceInputModal(onClick: (String? value) {
+                            createOrderStore.from_address = value;
+                          }),
+                          onClick: (dynamic item) {
+                            createOrderStore.from_city_id = item.id;
+                            createOrderStore.from_city_name = item.name;
+                          }));
                 },
                 placeholder: 'Откуда',
                 city_name: createOrderStore.from_city_name,
@@ -177,7 +153,18 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
               Select(
                 iconData: Icons.place,
                 onPress: () {
-                  openModal('to_city');
+                  showModal(
+                      context,
+                      ListModal(
+                          items: regionStore.regions,
+                          placeWidget:
+                              PlaceInputModal(onClick: (String? value) {
+                            createOrderStore.to_address = value;
+                          }),
+                          onClick: (dynamic item) {
+                            createOrderStore.to_city_id = item.id;
+                            createOrderStore.to_city_name = item.name;
+                          }));
                 },
                 placeholder: 'Куда',
                 city_name: createOrderStore.to_city_name,
@@ -211,8 +198,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   placeholder: 'Выезд',
                   value: createOrderStore.date,
                   onPress: () {
-                    PluginDatetimePicker.DatePicker.showDatePicker(context, showTitleActions: true,
-                        onConfirm: (date) {
+                    PluginDatetimePicker.DatePicker.showDatePicker(context,
+                        showTitleActions: true, onConfirm: (date) {
                       createOrderStore.date = dateFormat.format(date);
                     },
                         currentTime: DateTime.now(),
@@ -229,8 +216,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   placeholder: 'Время выезда',
                   value: createOrderStore.time,
                   onPress: () {
-                    PluginDatetimePicker.DatePicker.showTimePicker(context, showTitleActions: true,
-                        onConfirm: (date) {
+                    PluginDatetimePicker.DatePicker.showTimePicker(context,
+                        showTitleActions: true, onConfirm: (date) {
                       createOrderStore.time = timeFormat.format(date);
                     },
                         currentTime: DateTime.now(),

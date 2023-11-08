@@ -19,7 +19,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
     super.initState();
     controller = WebViewController()
       ..loadRequest(
-        Uri.parse('http://185.4.180.190/feedback/'),
+        Uri.parse('http://213.171.4.132/feedback/'),
       );
   }
 

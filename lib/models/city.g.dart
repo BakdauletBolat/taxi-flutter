@@ -6,28 +6,28 @@ part of 'city.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+City _$CityFromJson(Map<String, dynamic> json) => City(
+      name: json['name'] as String,
+      id: json['id'] as int?,
+    );
+
+Map<String, dynamic> _$CityToJson(City instance) => <String, dynamic>{
+      'name': instance.name,
+      'id': instance.id,
+    };
+
 Region _$RegionFromJson(Map<String, dynamic> json) => Region(
       name: json['name'] as String,
       id: json['id'] as int?,
+      cities: (json['cities'] as List<dynamic>)
+          .map((e) => City.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$RegionToJson(Region instance) => <String, dynamic>{
       'name': instance.name,
       'id': instance.id,
-    };
-
-City _$CityFromJson(Map<String, dynamic> json) => City(
-      name: json['name'] as String,
-      id: json['id'] as int?,
-      region: json['region'] == null
-          ? null
-          : Region.fromJson(json['region'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$CityToJson(City instance) => <String, dynamic>{
-      'name': instance.name,
-      'region': instance.region,
-      'id': instance.id,
+      'cities': instance.cities,
     };
 
 CityToCityPrice _$CityToCityPriceFromJson(Map<String, dynamic> json) =>

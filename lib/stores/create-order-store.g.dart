@@ -211,13 +211,13 @@ mixin _$CreateOrderStore on CreateOrderBase, Store {
       Atom(name: 'CreateOrderBase.error', context: context);
 
   @override
-  dynamic get error {
+  DioException? get error {
     _$errorAtom.reportRead();
     return super.error;
   }
 
   @override
-  set error(dynamic value) {
+  set error(DioException? value) {
     _$errorAtom.reportWrite(value, super.error, () {
       super.error = value;
     });

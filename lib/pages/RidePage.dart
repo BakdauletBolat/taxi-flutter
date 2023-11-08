@@ -3,7 +3,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as PluginDatetimePicker;
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
+    as PluginDatetimePicker;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lottie/lottie.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -12,10 +13,12 @@ import 'package:taxizakaz/components/BAppBar.dart';
 import 'package:taxizakaz/components/NotFoundOrder.dart';
 import 'package:taxizakaz/components/OrderItem.dart';
 import 'package:taxizakaz/components/Select.dart';
-import 'package:taxizakaz/modals/RidePageCityList.dart';
+import 'package:taxizakaz/hooks/showModal.dart';
+import 'package:taxizakaz/modals/ListModal.dart';
 import 'package:taxizakaz/models/order.dart';
 import 'package:taxizakaz/stores/order-store.dart';
 import 'package:intl/intl.dart';
+import 'package:taxizakaz/stores/region-store.dart';
 import 'package:taxizakaz/stores/user-store.dart';
 
 enum TypeOrder { driver, passenger }
@@ -32,16 +35,6 @@ class _RidePageState extends State<RidePage> {
     TypeOrder.driver: 1,
     TypeOrder.passenger: 2
   };
-
-  void openModal(type, {int? type_order_id}) {
-    showCupertinoModalBottomSheet(
-        context: context,
-        expand: false,
-        builder: (context) => RidePageCityList(
-              type: type,
-              type_order_id: type_order_id,
-            ));
-  }
 
   @override
   void initState() {
@@ -83,6 +76,7 @@ class _RidePageState extends State<RidePage> {
   Widget build(BuildContext context) {
     OrderStore orderStore = Provider.of<OrderStore>(context, listen: false);
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
+    RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const BAppBar(title: 'Попутки'),
@@ -99,16 +93,34 @@ class _RidePageState extends State<RidePage> {
                   Select(
                     iconData: Icons.directions,
                     onPress: () {
-                      openModal('from_city',
-                          type_order_id: skyColors[_selectedSegment]!);
+                      showModal(
+                          context,
+                          ListModal(
+                            withPlace: false,
+                              items: regionStore.regions,
+                              onClick: (item) {
+                                orderStore.from_city_id = item.id;
+                                orderStore.from_city_name = item.name;
+                                orderStore.loadOrders(
+                                    type_order: skyColors[_selectedSegment]);
+                              }));
                     },
                     city_name: orderStore.from_city_name,
                   ),
                   Select(
                     iconData: Icons.place,
                     onPress: () {
-                      openModal('to_city',
-                          type_order_id: skyColors[_selectedSegment]!);
+                      showModal(
+                          context,
+                          ListModal(
+                            withPlace: false,
+                              items: regionStore.regions,
+                              onClick: (item) {
+                                orderStore.to_city_id = item.id;
+                                orderStore.to_city_name = item.name;
+                                orderStore.loadOrders(
+                                    type_order: skyColors[_selectedSegment]);
+                              }));
                     },
                     placeholder: 'Туда',
                     city_name: orderStore.to_city_name,
@@ -118,13 +130,15 @@ class _RidePageState extends State<RidePage> {
                     placeholder: 'Выезд',
                     value: orderStore.date,
                     onPress: () {
-                      PluginDatetimePicker.DatePicker.showDatePicker(context, showTitleActions: true,
-                          onConfirm: (date) {
+                      PluginDatetimePicker.DatePicker.showDatePicker(context,
+                          showTitleActions: true, onConfirm: (date) {
                         orderStore.date = dateFormat.format(date);
 
                         orderStore.loadOrders(
                             type_order: skyColors[_selectedSegment]);
-                      }, currentTime: DateTime.now(), locale: PluginDatetimePicker.LocaleType.ru);
+                      },
+                          currentTime: DateTime.now(),
+                          locale: PluginDatetimePicker.LocaleType.ru);
                     },
                   ),
                   const SizedBox(

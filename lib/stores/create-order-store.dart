@@ -53,7 +53,7 @@ abstract class CreateOrderBase with Store {
   CityToCityPrice? city_to_city_price;
 
   @observable
-  dynamic? error;
+  DioException? error;
 
   @observable
   bool isLoadingCreate = false;
@@ -98,7 +98,7 @@ abstract class CreateOrderBase with Store {
         city_to_city_price = city_to_city_price_value;
         access_id = city_to_city_price_value.id;
       });
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       log(e.response.toString());
       runInAction(() => city_to_city_coin = null);
     }
@@ -120,8 +120,8 @@ abstract class CreateOrderBase with Store {
             price: price!,
             comment: comment,
             date_time: '$date $time'));
-      } catch (e) {
-        runInAction(() => error = e.toString());
+      } on DioException catch (e) {
+        runInAction(() => error = e);
       } finally {
         runInAction(() => isLoadingCreate = false);
       }

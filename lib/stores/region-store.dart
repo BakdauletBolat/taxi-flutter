@@ -16,30 +16,21 @@ abstract class RegionBase with Store {
   @observable
   bool isAuth = true;
 
-  @observable
-  String? input_city;
 
-  ObservableList<City> cities = ObservableList.of([]);
+  ObservableList<Region> regions = ObservableList.of([]);
 
-  @computed
-  List<City> get searched_cities {
-    if (input_city == null || input_city!.isEmpty) {
-      return cities;
-    }
-    return cities
-        .where((element) =>
-            element.name.toLowerCase().startsWith(input_city!.toLowerCase()))
-        .toList();
-  }
+
 
   RegionService service = RegionService();
 
-  void loadCities(context, {String? name}) async {
+  void loadRegions(context, {String? name}) async {
     try {
-      List<City> citiesData = await service.getCities(name: name);
-      runInAction(() => {cities = ObservableList.of(citiesData)});
+      List<Region> regionsData = await service.getRegions(name: name);
+      runInAction(() => {regions = ObservableList.of(regionsData)});
     } catch (e) {
       showSnackBar(context, 'Ошибка при загрузке города');
     }
   }
+
+  
 }

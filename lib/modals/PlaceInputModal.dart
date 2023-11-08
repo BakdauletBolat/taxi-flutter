@@ -5,10 +5,9 @@ import 'package:taxizakaz/components/BAppBar.dart';
 import 'package:taxizakaz/stores/create-order-store.dart';
 
 class PlaceInputModal extends StatefulWidget {
-  const PlaceInputModal({Key? key, required this.type}) : super(key: key);
+  const PlaceInputModal({Key? key, required this.onClick}) : super(key: key);
 
-  final String type;
-
+  final Function onClick;
   @override
   State<PlaceInputModal> createState() => _PlaceInputModalState();
 }
@@ -30,7 +29,7 @@ class _PlaceInputModalState extends State<PlaceInputModal> {
               padding: const EdgeInsets.all(20),
               child: CupertinoTextField(
                 controller: textEditingController,
-                placeholder: 'Айбергенова 5А',
+                placeholder: 'Улица, дом, квартира',
               ),
             ),
             Padding(
@@ -38,23 +37,7 @@ class _PlaceInputModalState extends State<PlaceInputModal> {
               child: CupertinoButton.filled(
                   child: const Text('Подтвердить'),
                   onPressed: () {
-                    if (widget.type == 'from_city') {
-                      if (textEditingController.text.isEmpty) {
-                        createOrderStore.from_address = null;
-                      } else {
-                        createOrderStore.from_address =
-                            textEditingController.text;
-                      }
-                    }
-                    if (widget.type == 'to_city') {
-                      if (textEditingController.text.isEmpty) {
-                        createOrderStore.to_address = null;
-                      } else {
-                        createOrderStore.to_address =
-                            textEditingController.text;
-                      }
-                    }
-
+                    widget.onClick(textEditingController.text);
                     textEditingController.text = '';
                     Navigator.pop(context, 'exit');
                   }),

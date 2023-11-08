@@ -32,7 +32,6 @@ class CustomAppBarState extends State<BAppBar> {
       foregroundColor = Colors.white;
     }
     return AppBar(
-      leadingWidth: 100,
       actions: widget.actions,
       leading: widget.leading,
       title: Text(widget.title,

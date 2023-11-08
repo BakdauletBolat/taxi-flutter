@@ -80,7 +80,7 @@ class OrderService extends ApiService {
       var res =
           await authApi.post('/order/create/', data: createOrder.toJson());
       return Order.fromJson(res.data);
-    } catch (e) {
+    } on DioException catch (_) {
       rethrow;
     }
   }

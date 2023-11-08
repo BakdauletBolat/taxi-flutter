@@ -15,4 +15,16 @@ class RegionService extends ApiService {
         res.data.map<City>((obj) => City.fromJson(obj)).toList();
     return cities;
   }
+
+  Future<List<Region>> getRegions({String? name}) async {
+    String url = '/regions/?';
+    if (name != null) {
+      url += 'search=$name';
+    }
+
+    var res = await api.get(url);
+    List<Region> items =
+        res.data.map<Region>((obj) => Region.fromJson(obj)).toList();
+    return items;
+  }
 }

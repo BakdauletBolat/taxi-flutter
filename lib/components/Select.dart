@@ -54,7 +54,7 @@ class Select extends StatelessWidget {
         ],
       );
     }
-    if (city_name != null && address != null) {
+    if (city_name != null && address != null && address!.isNotEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +65,7 @@ class Select extends StatelessWidget {
           Text(address!)
         ],
       );
-    } else if (city_name != null) {
+    } else if (city_name != null && city_name!.isNotEmpty) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -74,7 +74,7 @@ class Select extends StatelessWidget {
               style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500))
         ],
       );
-    } else if (address != null) {
+    } else if (address != null && address!.isNotEmpty) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
