@@ -47,15 +47,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     super.dispose();
   }
 
-  // void openModal(type) {
-  //   RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
-
-  //   showCupertinoModalBottomSheet(
-  //     context: context,
-  //     expand: false,
-  //     builder: (context) => ListModal(items: regionStore.regions, ),
-  //   );
-  // }
 
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
   DateFormat timeFormat = DateFormat("HH:mm:ss");
@@ -88,7 +79,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
           );
         }
         showSnackBar(
-            context, createOrderStore.error?.response?.statusCode.toString());
+            context, createOrderStore.error?.response?.data['detail'].toString());
       }
     }
   }

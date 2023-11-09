@@ -31,58 +31,40 @@ class RidePage extends StatefulWidget {
 }
 
 class _RidePageState extends State<RidePage> {
-  Map<TypeOrder, int> skyColors = <TypeOrder, int>{
+  Map<TypeOrder, int> typeOrder = <TypeOrder, int>{
     TypeOrder.driver: 1,
     TypeOrder.passenger: 2
   };
 
+
+  TypeOrder selectedType = TypeOrder.driver;
+
   @override
   void initState() {
     OrderStore orderStore = Provider.of<OrderStore>(context, listen: false);
-    orderStore.loadOrders(type_order: 1);
+    UserStore userStore = Provider.of<UserStore>(context, listen: false);
+    if (userStore.user!.type_user == 1) {
+        selectedType = TypeOrder.passenger;
+    }
+    orderStore.loadOrders(type_order: typeOrder[selectedType]);
     super.initState();
   }
 
-  TypeOrder _selectedSegment = TypeOrder.driver;
+  
 
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
 
-  Map<TypeOrder, Widget> buildChildrens() {
-    return <TypeOrder, Widget>{
-      TypeOrder.passenger: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Text(
-          'Пассажирские',
-          style: TextStyle(
-              color: _selectedSegment == TypeOrder.passenger
-                  ? Theme.of(context).primaryColor
-                  : Colors.white),
-        ),
-      ),
-      TypeOrder.driver: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Text(
-          'Водителские',
-          style: TextStyle(
-              color: _selectedSegment == TypeOrder.driver
-                  ? Theme.of(context).primaryColor
-                  : Colors.white),
-        ),
-      ),
-    };
-  }
 
   @override
   Widget build(BuildContext context) {
     OrderStore orderStore = Provider.of<OrderStore>(context, listen: false);
-    UserStore userStore = Provider.of<UserStore>(context, listen: false);
     RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const BAppBar(title: 'Попутки'),
       body: RefreshIndicator(
         onRefresh: () async {
-          orderStore.loadOrders(type_order: skyColors[_selectedSegment]);
+          orderStore.loadOrders(type_order: typeOrder[selectedType]);
         },
         child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
@@ -102,7 +84,7 @@ class _RidePageState extends State<RidePage> {
                                 orderStore.from_city_id = item.id;
                                 orderStore.from_city_name = item.name;
                                 orderStore.loadOrders(
-                                    type_order: skyColors[_selectedSegment]);
+                                    type_order: typeOrder[selectedType]);
                               }));
                     },
                     city_name: orderStore.from_city_name,
@@ -119,7 +101,7 @@ class _RidePageState extends State<RidePage> {
                                 orderStore.to_city_id = item.id;
                                 orderStore.to_city_name = item.name;
                                 orderStore.loadOrders(
-                                    type_order: skyColors[_selectedSegment]);
+                                    type_order: typeOrder[selectedType]);
                               }));
                     },
                     placeholder: 'Туда',
@@ -135,7 +117,7 @@ class _RidePageState extends State<RidePage> {
                         orderStore.date = dateFormat.format(date);
 
                         orderStore.loadOrders(
-                            type_order: skyColors[_selectedSegment]);
+                            type_order: typeOrder[selectedType]);
                       },
                           currentTime: DateTime.now(),
                           locale: PluginDatetimePicker.LocaleType.ru);
@@ -144,24 +126,7 @@ class _RidePageState extends State<RidePage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  if (userStore.user?.type_user == 1)
-                    CupertinoSlidingSegmentedControl<TypeOrder>(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        thumbColor: Colors.white,
-                        groupValue: _selectedSegment,
-                        onValueChanged: (TypeOrder? value) {
-                          if (value != null) {
-                            orderStore.loadOrders(type_order: skyColors[value]);
-
-                            setState(() {
-                              _selectedSegment = value;
-                            });
-                          }
-                        },
-                        children: buildChildrens()),
-                  const SizedBox(
-                    height: 30,
-                  ),
+                  
                   Observer(builder: (context) {
                     if (orderStore.isLoadingOrders == true) {
                       return SizedBox(
@@ -183,7 +148,6 @@ class _RidePageState extends State<RidePage> {
                         itemCount: orderStore.orders.length,
                         itemBuilder: (context, int index) {
                           Order order = orderStore.orders[index];
-
                           return OrderItem(order: order);
                         });
                   }),
