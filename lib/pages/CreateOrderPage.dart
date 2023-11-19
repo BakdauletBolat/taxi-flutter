@@ -78,8 +78,9 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
             },
           );
         }
-        showSnackBar(
-            context, createOrderStore.error?.response?.data['detail'].toString());
+        print(createOrderStore.error?.response?.data);
+        // showSnackBar(
+        //     context, createOrderStore.error?.response?.data['detail'].toString());
       }
     }
   }

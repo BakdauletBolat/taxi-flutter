@@ -56,7 +56,7 @@ class _UploadDocumentsPageState extends State<PreviewDocumentsPage> {
                   height: 10,
                 ),
                 const Text(
-                  'Передная часть паспорта',
+                  'Водительское удостоверение (лицевая сторона)',
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(
@@ -80,7 +80,7 @@ class _UploadDocumentsPageState extends State<PreviewDocumentsPage> {
                   height: 10,
                 ),
                 const Text(
-                  'Задная часть паспорта',
+                  'Водительское удостоверение (обратная сторона)',
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(
@@ -104,7 +104,7 @@ class _UploadDocumentsPageState extends State<PreviewDocumentsPage> {
                   height: 10,
                 ),
                 const Text(
-                  'Паспорт автомобиля фронт',
+                  'Свидетелесьтво о регистраций ТС (тех. паспорт)',
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(
@@ -128,7 +128,7 @@ class _UploadDocumentsPageState extends State<PreviewDocumentsPage> {
                   height: 10,
                 ),
                 const Text(
-                  'Паспорт автомобиля задняя',
+                  'Свидетелесьтво о регистраций ТС (обратная сторона)',
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(

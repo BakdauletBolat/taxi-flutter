@@ -66,11 +66,15 @@ class _ProfilePageState extends State<PaymentPage> {
           children: [
             Column(
               children: [
-                Icon(
-                  Icons.attach_money_rounded,
-                  size: 30,
-                  color: Theme.of(context).primaryColor,
+                Text(
+                  '₸',
+                  style: TextStyle(fontSize: 26, height: 0),
                 ),
+                // Icon(
+                //   Icons.attach_money_rounded,
+                //   size: 30,
+                //   color: Theme.of(context).primaryColor,
+                // ),
                 Text(
                   "${user.coins!.toString()}₸",
                   style: const TextStyle(

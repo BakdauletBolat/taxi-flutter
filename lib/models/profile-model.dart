@@ -178,7 +178,6 @@ class User {
   final bool? is_driver;
   final int? coins;
   final int? coins_expected;
-  final List<int> access_orders_ids;
   final UserDocumentsGet? user_document;
 
   User(
@@ -188,7 +187,6 @@ class User {
       this.user_document,
       this.coins_expected,
       this.coins,
-      required this.access_orders_ids,
       required this.user_info,
       required this.driver_can_view_order_date,
       required this.is_driver});

@@ -79,6 +79,19 @@ class _RequestDriverPageState extends State<RequestDriverPage> {
     );
   }
 
+  Widget renderRequiredFields() {
+    UserStore userStore = Provider.of<UserStore>(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Заполните эти поля'),
+        userStore.user?.user_info?.avatar == null ? const Text(' - Фото пользователя') : const Text(''),
+         userStore.user?.user_info?.first_name == null ? const Text(' - Имя пользователя') : const Text(''),
+          userStore.user?.user_info?.last_name == null ? const Text(' - Фамилия пользователя') : const Text('')
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
@@ -109,6 +122,7 @@ class _RequestDriverPageState extends State<RequestDriverPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Пожалуйста заполните страницу профиля'),
+                renderRequiredFields(),
                 const SizedBox(
                   height: 10,
                 ),

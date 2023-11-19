@@ -33,6 +33,7 @@ class Select extends StatelessWidget {
       this.onPress,
       this.placeholder,
       this.value,
+      this.onRemove,
       this.iconData})
       : super(key: key);
 
@@ -41,6 +42,7 @@ class Select extends StatelessWidget {
   final String? value;
   final String? address;
   final Function()? onPress;
+  final Function()? onRemove;
   final String? placeholder;
 
   Widget renderText() {
@@ -116,10 +118,20 @@ class Select extends StatelessWidget {
                   renderText()
                 ],
               ),
-              const Icon(
+              Row(children: [
+                city_name != null || value != null ? GestureDetector(
+                  onTap: onRemove,
+                  child: const Icon(
+                  CupertinoIcons.xmark_circle,
+                  size: 20,
+                                ),
+                ) : const SizedBox.shrink(),
+                const Icon(
                 CupertinoIcons.chevron_right,
                 size: 20,
               )
+              ],)
+              
             ]),
       ),
     );

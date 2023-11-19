@@ -104,6 +104,38 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Colors.white,
                   child: Column(
                     children: [
+                       Observer(
+                         builder: (context) {
+                            if (userStore.user!.is_driver! == false) {
+                              return const SizedBox.shrink();
+                            }
+                           return Padding(
+                            padding:const EdgeInsets.symmetric(horizontal: 15),
+                             child: CupertinoButton.filled(
+                                          child:  Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(Icons.supervised_user_circle,
+                                                    color: CupertinoColors.white),
+                                               const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  userStore.user!.type_user! == 1 ? 'Стать пассижиром' : 'Стать водителем',
+                                                  style:const  TextStyle(
+                                                      color:
+                                                          CupertinoColors.white),
+                                                )
+                                              ]),
+                                          onPressed: () {
+                                            userStore.changeUserType();
+                                            showSuccessSnackBar(context,
+                                                'Изменился тип пользователя');
+                                          }),
+                           );
+                         }
+                       ),
                       ListTile(
                         subtitle: Text(
                             '${userStore.user?.coins?.toString()} (${userStore.user?.coins_expected?.toString()})'),
@@ -141,10 +173,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: Column(
                               children: [
                                 CupertinoButton.filled(
-                                    child: Row(
+                                    child:const Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                        children: const [
+                                        children: [
                                           Icon(Icons.document_scanner_outlined),
                                           SizedBox(
                                             width: 10,
@@ -161,28 +193,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                CupertinoButton(
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Icon(Icons.supervised_user_circle,
-                                              color: CupertinoColors.systemRed),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            'Сменить аккаунт',
-                                            style: TextStyle(
-                                                color:
-                                                    CupertinoColors.systemRed),
-                                          )
-                                        ]),
-                                    onPressed: () {
-                                      userStore.changeUserType();
-                                      showSuccessSnackBar(context,
-                                          'Изменился тип пользователя');
-                                    })
+                              
                               ],
                             ),
                           );
@@ -190,9 +201,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: CupertinoButton.filled(
-                              child: Row(
+                              child: const Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     Icon(Icons.drive_eta_rounded),
                                     SizedBox(
                                       width: 10,
@@ -210,9 +221,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       }),
                       CupertinoButton(
                         onPressed: onDeleteUser,
-                        child: Row(
+                        child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Icon(Icons.delete,
                                   color: CupertinoColors.systemRed),
                               SizedBox(

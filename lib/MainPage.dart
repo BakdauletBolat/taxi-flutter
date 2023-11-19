@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_notification/in_app_notification.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/Notification.dart';
+import 'package:taxizakaz/pages/MessagePage.dart';
 import 'package:taxizakaz/pages/PaymentPage.dart';
 import 'package:taxizakaz/pages/Profile/ProfilePage.dart';
 import 'package:taxizakaz/pages/RidePage.dart';
@@ -41,8 +42,16 @@ class _MyHomePageState extends State<MainPage> {
       if (message.notification != null) {
         showNotification(
             message.notification!.title!, message.notification?.body);
-
         userStore.loadUserPayments();
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print(message.notification);
+      print('asdadsasd');
+      if (message.notification != null) {
+        var route = MaterialPageRoute(builder: (context)=>const MessagePage());
+        Navigator.of(context).push(route);
       }
     });
   }
@@ -55,7 +64,10 @@ class _MyHomePageState extends State<MainPage> {
       ),
       duration: const Duration(seconds: 2),
       context: context,
-      onTap: () => print('Notification tapped!'),
+      onTap: () {
+        var route = MaterialPageRoute(builder: (context)=> const MessagePage());
+        Navigator.of(context).push(route);
+      },
     );
   }
 

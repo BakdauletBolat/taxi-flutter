@@ -140,9 +140,6 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
               json['user_document'] as Map<String, dynamic>),
       coins_expected: json['coins_expected'] as int?,
       coins: json['coins'] as int?,
-      access_orders_ids: (json['access_orders_ids'] as List<dynamic>)
-          .map((e) => e as int)
-          .toList(),
       user_info: json['user_info'] == null
           ? null
           : UserInfoGet.fromJson(json['user_info'] as Map<String, dynamic>),
@@ -162,7 +159,6 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'is_driver': instance.is_driver,
       'coins': instance.coins,
       'coins_expected': instance.coins_expected,
-      'access_orders_ids': instance.access_orders_ids,
       'user_document': instance.user_document,
     };
 

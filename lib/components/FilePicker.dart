@@ -46,7 +46,7 @@ class FilePicker extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            Text('Имя файла: ${photo!.name}')
+            // Text('Имя файла: ${photo!.name}')
           ],
         );
       }
@@ -72,7 +72,7 @@ class FilePicker extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              Text(title)
+              Text(title, textAlign: TextAlign.center,)
             ],
           )),
         ),

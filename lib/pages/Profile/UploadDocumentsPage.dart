@@ -73,6 +73,7 @@ class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
     if (userStore.error == null) {
       if (!mounted) return;
       showSuccessSnackBar(context, 'Документы успешно загружены');
+      Navigator.of(context).pop();
     } else {
       if (!mounted) return;
       showSnackBar(context, 'Ошибка при загрузке документа');
@@ -98,26 +99,26 @@ class _UploadDocumentsPageState extends State<UploadDocumentsPage> {
           FilePicker(
             onPress: pickFrontPassport,
             photo: frontPassportLocal,
-            subtitle: 'Передная часть паспорта',
-            title: 'Загрузите передную часть документа',
+            subtitle: 'Водительское удостоверение (лицевая сторона)',
+            title: 'Водительское удостоверение (лицевая сторона)',
           ),
           FilePicker(
             onPress: pickBackPassport,
             photo: backPassportLocal,
-            subtitle: 'Задная часть паспорта',
-            title: 'Загрузите задную часть документа',
+            subtitle: 'Водительское удостоверение (обратная сторона)',
+            title: 'Водительское удостоверение (обратная сторона)',
           ),
           FilePicker(
             onPress: pickCarPassportFront,
             photo: carPassportFrontLocal,
-            subtitle: 'Паспорт машины',
-            title: 'Загрузите передную часть паспорт машины часть документа',
+            subtitle: 'Свидетелесьтво о регистраций ТС (тех. паспорт)',
+            title: 'Свидетелесьтво о регистраций ТС (тех. паспорт)',
           ),
           FilePicker(
             onPress: pickCarPassportBack,
             photo: carPassportBackLocal,
-            subtitle: 'Паспорт машины',
-            title: 'Загрузите задную паспорт машины часть документа',
+            subtitle: 'Свидетелесьтво о регистраций ТС (обратная сторона)',
+            title: 'Свидетелесьтво о регистраций ТС (обратная сторона)',
           ),
           const SizedBox(
             height: 10,

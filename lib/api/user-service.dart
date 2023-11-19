@@ -53,8 +53,15 @@ class UserService extends ApiService {
 
   FutureOr<User?> updateUserInfo(UserInfoCreate profileInfo) async {
     try {
-      var formData = FormData.fromMap(
+      FormData formData;
+      if (profileInfo.avatar != null) {
+        formData = FormData.fromMap(
           {...profileInfo.toJson(), 'avatar': profileInfo.avatar});
+      }
+      else {
+        formData = FormData.fromMap(
+          {...profileInfo.toJson()});
+      }
       var res = await authApi.patch('/users/profile-info/', data: formData);
       return User.fromJson(res.data);
     } catch (e) {

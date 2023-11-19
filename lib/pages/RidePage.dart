@@ -16,6 +16,7 @@ import 'package:taxizakaz/components/Select.dart';
 import 'package:taxizakaz/hooks/showModal.dart';
 import 'package:taxizakaz/modals/ListModal.dart';
 import 'package:taxizakaz/models/order.dart';
+import 'package:taxizakaz/stores/create-order-store.dart';
 import 'package:taxizakaz/stores/order-store.dart';
 import 'package:intl/intl.dart';
 import 'package:taxizakaz/stores/region-store.dart';
@@ -46,6 +47,13 @@ class _RidePageState extends State<RidePage> {
     if (userStore.user!.type_user == 1) {
         selectedType = TypeOrder.passenger;
     }
+    if (orderStore.order != null) {
+      orderStore.from_city_id = orderStore.order!.from_city.id;
+      orderStore.to_city_id = orderStore.order!.to_city.id;
+      orderStore.from_city_name = orderStore.order!.from_city.name;
+      orderStore.to_city_name = orderStore.order!.to_city.name;
+    }
+ 
     orderStore.loadOrders(type_order: typeOrder[selectedType]);
     super.initState();
   }
@@ -87,10 +95,17 @@ class _RidePageState extends State<RidePage> {
                                     type_order: typeOrder[selectedType]);
                               }));
                     },
+                    onRemove: ()  {
+                      orderStore.from_city_name = null;
+                      orderStore.from_city_id = null;
+                      orderStore.loadOrders(
+                                    type_order: typeOrder[selectedType]);
+                    },
                     city_name: orderStore.from_city_name,
                   ),
                   Select(
                     iconData: Icons.place,
+                    
                     onPress: () {
                       showModal(
                           context,
@@ -106,11 +121,22 @@ class _RidePageState extends State<RidePage> {
                     },
                     placeholder: 'Туда',
                     city_name: orderStore.to_city_name,
+                    onRemove: ()  {
+                      orderStore.to_city_name = null;
+                      orderStore.to_city_id = null;
+                      orderStore.loadOrders(
+                                    type_order: typeOrder[selectedType]);
+                    }
                   ),
                   Select(
                     iconData: Icons.calendar_month,
                     placeholder: 'Выезд',
                     value: orderStore.date,
+                    onRemove: ()  {
+                      orderStore.date = null;
+                      orderStore.loadOrders(
+                                    type_order: typeOrder[selectedType]);
+                    },
                     onPress: () {
                       PluginDatetimePicker.DatePicker.showDatePicker(context,
                           showTitleActions: true, onConfirm: (date) {

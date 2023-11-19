@@ -164,18 +164,7 @@ class _ProfilePageState extends State<ProfileEditPage> {
                         width: MediaQuery.of(context).size.width - 20,
                         child: CupertinoButton.filled(
                           onPressed: () async {
-                            if (email_controller != null ||
-                                email_controller!.value.toString().isNotEmpty) {
-                              final bool emailValid = RegExp(
-                                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                  .hasMatch(email_controller!.text);
-                              if (!emailValid) {
-                                if (!mounted) return;
-                                showSnackBar(
-                                    context, 'Введите правильный email');
-                                return;
-                              }
-                            }
+                            
                             await userStore.updateUserInfo(UserInfoCreate(
                                 email: email_controller?.text,
                                 avatar: avatar_form,

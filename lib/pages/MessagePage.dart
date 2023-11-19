@@ -102,8 +102,7 @@ class MessageItem extends StatelessWidget {
                       message.title,
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text(message.type.name)
+                    )
                   ],
                 ),
                 Text(message.text),
