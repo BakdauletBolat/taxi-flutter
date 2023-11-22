@@ -21,6 +21,7 @@ import 'package:taxizakaz/hooks/showModal.dart';
 import 'package:taxizakaz/hooks/showSnackBar.dart';
 import 'package:taxizakaz/modals/ListModal.dart';
 import 'package:taxizakaz/modals/PlaceInputModal.dart';
+import 'package:taxizakaz/pages/Orders.dart';
 import 'package:taxizakaz/pages/FeedBackPage.dart';
 import 'package:taxizakaz/stores/create-order-store.dart';
 import 'package:taxizakaz/stores/order-store.dart';
@@ -47,7 +48,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     super.dispose();
   }
 
-
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
   DateFormat timeFormat = DateFormat("HH:mm:ss");
 
@@ -61,9 +61,11 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     await createOrderStore.create();
     if (createOrderStore.error == null) {
       createOrderStore.clear();
-      await orderStore.loadLastOrder();
+      orderStore.loadUserOrders();
       if (mounted) {
         showSuccessSnackBar(context, 'Успешно создано');
+        var route = MaterialPageRoute(builder: (context) => const OrdersPage());
+        Navigator.of(context).push(route);
       }
     } else {
       if (mounted) {
@@ -78,9 +80,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
             },
           );
         }
-        print(createOrderStore.error?.response?.data);
-        // showSnackBar(
-        //     context, createOrderStore.error?.response?.data['detail'].toString());
+        showSnackBar(context,
+            createOrderStore.error?.response?.data['detail'].toString());
       }
     }
   }
@@ -115,8 +116,17 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     RegionStore regionStore = Provider.of<RegionStore>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const BAppBar(
+      appBar: BAppBar(
         title: 'Межгород',
+        actions: [
+          CupertinoButton(
+              child: const Text('Заказы'),
+              onPressed: () {
+                var route =
+                    MaterialPageRoute(builder: (context) => const OrdersPage());
+                Navigator.of(context).push(route);
+              })
+        ],
       ),
       body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),

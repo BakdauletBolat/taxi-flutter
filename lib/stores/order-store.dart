@@ -30,9 +30,6 @@ abstract class OrderBase with Store {
   List<Order> orders = [];
 
   @observable
-  bool isLoadingLastOrder = false;
-
-  @observable
   bool isLoadingOrders = false;
 
   @observable
@@ -50,31 +47,29 @@ abstract class OrderBase with Store {
   @observable
   String? to_city_name;
 
-  @observable
-  Order? order;
+  @computed
+  Order? get order {
+    Order? activeOrder;
+
+    for (var order in user_orders) {
+      if (order.is_active) {
+        activeOrder = order;
+        break;
+      }
+    }
+
+    return activeOrder;
+  }
 
   OrderService service = OrderService();
 
   Future cancelOrder() async {
     try {
-      bool result = await service.cancelOrder(order!.id);
-      runInAction(() => order = null);
+      await service.cancelOrder(order!.id);
     } on DioException catch (e) {
       log(e.response!.data.toString());
     } catch (e) {
       rethrow;
-    }
-  }
-
-  Future loadLastOrder() async {
-    runInAction(() => isLoadingLastOrder = true);
-    try {
-      Order? data = await service.getLastOrder();
-      runInAction(() => order = data);
-    } on DioException catch (_) {
-      runInAction(() => order = null);
-    } finally {
-      runInAction(() => isLoadingLastOrder = false);
     }
   }
 

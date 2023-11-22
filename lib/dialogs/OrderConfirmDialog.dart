@@ -38,7 +38,7 @@ class _ErrorDialogState extends State<OrderConfirmDialog>
     await createOrderStore.create();
     if (createOrderStore.error == null) {
       createOrderStore.clear();
-      await orderStore.loadLastOrder();
+      orderStore.loadUserOrders();
       if (mounted) {
         showSuccessSnackBar(context, 'Успешно создано');
         Navigator.of(context).pop();

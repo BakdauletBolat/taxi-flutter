@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_notification/in_app_notification.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/components/Notification.dart';
+
 import 'package:taxizakaz/pages/MessagePage.dart';
 import 'package:taxizakaz/pages/PaymentPage.dart';
 import 'package:taxizakaz/pages/Profile/ProfilePage.dart';
@@ -32,12 +33,20 @@ class _MyHomePageState extends State<MainPage> {
     });
   }
 
+
+  List<Widget> widgetOptions = <Widget>[
+    const StartPage(),
+    const RidePage(),
+    const PaymentPage(),
+    const ProfilePage(),
+  ];
+
   @override
   void initState() {
     super.initState();
 
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
-
+  
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
         showNotification(
@@ -47,8 +56,6 @@ class _MyHomePageState extends State<MainPage> {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print(message.notification);
-      print('asdadsasd');
       if (message.notification != null) {
         var route = MaterialPageRoute(builder: (context)=>const MessagePage());
         Navigator.of(context).push(route);
@@ -71,15 +78,36 @@ class _MyHomePageState extends State<MainPage> {
     );
   }
 
-  List<Widget> widgetOptions = <Widget>[
-    const StartPage(),
-    const RidePage(),
-    const PaymentPage(),
-    const ProfilePage(),
-  ];
+
+  var items = <BottomNavigationBarItem>[
+           const BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.text_badge_plus),
+              label: 'Заказать',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.car_detailed),
+              label: 'Попутки',
+            ),
+        const BottomNavigationBarItem(
+              icon: Icon(Icons.payment),
+              label: 'Платежи',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.supervised_user_circle),
+              label: 'Профиль',
+            ),
+          ];
+  
+
+  @override
+  void dispose() {
+    super.dispose();
+
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         bottomNavigationBar: BottomNavigationBar(
           elevation: 0,
@@ -90,24 +118,7 @@ class _MyHomePageState extends State<MainPage> {
           unselectedFontSize: 14,
           showSelectedLabels: false,
           showUnselectedLabels: false,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.text_badge_plus),
-              label: 'Заказать',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.car_detailed),
-              label: 'Попутки',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.payment),
-              label: 'Платежи',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.supervised_user_circle),
-              label: 'Профиль',
-            ),
-          ],
+          items:items,
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
         ),

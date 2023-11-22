@@ -54,7 +54,8 @@ class _ProfilePageState extends State<PaymentPage> {
     return res.toString();
   }
 
-  Widget renderDriverWidget(context, User user, formKey, submitCreatePayment,bool isLoadingCreatePayment,TextEditingController coinController) {
+  Widget renderDriverWidget(context, User user, formKey, submitCreatePayment,
+      bool isLoadingCreatePayment, TextEditingController coinController) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -66,7 +67,7 @@ class _ProfilePageState extends State<PaymentPage> {
           children: [
             Column(
               children: [
-                Text(
+                const Text(
                   '₸',
                   style: TextStyle(fontSize: 26, height: 0),
                 ),
@@ -106,83 +107,54 @@ class _ProfilePageState extends State<PaymentPage> {
         const SizedBox(
           height: 30,
         ),
-            Form(
-                key: formKey,
-                child: CupertinoTextFormFieldRow(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  placeholder: 'Сумма',
-                  controller: coinController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Обязтельно';
-                    }
-                    return null;
-                  },
-                  keyboardType: TextInputType.number,
-                  prefix:
-                      Icon(Icons.wallet, color: Theme.of(context).primaryColor),
-                ),
-              )
-           ,
+        Form(
+          key: formKey,
+          child: CupertinoTextFormFieldRow(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            placeholder: 'Сумма',
+            controller: coinController,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Обязтельно';
+              }
+              return null;
+            },
+            keyboardType: TextInputType.number,
+            prefix: Icon(Icons.wallet, color: Theme.of(context).primaryColor),
+          ),
+        ),
         const SizedBox(
           height: 25,
         ),
         Row(
-                children: [
-                  Expanded(
-                    child: Observer(builder: (context) {
-                      return CupertinoButton.filled(
-                          onPressed: submitCreatePayment,
-                          child: Text(isLoadingCreatePayment == true
-                              ? 'Загрузка'
-                              : 'Оплатить'));
-                    }),
-                  ),
-                ],
-              ),
+          children: [
+            Expanded(
+              child: Observer(builder: (context) {
+                return CupertinoButton.filled(
+                    onPressed: submitCreatePayment,
+                    child: Text(isLoadingCreatePayment == true
+                        ? 'Загрузка'
+                        : 'Оплатить'));
+              }),
+            ),
+          ],
+        ),
         const SizedBox(
           height: 35,
         ),
-        const Text(
-          'История заказов',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Column(
-          children: [
-            ListTile(
-              onTap: () {
-                var route = CupertinoPageRoute(
-                    builder: (context) => const UserOrdersPage());
-                Navigator.of(context).push(route);
-              },
-              enableFeedback: true,
-              visualDensity: VisualDensity.comfortable,
-              trailing: const Icon(Icons.keyboard_arrow_right_rounded),
-              title: const Text('Заказы',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ),
-                ListTile(
-                    onTap: () {
-                      var route = CupertinoPageRoute(
-                          builder: (context) => const ListPaymentsPage());
-                      Navigator.of(context).push(route);
-                    },
-                    enableFeedback: true,
-                    visualDensity: VisualDensity.comfortable,
-                    trailing: const Icon(Icons.keyboard_arrow_right_rounded),
-                    title: const Text('Покупки',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                  )
-          ],
-        ),
+        ListTile(
+          onTap: () {
+            var route = CupertinoPageRoute(
+                builder: (context) => const ListPaymentsPage());
+            Navigator.of(context).push(route);
+          },
+          enableFeedback: true,
+          visualDensity: VisualDensity.comfortable,
+          trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+          title: const Text('Покупки',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        )
       ],
     );
   }
@@ -257,7 +229,13 @@ class _ProfilePageState extends State<PaymentPage> {
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Observer(builder: (_) {
               if (userStore.user!.type_user == 1) {
-                return renderDriverWidget(context, userStore.user!, formKey, submitCreatePayment, userStore.isLoadingCreatePayment, coinController);
+                return renderDriverWidget(
+                    context,
+                    userStore.user!,
+                    formKey,
+                    submitCreatePayment,
+                    userStore.isLoadingCreatePayment,
+                    coinController);
               }
               return renderClientWidget(context, userStore.user!);
             }),

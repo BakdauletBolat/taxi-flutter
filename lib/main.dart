@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:in_app_notification/in_app_notification.dart';
@@ -74,6 +75,8 @@ class _TaxiAppState extends State<TaxiApp> {
     super.initState();
   }
 
+  bool isLoading = false;
+
   void interval() {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
     timer = Timer.periodic(const Duration(seconds: 30), (timer) {
@@ -86,7 +89,19 @@ class _TaxiAppState extends State<TaxiApp> {
     UserStore userStore = Provider.of<UserStore>(context, listen: false);
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     String? token = await messaging.getToken();
-    userStore.loadUser(token: token ?? '');
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      await userStore.loadUser(token: token ?? '');
+    }
+    finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+
+    
   }
 
   @override
@@ -109,7 +124,9 @@ class _TaxiAppState extends State<TaxiApp> {
               return MaterialWithModalsPageRoute(
                   builder: (_) => Observer(builder: (context) {
                         UserStore userStore = Provider.of<UserStore>(context);
-                        
+                        if (isLoading) {
+                          return const Scaffold( body:Center( child: CircularProgressIndicator(),),);
+                        }
                         if (userStore.isAuth) {
                           return const MainPage();
                         }

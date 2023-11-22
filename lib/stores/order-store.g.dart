@@ -9,6 +9,13 @@ part of 'order-store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$OrderStore on OrderBase, Store {
+  Computed<Order?>? _$orderComputed;
+
+  @override
+  Order? get order => (_$orderComputed ??=
+          Computed<Order?>(() => super.order, name: 'OrderBase.order'))
+      .value;
+
   late final _$dateAtom = Atom(name: 'OrderBase.date', context: context);
 
   @override
@@ -36,22 +43,6 @@ mixin _$OrderStore on OrderBase, Store {
   set orders(List<Order> value) {
     _$ordersAtom.reportWrite(value, super.orders, () {
       super.orders = value;
-    });
-  }
-
-  late final _$isLoadingLastOrderAtom =
-      Atom(name: 'OrderBase.isLoadingLastOrder', context: context);
-
-  @override
-  bool get isLoadingLastOrder {
-    _$isLoadingLastOrderAtom.reportRead();
-    return super.isLoadingLastOrder;
-  }
-
-  @override
-  set isLoadingLastOrder(bool value) {
-    _$isLoadingLastOrderAtom.reportWrite(value, super.isLoadingLastOrder, () {
-      super.isLoadingLastOrder = value;
     });
   }
 
@@ -151,27 +142,11 @@ mixin _$OrderStore on OrderBase, Store {
     });
   }
 
-  late final _$orderAtom = Atom(name: 'OrderBase.order', context: context);
-
-  @override
-  Order? get order {
-    _$orderAtom.reportRead();
-    return super.order;
-  }
-
-  @override
-  set order(Order? value) {
-    _$orderAtom.reportWrite(value, super.order, () {
-      super.order = value;
-    });
-  }
-
   @override
   String toString() {
     return '''
 date: ${date},
 orders: ${orders},
-isLoadingLastOrder: ${isLoadingLastOrder},
 isLoadingOrders: ${isLoadingOrders},
 from_city_id: ${from_city_id},
 from_city_name: ${from_city_name},

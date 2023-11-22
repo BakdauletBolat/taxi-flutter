@@ -51,7 +51,6 @@ class _UserOrdersPageState extends State<UserOrdersPage> {
             itemCount: orderStore.user_orders.length,
             itemBuilder: (context, int index) {
               Order order = orderStore.user_orders[index];
-
               return OrderItem(order: order, visiblePhone: true);
             });
       }),

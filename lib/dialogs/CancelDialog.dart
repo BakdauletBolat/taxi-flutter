@@ -1,14 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:taxizakaz/hooks/showSnackBar.dart';
-import 'package:taxizakaz/stores/create-order-store.dart';
 import 'package:taxizakaz/stores/order-store.dart';
-import 'package:taxizakaz/stores/user-store.dart';
 
 class CancelOrderDialog extends StatefulWidget {
   const CancelOrderDialog({Key? key}) : super(key: key);
@@ -31,9 +25,9 @@ class _ErrorDialogState extends State<CancelOrderDialog> {
     OrderStore orderStore = Provider.of<OrderStore>(context, listen: false);
     try {
       orderStore.cancelOrder();
+      orderStore.loadUserOrders();
       Navigator.of(context).pop();
     } catch (e) {
-      log(e.toString());
       showSnackBar(context, 'Ошибка при отмений');
       Navigator.of(context).pop();
     }

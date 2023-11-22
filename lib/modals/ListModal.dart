@@ -42,7 +42,7 @@ class _ListModalState extends State<ListModal> {
       });
     }
     setState(() {
-      items = widget.items
+      items = items
           .where((element) =>
               element.name.toLowerCase().startsWith(value!.toLowerCase()))
           .toList();
