@@ -27,6 +27,8 @@ import 'package:taxizakaz/stores/create-order-store.dart';
 import 'package:taxizakaz/stores/order-store.dart';
 import 'package:taxizakaz/stores/region-store.dart';
 import 'package:taxizakaz/stores/user-store.dart';
+import 'package:taxizakaz/pages/SupportPage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CreateOrderPage extends StatefulWidget {
   const CreateOrderPage({Key? key}) : super(key: key);
@@ -90,6 +92,14 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     var route = CupertinoPageRoute(builder: (context) => const FeedBackPage());
     Navigator.of(context).push(route);
   }
+
+
+  navigateToSupportPage() async {
+   final Uri url = Uri.parse('https://zakaz-taxi.kz/documents/');
+   if (!await launchUrl(url)) {
+        throw Exception('Could not launch $url');
+    }
+}
 
   void onOrderCreateClicked() async {
     CreateOrderStore createOrderStore =
@@ -285,7 +295,12 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                               recognizer: TapGestureRecognizer()
                                 ..onTap = navigateToFeedBackPage)
                         ]),
-                  ))
+                  )),
+                 const SizedBox(height: 20,),
+                SizedBox(width: MediaQuery.of(context).size.width,
+                child: GestureDetector(onTap: navigateToSupportPage,child:const Text('Документы',textAlign: TextAlign.center, style: TextStyle(
+                                  color: Colors.blueGrey,
+                                  decoration: TextDecoration.underline)),),)
             ],
           )),
     );
